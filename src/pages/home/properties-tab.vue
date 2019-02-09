@@ -1,0 +1,54 @@
+<template>
+  <div v-if="showCards">
+    <div class="demo-expandable-cards">
+      <property-card v-for="(items, property) in properties" :key="property"
+        :title="property" :items="items" :subtitle="`${items.length} item${items.length > 1 ? 's' : ''}`" :color="color(property)" />
+    </div>
+  </div>
+</template>
+
+<script>
+import PropertyCard from '../../components/cards/property-card.vue'
+
+export default {
+  components: {
+    PropertyCard
+  },
+  data () {
+    return {
+      showCards: false,
+      properties: []
+    }
+  },
+  created () {
+    this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
+      this.showCards = true
+
+      this.properties = data.filter((item, index, items) => {
+        return item.metadata && item.metadata.semantics &&
+          item.metadata.semantics && item.metadata.semantics.config &&
+          item.metadata.semantics.config.relatesTo
+      }).reduce((prev, item, i, properties) => {
+        const property = item.metadata.semantics.config.relatesTo.split('_')[1]
+        if (!prev[property]) prev[property] = []
+        prev[property].push(item)
+        return prev
+      }, {})
+    })
+  },
+  methods: {
+    hideCards () {
+      this.showCards = false
+    },
+    color (property) {
+      if (property === 'Temperature') return 'red'
+      if (property === 'Light') return 'orange'
+      if (property === 'Humidity') return 'blue'
+      if (property === 'Presence') return 'teal'
+      if (property === 'Pressure') return 'deeppurple'
+      // etc. - use a map
+      return 'gray'
+    }
+  }
+}
+</script>

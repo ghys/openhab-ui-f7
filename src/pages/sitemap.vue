@@ -28,26 +28,22 @@ export default {
   // components: {
   //   SitemapWidgetGeneric
   // },
-  props: ["sitemapId", "pageId"],
-  data() {
+  props: ['sitemapId', 'pageId'],
+  data () {
     return {
       sitemap: {}
-    };
+    }
   },
-  created() {
-    fetch("/rest/sitemaps/" + this.sitemapId + "/" + this.pageId).then(resp => {
-      const json = resp.json();
-      json.then(j => {
-        this.sitemap = j;
-      });
-    });
+  created () {
+    this.$oh.api.get('/rest/sitemaps/' + this.sitemapId + '/' + this.pageId).then(data => {
+      this.sitemap = data
+    })
   }
-};
+}
 </script>
 
 <style lang="stylus">
-.sitemap .block {
-  padding: 0;
-  margin: 0;
-}
+.sitemap .block
+  padding 0
+  margin 0
 </style>

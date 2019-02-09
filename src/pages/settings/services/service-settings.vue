@@ -36,55 +36,42 @@
 </template>
 
 <script>
-import ConfigParameter from "../../../components/config-parameter.vue";
+import ConfigParameter from '../../../components/config-parameter.vue'
 
 export default {
   components: {
     ConfigParameter
   },
-  props: ["serviceId"],
-  data() {
+  props: ['serviceId'],
+  data () {
     return {
       service: {},
       configDescriptions: null,
       config: null
-    };
-  },
-  methods: {
-    save() {
-      alert("Save not implemented!");
-      // this.$f7.dialog.alert('Save not implemented!')
     }
   },
-  created() {
-    fetch("/rest/services/" + this.serviceId).then(resp => {
-      const json = resp.json();
-      json.then(j => {
-        this.service = j;
+  methods: {
+    save () {
+      // alert('Save not implemented!')
+      this.$f7.dialog.alert('Save not implemented!')
+    }
+  },
+  created () {
+    this.$oh.api.get('/rest/services/' + this.serviceId).then(data => {
+      this.service = data
 
-        if (this.service.configDescriptionURI) {
-          fetch(
-            "/rest/config-descriptions/" + this.service.configDescriptionURI
-          ).then(resp2 => {
-            const json2 = resp2.json();
-            json2.then(j2 => {
-              this.configDescriptions = j2;
+      if (this.service.configDescriptionURI) {
+        this.$oh.api.get('/rest/config-descriptions/' + this.service.configDescriptionURI).then(data2 => {
+          this.configDescriptions = data2
 
-              fetch("/rest/services/" + this.serviceId + "/config").then(
-                resp3 => {
-                  const json3 = resp3.json();
-                  json3.then(j3 => {
-                    this.config = j3;
-                  });
-                }
-              );
-            });
-          });
-        }
-      });
-    });
+          this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then(data3 => {
+            this.config = data3
+          })
+        })
+      }
+    })
   }
-};
+}
 </script>
 
 <style lang="stylus">

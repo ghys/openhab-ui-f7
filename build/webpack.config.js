@@ -17,6 +17,7 @@ const env = process.env.NODE_ENV || 'development';
 const target = process.env.TARGET || 'web';
 const isCordova =  target === 'cordova';
 
+// const apiBaseUrl = 'http://openhab:8080' // 'http://demo.openhab.org:8080' // 'http://localhost:8080'
 const apiBaseUrl = 'http://localhost:8080'
 
 
@@ -40,13 +41,13 @@ module.exports = {
   devtool: env === 'production' ? 'source-map' : 'eval',
   devServer: {
     hot: true,
-    open: true,
-    compress: true,
+    // open: true,
+    // compress: true,
     contentBase: '/www/',
     disableHostCheck: true,
-    watchOptions: {
-      poll: true,
-    },
+    // watchOptions: {
+    //   poll: true,
+    // },
     proxy: {
       '/rest': apiBaseUrl,
       '/chart': apiBaseUrl,
@@ -67,6 +68,8 @@ module.exports = {
           resolvePath('node_modules/template7'),
           resolvePath('node_modules/dom7'),
           resolvePath('node_modules/ssr-window'),
+          resolvePath('node_modules/vue-echarts'),
+          resolvePath('node_modules/resize-detector')
         ],
       },
 

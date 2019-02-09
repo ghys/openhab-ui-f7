@@ -1,6 +1,6 @@
 <template>
   <f7-page name="about">
-    <f7-navbar title-large="About" back-link="Back"></f7-navbar>
+    <f7-navbar title-large="About" title="About" back-link="Back"></f7-navbar>
     <f7-block-title class="after-big-title">About My App</f7-block-title>
     <f7-block strong>
       <p>Fugiat perspiciatis excepturi, soluta quod non ullam deleniti. Nobis sint nemo consequuntur, fugiat. Eius perferendis animi autem incidunt vel quod tenetur nostrum, voluptate omnis quasi quidem illum consequuntur, a, quisquam.</p>
@@ -11,5 +11,19 @@
       <p>Molestias et distinctio porro nesciunt ratione similique, magni doloribus, rerum nobis, aliquam quae reiciendis quasi modi. Nam a recusandae, fugiat in ea voluptates fuga eius, velit corrupti reprehenderit dignissimos consequatur!</p>
       <p>Blanditiis, cumque quo adipisci. Molestiae, dolores dolorum quos doloremque ipsa ullam eligendi commodi deserunt doloribus inventore magni? Ea mollitia veniam nostrum nihil, iusto doloribus a at! Ea molestiae ullam delectus!</p>
     </f7-block>
+
+    <f7-button href="/analyzer/?items=MultiSensorSalon_Temperature">Analyzer</f7-button>
+
+    <!-- <expandable-card />
+    <expandable-card />
+    <expandable-card /> -->
   </f7-page>
 </template>
+
+<script>
+// import ExpandableCard from '../components/expandable-card.vue'
+
+export default {
+
+}
+</script>

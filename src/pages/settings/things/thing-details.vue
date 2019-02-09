@@ -50,7 +50,8 @@
                 <f7-accordion-content>
                   <f7-block>
                     <p>Use the definition below in a .things file. Note: this is provided without guarantees as a convenience only.</p>
-                    <p v-if="this.thing.bridgeUID">Attention: This Thing is provided by a Bridge (
+                    <p v-if="this.thing.bridgeUID">
+                      Attention: This Thing is provided by a Bridge (
                       <strong>{{this.thing.bridgeUID}}</strong>). You can also include it within the Bridge block and remove the reference between parentheses.
                     </p>
                     <code class="textual-definition">
@@ -198,115 +199,108 @@ textarea.textual-definition {
 </style>
 
 <script>
-import ChannelLink from "../../../components/channel-link.vue";
-import ConfigParameter from "../../../components/config-parameter.vue";
+import ChannelLink from '../../../components/channel-link.vue'
+import ConfigParameter from '../../../components/config-parameter.vue'
 
-let copyToast = null;
+let copyToast = null
 
 export default {
   components: {
     ConfigParameter,
     ChannelLink
   },
-  props: ["thingId"],
-  data() {
+  props: ['thingId'],
+  data () {
     return {
       thing: {},
       thingType: {},
       codePopupOpened: false
-    };
+    }
   },
-  created() {
+  created () {
     copyToast = this.$f7.toast.create({
-      text: "Textual definition copied to clipboard",
+      text: 'Textual definition copied to clipboard',
       closeTimeout: 2000
-    });
+    })
 
-    fetch("/rest/things/" + this.thingId).then(resp => {
-      const json = resp.json();
-      json.then(j => {
-        this.thing = j;
+    this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
+      this.thing = data
 
-        fetch("/rest/thing-types/" + this.thing.thingTypeUID).then(resp2 => {
-          const json2 = resp2.json();
-          json2.then(j2 => {
-            this.thingType = j2;
-          });
-        });
-      });
-    });
+      this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID).then(data2 => {
+        this.thingType = data2
+      })
+    })
   },
   computed: {
-    textualDefinition() {
-      if (!this.thing.UID || !this.thingType.UID) return "";
+    textualDefinition () {
+      if (!this.thing.UID || !this.thingType.UID) return ''
 
-      let definition = "";
+      let definition = ''
 
       if (this.thing.bridgeUID) {
         definition +=
-          "# Attention: This Thing is provided by a Bridge (" +
+          '# Attention: This Thing is provided by a Bridge (' +
           this.thing.bridgeUID +
-          ")." +
-          "\n# You can also include it within the Bridge block and remove" +
-          "\n# the reference between parentheses to the bridge below.\n\n";
+          ').' +
+          '\n# You can also include it within the Bridge block and remove' +
+          '\n# the reference between parentheses to the bridge below.\n\n'
       }
 
-      definition += "# Thing definition (put in a .things file):\n\n";
+      definition += '# Thing definition (put in a .things file):\n\n'
 
-      definition += this.thingType.bridge ? "Bridge" : "Thing";
-      definition += " " + this.thing.UID;
-      definition += " " + JSON.stringify(this.thing.label);
-      if (this.thing.location)
-        definition += " @ " + JSON.stringify(this.thing.location);
-      if (this.thing.bridgeUID) definition += " (" + this.thing.bridgeUID + ")";
-      definition += " [ ";
-      let parameters = [];
+      definition += this.thingType.bridge ? 'Bridge' : 'Thing'
+      definition += ' ' + this.thing.UID
+      definition += ' ' + JSON.stringify(this.thing.label)
+      if (this.thing.location) { definition += ' @ ' + JSON.stringify(this.thing.location) }
+      if (this.thing.bridgeUID) definition += ' (' + this.thing.bridgeUID + ')'
+      definition += ' [ '
+      let parameters = []
       for (let parameter in this.thing.configuration) {
         if (!Array.isArray(this.thing.configuration[parameter])) {
           parameters.push(
             parameter +
-              "=" +
+              '=' +
               JSON.stringify(this.thing.configuration[parameter])
-          );
+          )
         }
       }
-      definition += parameters.join(", ") + " ]";
+      definition += parameters.join(', ') + ' ]'
 
       // TODO: for bridges, handle things related to that bridge
 
-      let itemDefinitions = [];
+      let itemDefinitions = []
       for (let channel of this.thing.channels) {
-        if (!channel.itemType) continue;
+        if (!channel.itemType) continue
 
-        let itemDefinition = "";
-        itemDefinition += channel.itemType;
+        let itemDefinition = ''
+        itemDefinition += channel.itemType
         itemDefinition +=
-          " " +
-          this.thing.label.replace(/[^0-9a-z]/gi, "") +
-          "_" +
-          channel.id.replace(/[^0-9a-z]/gi, "");
-        itemDefinition += ' "' + channel.label + '"';
-        itemDefinition += " {channel=" + JSON.stringify(channel.uid) + "}";
-        itemDefinitions.push(itemDefinition);
+          ' ' +
+          this.thing.label.replace(/[^0-9a-z]/gi, '') +
+          '_' +
+          channel.id.replace(/[^0-9a-z]/gi, '')
+        itemDefinition += ' "' + channel.label + '"'
+        itemDefinition += ' {channel=' + JSON.stringify(channel.uid) + '}'
+        itemDefinitions.push(itemDefinition)
       }
       if (itemDefinitions.length) {
-        definition += "\n\n\n# Item definitions (put in a .items file):\n\n";
-        definition += itemDefinitions.join("\n");
+        definition += '\n\n\n# Item definitions (put in a .items file):\n\n'
+        definition += itemDefinitions.join('\n')
       }
 
       definition +=
-        "\n\n# END " + this.thing.UID + " - " + this.thing.label + "\n\n";
+        '\n\n# END ' + this.thing.UID + ' - ' + this.thing.label + '\n\n'
 
-      return definition;
+      return definition
     }
   },
   methods: {
-    copyTextualDefinition() {
-      let el = document.getElementById("textual-definition");
-      el.select();
-      document.execCommand("copy");
-      copyToast.open();
+    copyTextualDefinition () {
+      let el = document.getElementById('textual-definition')
+      el.select()
+      document.execCommand('copy')
+      copyToast.open()
     }
   }
-};
+}
 </script>

@@ -1,46 +1,47 @@
 <template>
   <f7-page class="other-apps">
     <f7-navbar bg-color="blue" title="Other Apps"></f7-navbar>
+    <theme-switcher />
     <f7-block strong>
       <p>Mock list - need an API</p>
     </f7-block>
     <a href="#" external>
       <f7-card class="app-card">
         <f7-card-content :padding="false">
-          <img src="/static/img/dashboard-tiles-tmp/basicui.png" width="100%">
+          <img src="static/img/dashboard-tiles-tmp/basicui.png" width="100%">
         </f7-card-content>
         <f7-card-footer>
           <div class="app-card-name">Basic UI</div>
         </f7-card-footer>
       </f7-card>
     </a>
-    
+
     <a href="#" external>
       <f7-card class="app-card">
         <f7-card-content :padding="false">
-          <img src="/static/img/dashboard-tiles-tmp/habpanel.png" width="100%">
+          <img src="static/img/dashboard-tiles-tmp/habpanel.png" width="100%">
         </f7-card-content>
         <f7-card-footer>
           <div class="app-card-name">HABPanel</div>
         </f7-card-footer>
       </f7-card>
     </a>
-    
+
     <a href="#" external>
       <f7-card class="app-card">
         <f7-card-content :padding="false">
-          <img src="/static/img/dashboard-tiles-tmp/habot.png" width="100%">
+          <img src="static/img/dashboard-tiles-tmp/habot.png" width="100%">
         </f7-card-content>
         <f7-card-footer>
           <div class="app-card-name">HABot</div>
         </f7-card-footer>
       </f7-card>
     </a>
-    
+
     <a href="#" external>
       <f7-card class="app-card">
         <f7-card-content :padding="false">
-          <img src="/static/img/dashboard-tiles-tmp/rest.png" width="100%">
+          <img src="static/img/dashboard-tiles-tmp/rest.png" width="100%">
         </f7-card-content>
         <f7-card-footer>
           <div class="app-card-name">REST Docs</div>
@@ -61,7 +62,12 @@
   </f7-page>
 </template>
 <script>
-export default {};
+import ThemeSwitcher from '../components/theme-switcher.vue'
+export default {
+  components: {
+    ThemeSwitcher
+  }
+}
 </script>
 
 <style lang="stylus">

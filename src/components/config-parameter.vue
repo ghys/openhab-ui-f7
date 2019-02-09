@@ -30,8 +30,8 @@
 <script>
 export default {
   props: [
-      'configDescription',
-      'value'
+    'configDescription',
+    'value'
   ],
   data () {
     return {
@@ -40,8 +40,8 @@ export default {
   },
   computed: {
     actualValue () {
-      if (this.configDescription.type === 'BOOLEAN' && typeof(this.value) === 'string') {
-        return this.value == 'true'
+      if (this.configDescription.type === 'BOOLEAN' && typeof (this.value) === 'string') {
+        return this.value === 'true'
       } else if (this.configDescription.type === 'INTEGER') {
         return parseInt(this.value)
       }

@@ -26,7 +26,7 @@
         </f7-col>
       </f7-row>
     </f7-block>-->
-    <f7-block class="block-narrow after-big-title">
+    <f7-block class="block-narrow after-big-title" v-show="addonsLoaded && servicesLoaded">
       <f7-row>
         <f7-col width="100" tablet-width="50">
           <f7-block-title>Configuration &amp; Automation</f7-block-title>
@@ -37,28 +37,28 @@
               title="Inbox"
               badge="1"
               badge-color="red"
-              :footer="objectsFooters.inbox"
+              :footer="objectsSubtitles.inbox"
             ></f7-list-item>
             <f7-list-item
               link="things/"
               title="Things"
               after="24"
               badge-color="blue"
-              :footer="objectsFooters.things"
+              :footer="objectsSubtitles.things"
             ></f7-list-item>
             <f7-list-item
               link="items/"
               title="Items"
               after="192"
               badge-color="blue"
-              :footer="objectsFooters.items"
+              :footer="objectsSubtitles.items"
             ></f7-list-item>
             <f7-list-item
               link="rules/"
               title="Rules"
               after="3"
               badge-color="blue"
-              :footer="objectsFooters.rules"
+              :footer="objectsSubtitles.rules"
             ></f7-list-item>
           </f7-list>
           <f7-block-title>Add-ons</f7-block-title>
@@ -68,7 +68,7 @@
               :key="type.id"
               :link="'addons/' + type.id"
               :title="type.label"
-              :footer="addonsFooters[type.id]"
+              :footer="addonsSubtitles[type.id]"
             ></f7-list-item>
           </f7-list>
         </f7-col>
@@ -99,56 +99,43 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
+      addonsLoaded: false,
+      servicesLoaded: false,
       addonTypes: {},
-      // addonTypes: [
-      //   { link: "addons/bindings", title: "Bindings" },
-      //   { link: "addons/actions", title: "Actions" },
-      //   { link: "addons/persistence", title: "Persistence" },
-      //   { link: "addons/io", title: "System Integrations" },
-      //   { link: "addons/ui", title: "User Interfaces & Apps" },
-      //   { link: "addons/voice", title: "Voice" },
-      //   { link: "addons/misc", title: "Miscellaneous" }
-      // ],
       systemServices: [],
       otherServices: [],
-      objectsFooters: {
-        inbox: "Add new things to your system",
-        things: "Manage the physical layer, link to items",
-        items: "The conceptual model of your home",
-        rules: "Automate without programming"
+      objectsSubtitles: {
+        inbox: 'Add new things to your system',
+        things: 'Manage the physical layer, link to items',
+        items: 'The conceptual model of your home',
+        rules: 'Automate without programming'
       },
-      addonsFooters: {
-        binding: "Connect and control hardware and online services",
-        action: "Predefined methods for rules and scripts",
-        persistence: "Backend connectors to store historical data",
-        transformation: "Translate between technical and human-readable values",
-        misc: "Integrations to external systems and more",
-        ui: "Alternative frontends for user interaction",
-        voice:
-          "Convert between text and speech, interpret human language queries"
+      addonsSubtitles: {
+        binding: 'Connect and control hardware and online services',
+        action: 'Predefined methods for rules and scripts',
+        persistence: 'Backend connectors to store historical data',
+        transformation: 'Translate between technical and human-readable values',
+        misc: 'Integrations to external systems and more',
+        ui: 'Alternative frontends for user interaction',
+        voice: 'Convert between text and speech, interpret human language queries'
       }
-    };
+    }
   },
-  beforeCreate() {
-    fetch("/rest/services").then(resp => {
-      const json = resp.json();
-      json.then(j => {
-        this.systemServices = j.filter(s => s.category === "system");
-        this.otherServices = j.filter(s => s.category !== "system");
-      });
-    });
-
-    // can be done in parallel
-    fetch("/rest/extensions/types").then(resp2 => {
-      const json2 = resp2.json();
-      json2.then(j2 => {
-        this.addonTypes = j2;
-      });
-    });
+  beforeCreate () {
+    // can be done in parallel!
+    this.$oh.api.get('/rest/services').then((data) => {
+      this.systemServices = data.filter(s => s.category === 'system')
+      this.otherServices = data.filter(s => s.category !== 'system')
+      this.servicesLoaded = true
+    })
+    this.$oh.api.get('/rest/extensions/types').then((data) => {
+      this.addonTypes = data
+      this.addonsLoaded = true
+    })
   }
-};
+}
 </script>
 
 <style>

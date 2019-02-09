@@ -51,77 +51,50 @@
 
 <script>
 export default {
-  props: ["addonId", "opened"],
-  data() {
+  props: ['addonId', 'opened'],
+  data () {
     return {
       addon: {},
       bindingInfo: {}
-    };
+    }
   },
-  // created () {
-  //   fetch('/rest/extensions/' + this.addonId).then((resp) => {
-  //     const json = resp.json()
-  //     json.then((j) => {
-  //       this.addon = j
-
-  //       if (addon.binding && addon.installed) {
-  //         fetch('/rest/bindings').then((resp2) => {
-  //           const json2 = resp2.json()
-  //           json2.then((j2) => {
-  //             this.bindingInfo = j2
-
-  //             // TODO: binding configuration
-  //           })
-  //         })
-  //       }
-  //     })
-  //   })
-  // },
   watch: {
-    addonId() {
+    addonId () {
       if (!this.addonId) {
-        this.addon = {};
-        this.bindingInfo = {};
-        return;
+        this.addon = {}
+        this.bindingInfo = {}
+        return
       }
-      fetch("/rest/extensions/" + this.addonId).then(resp => {
-        const json = resp.json();
-        json.then(j => {
-          this.addon = j;
+      this.$oh.api.get('/rest/extensions/' + this.addonId).then(data => {
+        this.addon = data
 
-          if (this.addon.type === "binding" && this.addon.installed) {
-            fetch("/rest/bindings").then(resp2 => {
-              const json2 = resp2.json();
-              json2.then(j2 => {
-                this.bindingInfo =
-                  j2.find(b => b.id === this.addonId.replace("binding-", "")) ||
-                  {};
+        if (this.addon.type === 'binding' && this.addon.installed) {
+          this.$oh.api.get('/rest/bindings').then(data2 => {
+            this.bindingInfo = data2.find(b => b.id === this.addonId.replace('binding-', '')) || {}
 
-                // TODO: binding configuration stuff
-              });
-            });
-          }
-        });
-      });
+            // TODO: binding configuration stuff
+          })
+        }
+      })
     }
   },
   computed: {
-    state() {
+    state () {
       // TODO: figure out somehow whether the addon is BEING installed/uninstalled.
-      if (!this.addon) return "UNKNOWN";
-      return this.addon.installed ? "INSTALLED" : "UNINSTALLED";
+      if (!this.addon) return 'UNKNOWN'
+      return this.addon.installed ? 'INSTALLED' : 'UNINSTALLED'
     }
   },
   methods: {
-    install() {
+    install () {
       this.$f7.dialog.alert(
-        "Installing/uninstalling addons not implemented yet!",
-        "Sorry"
-      );
+        'Installing/uninstalling addons not implemented yet!',
+        'Sorry'
+      )
     },
-    uninstall() {
-      this.install();
+    uninstall () {
+      this.install()
     }
   }
-};
+}
 </script>

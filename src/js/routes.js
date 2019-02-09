@@ -1,22 +1,33 @@
-import HomePage from '../pages/home.vue';
-import AboutPage from '../pages/about.vue';
-import FormPage from '../pages/form.vue';
-import DynamicRoutePage from '../pages/dynamic-route.vue';
-import NotFoundPage from '../pages/not-found.vue';
+import HomePage from '../pages/home.vue'
+import AboutPage from '../pages/about.vue'
+import FormPage from '../pages/form.vue'
+import DynamicRoutePage from '../pages/dynamic-route.vue'
+import NotFoundPage from '../pages/not-found.vue'
 
-import SitemapPage from '../pages/sitemap.vue';
+// import OverviewTab from '../pages/home/overview-tab.vue'
+// import LocationsTab from '../pages/home/locations-tab.vue'
+// import EquipmentsTab from '../pages/home/equipments-tab.vue'
+// import PropertiesTab from '../pages/home/properties-tab.vue'
 
-//import SetupWizardPage from '../pages/setup-wizard.vue';
-import SettingsMenuPage from '../pages/settings/settings-menu.vue';
-import ServiceSettingsPage from '../pages/settings/services/service-settings.vue';
-import AddonsListPage from '../pages/settings/addons/addons-list.vue';
-import AddonsAddPage from '../pages/settings/addons/addons-add.vue';
+import SitemapPage from '../pages/sitemap.vue'
 
-import ItemsListPage from '../pages/settings/items/items-list.vue';
+import SetupWizard from '../pages/wizards/setup-wizard.vue'
+import SetupWizardPage from '../pages/wizards/setup-wizard-page.vue'
+import SettingsMenuPage from '../pages/settings/settings-menu.vue'
+import ServiceSettingsPage from '../pages/settings/services/service-settings.vue'
+import AddonsListPage from '../pages/settings/addons/addons-list.vue'
+import AddonsAddPage from '../pages/settings/addons/addons-add.vue'
 
-import ThingsListPage from '../pages/settings/things/things-list.vue';
-import ThingDetailsPage from '../pages/settings/things/thing-details.vue';
+import ItemsListPage from '../pages/settings/items/items-list.vue'
+import ItemDetailsPage from '../pages/settings/items/items-details.vue'
 
+import ThingsListPage from '../pages/settings/things/things-list.vue'
+import ThingDetailsPage from '../pages/settings/things/thing-details.vue'
+
+import Analyzer from '../pages/analyzer/analyzer.vue'
+
+import MasterDetailMaster from '../pages/master-detail-master.vue'
+import MasterDetailDetail from '../pages/master-detail-detail.vue'
 
 export default [
   {
@@ -24,6 +35,42 @@ export default [
     component: HomePage,
     options: {
       animate: false
+    }
+    // tabs: [
+    //   {
+    //     path: '/',
+    //     id: 'tab-overview',
+    //     content: `
+    //     <div class="block">
+    //       <p>Tab 1 content</p>
+    //       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam enim quia molestiae facilis laudantium voluptates obcaecati officia cum, sit libero commodi. Ratione illo suscipit temporibus sequi iure ad laboriosam accusamus?</p>
+    //       <p>Saepe explicabo voluptas ducimus provident, doloremque quo totam molestias! Suscipit blanditiis eaque exercitationem praesentium reprehenderit, fuga accusamus possimus sed, sint facilis ratione quod, qui dignissimos voluptas! Aliquam rerum consequuntur deleniti.</p>
+    //       <p>Totam reprehenderit amet commodi ipsum nam provident doloremque possimus odio itaque, est animi culpa modi consequatur reiciendis corporis libero laudantium sed eveniet unde delectus a maiores nihil dolores? Natus, perferendis.</p>
+    //     </div>
+    //     `,
+    //     component: OverviewTab
+    //   },
+    //   {
+    //     path: '/locations/',
+    //     id: 'tab-locations',
+    //     component: LocationsTab
+    //   },
+    //   {
+    //     path: '/equipments/',
+    //     id: 'tab-equipments',
+    //     component: EquipmentsTab
+    //   },
+    //   {
+    //     path: '/properties/',
+    //     id: 'tab-properties',
+    //     component: PropertiesTab
+    //   }
+    // ]
+  },
+  {
+    path: '/setup/',
+    loginScreen: {
+      component: SetupWizard
     }
   },
   {
@@ -33,6 +80,9 @@ export default [
   {
     path: '/about/',
     component: AboutPage,
+    options: {
+      animate: false
+    }
   },
   {
     path: '/form/',
@@ -40,6 +90,10 @@ export default [
     options: {
       animate: false
     }
+  },
+  {
+    path: '/setup-wizard/',
+    component: SetupWizardPage
   },
   {
     path: '/settings/',
@@ -51,6 +105,12 @@ export default [
       {
         path: 'items',
         component: ItemsListPage,
+        routes: [
+          {
+            path: ':itemName',
+            component: ItemDetailsPage
+          }
+        ]
         // routes: [
         //   {
         //     path: 'add',
@@ -65,7 +125,7 @@ export default [
           {
             path: ':thingId',
             component: ThingDetailsPage
-          },
+          }
           // {
           //   path: 'add',
           //   component: AddonsAddPage
@@ -93,11 +153,32 @@ export default [
   //   component: SetupWizardPage,
   // },
   {
+    path: '/master-detail/',
+    component: MasterDetailMaster,
+    master: true,
+    detailRoutes: [
+      {
+        path: '/master-detail/:id/',
+        component: MasterDetailDetail
+      }
+    ]
+  },
+  {
     path: '/dynamic-route/blog/:blogId/post/:postId/',
-    component: DynamicRoutePage,
+    component: DynamicRoutePage
+  },
+  {
+    path: '/analyzer/',
+    popup: {
+      component: Analyzer
+    }
+  },
+  {
+    path: '/static/(.*)',
+    redirect: '/'
   },
   {
     path: '(.*)',
-    component: NotFoundPage,
-  },
-];
+    component: NotFoundPage
+  }
+]

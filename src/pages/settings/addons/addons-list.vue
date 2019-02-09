@@ -2,7 +2,7 @@
   <f7-page>
     <f7-navbar :title="'Add-ons: ' + addonType" back-link="Back">
       <!-- <f7-nav-right>
-				<f7-link href="add">Add</f7-link>
+        <f7-link href="add">Add</f7-link>
       </f7-nav-right>-->
     </f7-navbar>
     <f7-block form v-if="addons.length" class="service-config block-narrow">
@@ -48,37 +48,32 @@
 </template>
 
 <script>
-import AddonDetailsPopup from "./addon-details-popup.vue";
+import AddonDetailsPopup from './addon-details-popup.vue'
 
 export default {
   components: {
     AddonDetailsPopup
   },
-  props: ["addonType"],
-  data() {
+  props: ['addonType'],
+  data () {
     return {
       addons: [],
       currentAddonId: null,
       addonPopupOpened: false
-    };
+    }
   },
-  created() {
-    fetch("/rest/extensions").then(resp => {
-      const json = resp.json();
-      json.then(j => {
-        this.addons = j.filter(
-          addon => addon.installed && addon.type === this.addonType
-        );
-      });
-    });
+  created () {
+    this.$oh.api.get('/rest/extensions').then(data => {
+      this.addons = data.filter(addon => addon.installed && addon.type === this.addonType)
+    })
   },
   methods: {
-    openAddonPopup(addonId) {
-      this.currentAddonId = addonId;
-      this.addonPopupOpened = true;
+    openAddonPopup (addonId) {
+      this.currentAddonId = addonId
+      this.addonPopupOpened = true
     }
   }
-};
+}
 </script>
 
 <style>

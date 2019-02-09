@@ -16,10 +16,10 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
       user: this.$f7route.context.user
-    };
+    }
   }
-};
+}
 </script>

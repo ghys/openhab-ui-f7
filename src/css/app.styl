@@ -18,12 +18,48 @@
   --f7-bars-text-color: #fff;
   --f7-bars-link-color: #fff;
   --f7-navbar-subtitle-text-color: rgba(255,255,255,0.85);
-  --f7-bars-border-color: transparent;
+  --f7-navbar-border-color: transparent;
   --f7-tabbar-link-active-color: #fff;
   --f7-tabbar-link-inactive-color: rgba(255,255,255,0.54);
   --f7-searchbar-input-bg-color: #fff;
   --f7-sheet-border-color: transparent;
   --f7-tabbar-link-active-border-color: #fff;
+}
+
+.home-tabs {
+  --f7-theme-color: #2196f3;
+  --f7-bars-bg-color: rgb(247, 247, 248);
+  --f7-bars-text-color: #000;
+  --f7-tabbar-link-inactive-color: rgba(0, 0, 0, 0.54);
+  --f7-tabbar-link-active-color: var(--f7-theme-color);
+  text-transform: none;
+}
+
+.ios .contextual-toolbar {
+  --f7-theme-color: #2196f3;
+  --f7-bars-bg-color: rgb(247, 247, 248);
+  --f7-bars-text-color: #000;
+  --f7-tabbar-link-inactive-color: rgba(0, 0, 0, 0.54);
+  --f7-tabbar-link-active-color: var(--f7-theme-color);
+  text-transform: none;
+}
+.md .contextual-toolbar {
+  --f7-theme-color: #333333;
+  --f7-bars-bg-color: #333333;
+  --f7-bars-text-color: #fff;
+  height: var(--f7-navbar-height);
+}
+
+
+.tabbar-labels .tabbar-label {
+    line-height: 1;
+    margin: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--f7-tabbar-label-font-size) !important;
+    text-transform: var(--f7-tabbar-label-text-transform) !important;
+    font-weight: var(--f7-tabbar-label-font-weight) !important;
+    letter-spacing: var(--f7-tabbar-label-letter-spacing) !important;
 }
 
 /* Left Panel right border when it is visible by breakpoint */
@@ -82,9 +118,17 @@
   box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.3);
 }
 
-.page-content {
-  margin-top: 1rem;
-}
+// .page-content {
+//   margin-top: 1rem;
+// }
+.page-content
+  .block:first-child
+    margin-top 1rem
+    // &.after-big-title
+    //   margin-top 1rem
+
+.md .page-content .after-big-title
+  margin-top 4.5rem
 
 .navbar
   .title-large-text
@@ -92,3 +136,75 @@
 
 .after-big-title
   margin-top 5rem
+
+
+.demo-expandable-cards
+  justify-content center
+
+/* Demo Expandable Cards */
+@media (min-width: 768px) {
+  .demo-expandable-cards {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .demo-expandable-cards .card {
+    flex-shrink: 10;
+    min-width: 0;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .demo-expandable-cards .card {
+    width 340px
+  }
+  // .demo-expandable-cards .card {
+  //   width: calc((100% - var(--f7-card-expandable-margin-horizontal) * 3) / 2);
+  // }
+  .demo-expandable-cards .card:nth-child(n),
+  .demo-expandable-cards .card:nth-child(n + 1) {
+    margin-left: 0;
+  }
+  .demo-expandable-cards .card:nth-child(n + 3) {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px)
+  .demo-expandable-cards 
+    margin-top 2rem
+    .card
+      width 340px
+      margin-top 0
+
+  .demo-expandable-cards .card:nth-child(n),
+  .demo-expandable-cards .card:nth-child(n + 1)
+    margin-left 0
+
+  .demo-expandable-cards .card:nth-child(n + 3)
+    margin-top 0
+
+
+  // hide scrollbar
+  .card-expandable.card-opened .card-content
+      overflow-y scroll
+      scrollbar-width none /* Firefox */
+      -ms-overflow-style none  /* IE 10+ */
+
+  .card-expandable.card-opened .card-content::-webkit-scrollbar /* WebKit */
+      width 0
+      height 0
+
+// .ios .card-expandable
+//   background-color var(--f7-page-bg-color)
+//   .list
+//     background-color white
+
+// Remove the borders and background for admin links in sidebar
+.list.admin-links
+  ul
+    background transparent !important
+  ul:before
+    display none !important
+  ul:after
+    display none !important
+  .item-inner:after
+    display none !important

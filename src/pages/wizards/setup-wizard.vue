@@ -1,12 +1,10 @@
 <template>
   <f7-login-screen id="login-screen">
-    <f7-view>
-      <f7-page login-screen>
         <!-- <f7-login-screen-title>Login</f7-login-screen-title> -->
         <f7-tabs animated>
           <f7-tab id="intro" tab-active>
             <f7-login-screen-title>
-              <img src="/static/img/openhab-logo.png" style="max-width: 200px">
+              <img src="static/img/openhab-logo.png" style="max-width: 200px">
               <br>Welcome!
             </f7-login-screen-title>
             <f7-list form>
@@ -173,8 +171,6 @@
             </f7-list>
           </f7-tab>
         </f7-tabs>
-      </f7-page>
-    </f7-view>
   </f7-login-screen>
 </template>
 
@@ -205,19 +201,16 @@ export default {
     }
   },
   created() {
-    fetch("/rest/config-descriptions/system:i18n").then(resp => {
-      const json = resp.json();
-      json.then(j => {
-        this.availableLanguages = j.parameters.find(
-          p => p.name === "language"
-        ).options;
-        this.availableRegions = j.parameters.find(
-          p => p.name === "region"
-        ).options;
-        this.availableTimezones = j.parameters.find(
-          p => p.name === "timezone"
-        ).options;
-      });
+    this.$oh.api.get("/rest/config-descriptions/system:i18n").then((data) => {
+      this.availableLanguages = data.parameters.find(
+        p => p.name === "language"
+      ).options;
+      this.availableRegions = data.parameters.find(
+        p => p.name === "region"
+      ).options;
+      this.availableTimezones = data.parameters.find(
+        p => p.name === "timezone"
+      ).options;
     });
   }
 };
