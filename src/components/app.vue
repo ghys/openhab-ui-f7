@@ -191,14 +191,17 @@ export default {
       })
     },
     login () {
-      this.$oh.api.get(this.serverUrl + '/rest/sitemaps').then((data) => {
+      localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
+      localStorage.setItem('openhab.ui:username', this.username)
+      localStorage.setItem('openhab.ui:password', this.password)
+      this.$oh.api.get('/rest/sitemaps').then((data) => {
         this.sitemaps = data
-        localStorage.setItem('openhab.ui:serverUrl', this.serverUrl)
-        localStorage.setItem('openhab.ui:username', this.username)
-        localStorage.setItem('openhab.ui:password', this.password)
         this.loginScreenOpened = false
         this.loggedIn = true
       }).catch((err) => {
+        localStorage.removeItem('openhab.ui:serverUrl')
+        localStorage.removeItem('openhab.ui:username')
+        localStorage.removeItem('openhab.ui:password')
         this.$f7.dialog.alert('Cannot login, please try again: ' + err)
       })
     },

@@ -8,14 +8,22 @@ export default {
       const username = localStorage.getItem('openhab.ui:username')
       const password = localStorage.getItem('openhab.ui:password')
 
-      if (serverUrl) uri = serverUrl + uri
-      if (username && password) {
-        const authorizationHeader = 'Basic ' + btoa(username + ':' + password)
-        Framework7.request.setup({
-          headers: {
-            Authorization: authorizationHeader
+      if (serverUrl) {
+        uri = serverUrl + uri
+        if (cordova && cordova.plugin.http) {
+          if (username && password) {
+            cordova.plugin.http.useBasicAuth(username, password)
           }
-        })
+
+          return new Promise((resolve, reject) => {
+            cordova.plugin.http.get(uri, (data) ? data.data : null, {},
+              function(response) {
+                resolve(JSON.parse(response.data))
+              }, function(response) {
+                reject(response.error)
+              })
+          })
+        }
       }
 
       return Framework7.request.promise.json(uri, data)
