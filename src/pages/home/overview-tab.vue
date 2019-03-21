@@ -1,6 +1,7 @@
 <template>
 <div>
   <f7-block class="block-narrow">
+    <habot v-if="showHABot" />
     <f7-col>
       <f7-card
         v-show="showSetup"
@@ -47,10 +48,15 @@
   </f7-block>
 
   <div class="demo-expandable-cards" v-if="showCards">
+    <h2 class="home-header"><f7-icon ios="f7:star_fill" md="material:star" size="25" style="vertical-align: sub" />Now</h2>
+    <expandable-card color="teal" header="gauge" />
+    <h2 class="home-header">Favorites</h2>
+    <h3 class="home-header">Scenes</h3>
+    <f7-block style="text-align: center">No favorite scenes defined</f7-block>
+    <h3 class="home-header">Cards</h3>
     <expandable-card color="red" header="temperature" title="Thermostat Upstairs" />
     <expandable-card color="blue" header="temperature" title="Thermostat Downstairs" />
     <expandable-card color="green" header="gauge" />
-    <!-- <expandable-card color="teal" header="gauge" /> -->
     <expandable-card color="deeppurple" />
     <!-- <expandable-card color="gray" /> -->
     <expandable-card color="black" header="player" title="SONOS Multiroom" />
@@ -61,21 +67,37 @@
     <expandable-card color="lightblue" /> -->
   </div>
 
+  <f7-block v-if="showCards">
+    <f7-button small @click="showSetup = true; showTasks = true; showCards = false; showHABot = false">Simulate first-time run</f7-button>
+  </f7-block>
 </div>
+
+
 </template>
+
+<style lang="stylus">
+.home-header
+  display block
+  width calc(100% - 30px)
+  padding-left 15px
+</style>
+
 
 <script>
 import ExpandableCard from '../../components/expandable-card.vue'
+import Habot from '../../components/home/habot.vue'
 
 export default {
   components: {
-    ExpandableCard
+    ExpandableCard,
+    Habot
   },
   data () {
     return {
-      showSetup: true,
-      showTasks: true,
-      showCards: false
+      showSetup: false,
+      showTasks: false,
+      showCards: false,
+      showHABot: true
     }
   },
   created () {

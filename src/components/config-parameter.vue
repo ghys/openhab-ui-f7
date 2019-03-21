@@ -60,6 +60,7 @@ export default {
       this.smartSelectParams.searchbar = true
     }
     this.smartSelectParams.closeOnSelect = !(this.configDescription.multiple)
+    // this.smartSelectParams.routableModals = false // to fix bug on firefox
   }
 }
 </script>

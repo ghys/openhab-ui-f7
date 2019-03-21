@@ -17,8 +17,8 @@ const env = process.env.NODE_ENV || 'development';
 const target = process.env.TARGET || 'web';
 const isCordova =  target === 'cordova';
 
-// const apiBaseUrl = 'http://openhab:8080' // 'http://demo.openhab.org:8080' // 'http://localhost:8080'
-const apiBaseUrl = 'http://localhost:8080'
+const apiBaseUrl = 'http://openhab:8080' // 'http://demo.openhab.org:8080' // 'http://localhost:8080'
+// const apiBaseUrl = 'http://localhost:8080'
 
 
 module.exports = {

@@ -80,7 +80,7 @@ var cordovaApp = {
     cordovaApp.f7 = f7
 
     // Handle Android back button
-    cordovaApp.handleAndroidBackButton()
+    // cordovaApp.handleAndroidBackButton()
 
     // Handle Statusbar
     cordovaApp.handleSplashscreen()

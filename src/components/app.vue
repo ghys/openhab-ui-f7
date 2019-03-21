@@ -146,7 +146,7 @@ export default {
         // App routes
         routes: routes,
         view: {
-          pushState: !this.$device.cordova
+          pushState: true, // !this.$device.cordova
         },
         // Enable panel left visibility breakpoint
         panel: {
@@ -163,7 +163,7 @@ export default {
           scrollIntoViewCentered: !!this.$device.cordova
         },
         card: {
-          swipeToClose: false
+          swipeToClose: true
         },
         // Cordova Statusbar settings
         statusbar: {

@@ -194,6 +194,23 @@
   </f7-card>
 </template>
 
+<style lang="stylus">
+.md .card-expandable
+  transition-duration 100ms !important
+.md .card-expandable.card-opening,
+.md .card-expandable.card-closing,
+.md .card-expandable.card-transitioning {
+  transition-duration: 100ms;
+}
+.md .card-expandable.card-opening .card-content {
+  transition-duration: 100ms;
+}
+.md .card-expandable.card-closing .card-content {
+  transition-duration: 100ms;
+}  
+</style>
+
+
 <script>
 export default {
   props: ['color', 'type', 'header', 'title', 'subtitle'],

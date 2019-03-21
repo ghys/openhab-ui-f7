@@ -54,6 +54,13 @@
               :footer="objectsSubtitles.items"
             ></f7-list-item>
             <f7-list-item
+              link="items-virtual/"
+              title="Items (virtual)"
+              after="192"
+              badge-color="blue"
+              :footer="objectsSubtitles.items"
+            ></f7-list-item>
+            <f7-list-item
               link="rules/"
               title="Rules"
               after="3"
