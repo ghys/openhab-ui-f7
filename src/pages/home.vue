@@ -22,13 +22,13 @@
         <overview-tab v-if="currentTab === 'overview'" />
       </f7-tab>
       <f7-tab id="tab-locations" :tab-active="currentTab === 'locations'" @tab:show="() => this.currentTab = 'locations'">
-        <locations-tab v-if="currentTab === 'locations'" />
+        <locations-tab v-if="currentTab === 'locations'" :semantic-items="semanticItems" />
       </f7-tab>
       <f7-tab id="tab-equipments" :tab-active="currentTab === 'equipments'" @tab:show="() => this.currentTab = 'equipments'">
-        <equipments-tab v-if="currentTab === 'equipments'" />
+        <equipments-tab v-if="currentTab === 'equipments'" :semantic-items="semanticItems" />
       </f7-tab>
       <f7-tab id="tab-properties" :tab-active="currentTab === 'properties'" @tab:show="() => this.currentTab = 'properties'">
-        <properties-tab v-if="currentTab === 'properties'" />
+        <properties-tab v-if="currentTab === 'properties'" :semantic-items="semanticItems" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
@@ -51,8 +51,80 @@ export default {
       showSetup: true,
       showTasks: true,
       showCards: false,
-      currentTab: 'overview'
+      currentTab: 'overview',
+      semanticItems: {}
     }
+  },
+  created () {
+    this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
+
+      this.semanticItems.locations = data.filter((item, index, items) => {
+        return item.metadata && item.metadata.semantics &&
+          item.metadata.semantics.value.indexOf('Location_') === 0
+      }).sort((a, b) => {
+        const titleA = a.label || a.name
+        const titleB = b.label || b.name
+        return titleA.localeCompare(titleB)
+      }).map((l) => {
+        return {
+          item: l,
+          properties: data.filter((item, index, items) => {
+            return item.metadata && item.metadata.semantics &&
+              item.metadata.semantics && item.metadata.semantics.config &&
+              item.metadata.semantics.config.relatesTo &&
+              item.metadata.semantics.config.hasLocation === l.name
+          }),
+          equipments: data.filter((item, index, items) => {
+            return item.metadata && item.metadata.semantics &&
+              item.metadata.semantics && item.metadata.semantics.config &&
+              item.metadata.semantics.value.indexOf('Equipment_') === 0 &&
+              item.metadata.semantics.config.hasLocation === l.name
+          }).map((item) => {
+            return {
+              item: item,
+              points: data.filter((item2, index, items) => {
+                return item2.metadata && item2.metadata.semantics &&
+                  item2.metadata.semantics && item2.metadata.semantics.config &&
+                  item2.metadata.semantics.config.isPointOf === item.name
+              })
+            }
+          })
+        }
+      })
+
+
+      this.semanticItems.equipments = data.filter((item, index, items) => {
+        return item.metadata && item.metadata.semantics &&
+          item.metadata.semantics &&
+          item.metadata.semantics.value.indexOf('Equipment_') === 0
+      }).reduce((prev, item, i, properties) => {
+        const equipmentType = item.metadata.semantics.value.split('_')[1]
+        if (!prev[equipmentType]) prev[equipmentType] = []
+        const equipmentWithPoints = {
+          item: item,
+          points: data.filter((item2, index, items) => {
+            return item2.metadata && item2.metadata.semantics &&
+              item2.metadata.semantics && item2.metadata.semantics.config &&
+              item2.metadata.semantics.config.isPointOf === item.name
+          })
+        }
+        prev[equipmentType].push(equipmentWithPoints)
+        return prev
+      }, {})
+
+
+      this.semanticItems.properties = data.filter((item, index, items) => {
+        return item.metadata && item.metadata.semantics &&
+          item.metadata.semantics && item.metadata.semantics.config &&
+          item.metadata.semantics.config.relatesTo
+      }).reduce((prev, item, i, properties) => {
+        const property = item.metadata.semantics.config.relatesTo.split('_')[1]
+        if (!prev[property]) prev[property] = []
+        prev[property].push(item)
+        return prev
+      }, {})
+
+    })
   },
   methods: {
     skipSetupWizard () {

@@ -1,7 +1,7 @@
 <template>
   <div v-if="showCards">
     <div class="demo-expandable-cards">
-      <property-card v-for="(items, property) in properties" :key="property"
+      <property-card v-for="(items, property) in semanticItems.properties" :key="property"
         :title="property" :items="items" :subtitle="`${items.length} item${items.length > 1 ? 's' : ''}`" :color="color(property)" />
     </div>
   </div>
@@ -11,6 +11,7 @@
 import PropertyCard from '../../components/cards/property-card.vue'
 
 export default {
+  props: ['semanticItems'],
   components: {
     PropertyCard
   },
@@ -21,20 +22,7 @@ export default {
     }
   },
   created () {
-    this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
-      this.showCards = true
-
-      this.properties = data.filter((item, index, items) => {
-        return item.metadata && item.metadata.semantics &&
-          item.metadata.semantics && item.metadata.semantics.config &&
-          item.metadata.semantics.config.relatesTo
-      }).reduce((prev, item, i, properties) => {
-        const property = item.metadata.semantics.config.relatesTo.split('_')[1]
-        if (!prev[property]) prev[property] = []
-        prev[property].push(item)
-        return prev
-      }, {})
-    })
+    this.showCards = true
   },
   methods: {
     hideCards () {

@@ -101,9 +101,7 @@ export default {
     }
   },
   created () {
-    this.$oh.api.get('/rest/items').then((data) => {
-      this.showCards = true
-    })
+    this.showCards = true
   },
   methods: {
     skipSetupWizard () {
