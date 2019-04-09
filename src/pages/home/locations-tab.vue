@@ -40,7 +40,7 @@ export default {
     },
     parentLocationName (item) {
       if (item.metadata.semantics.config && item.metadata.semantics.config.isPartOf) {
-        const parent = (this.locations.find((i) => i.item.name === item.metadata.semantics.config.isPartOf))
+        const parent = (this.semanticItems.locations.find((i) => i.item.name === item.metadata.semantics.config.isPartOf))
         return parent.item.label || parent.item.name
       }
       return ''
