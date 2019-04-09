@@ -1,7 +1,7 @@
 <template>
   <f7-page class="other-apps">
     <f7-navbar bg-color="blue" title="Other Apps"></f7-navbar>
-    <theme-switcher />
+    <!-- <theme-switcher /> -->
     <f7-block strong>
       <p>Mock list - need an API</p>
     </f7-block>

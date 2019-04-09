@@ -2,7 +2,7 @@
   <f7-page>
     <f7-navbar :title="item.name" back-link="Back">
       <f7-nav-right>
-        <f7-link md-icon="pencil">Edit</f7-link>
+        <f7-link icon-md="material:edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-subnavbar sliding class="item-header">
@@ -24,7 +24,7 @@
             {{item.state}}
             <f7-button v-show="$theme.md" :href="'/analyzer/?items=' + item.name">Analyze</f7-button>
           </f7-block>
-          <f7-list class="analyze-button" v-show="$theme.ios">
+          <f7-list class="analyze-button" v-show="!$theme.md">
             <f7-list-button :href="'/analyzer/?items=' + item.name">Analyze</f7-list-button>
           </f7-list>
         </f7-col>
@@ -34,7 +34,7 @@
           <f7-block-title>Tags</f7-block-title>
           <f7-block strong class="tags-block">
             <f7-chip v-for="tag in item.tags" :key="tag" :text="tag" media-bg-color="blue">
-              <f7-icon slot="media" ios="f7:tag_fill" md="material:label"></f7-icon>
+              <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
             </f7-chip>
           </f7-block>
         </f7-col>

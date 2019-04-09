@@ -2,7 +2,8 @@
   <f7-page>
     <f7-navbar :title="service.label" back-link="Back">
       <f7-nav-right>
-        <f7-link @click="save()" icon-if-ios="f7:download" icon-if-md="material:save" icon-only></f7-link>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-block form v-if="configDescriptions && config" class="service-config block-narrow">

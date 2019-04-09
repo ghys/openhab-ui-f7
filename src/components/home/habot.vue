@@ -41,6 +41,7 @@
   .habot-chatbar
     --f7-searchbar-input-font-size: 16px
     border-radius 22px
+    box-shadow none !important
     margin-left -2px !important
     input
       background #f1f3f4
@@ -49,6 +50,7 @@
     &.highlight input
       background-color #ffffff !important
       transition background-color 300ms
+      box-shadow var(--f7-searchbar-in-page-content-box-shadow)
     &.searchbar:after
       display none
   .chat-suggestions

@@ -2,19 +2,19 @@
   <f7-page v-on:page:afterin="displayCards">
     <f7-navbar>  <!-- title-large="Home"> -->
       <f7-nav-left>
-        <f7-link icon-if-ios="f7:menu" icon-if-md="material:menu" panel-open="left"></f7-link>
+        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
       <f7-nav-title>Home</f7-nav-title>
       <f7-nav-right>
-        <f7-link icon-if-ios="f7:tabs" icon-if-md="material:exit_to_app" panel-open="right"></f7-link>
+        <f7-link icon-ios="f7:tabs" icon-aurora="f7:tabs" icon-md="material:exit_to_app" panel-open="right"></f7-link>
       </f7-nav-right>
     </f7-navbar>
 
     <f7-toolbar tabbar labels bottom class="home-tabs">
-      <f7-link tab-link="#tab-overview" tab-link-active class="tabbar-label" icon-ios="f7:home" icon-md="material:home">Overview</f7-link>
-      <f7-link tab-link="#tab-locations" class="tabbar-label" icon-ios="f7:placemark" icon-md="material:place">Locations</f7-link>
-      <f7-link tab-link="#tab-equipments" class="tabbar-label" icon-ios="f7:bulb" icon-md="material:highlight">Equipments</f7-link>
-      <f7-link tab-link="#tab-properties" class="tabbar-label" icon-ios="f7:bolt_fill" icon-md="material:flash_on">Properties</f7-link>
+      <f7-link tab-link="#tab-overview" tab-link-active class="tabbar-label" icon-ios="f7:home" icon-aurora="f7:home" icon-md="material:home">Overview</f7-link>
+      <f7-link tab-link="#tab-locations" class="tabbar-label" icon-ios="f7:placemark" icon-aurora="f7:placemark" icon-md="material:place">Locations</f7-link>
+      <f7-link tab-link="#tab-equipments" class="tabbar-label" icon-ios="f7:bulb" icon-aurora="f7:bulb" icon-md="material:highlight">Equipments</f7-link>
+      <f7-link tab-link="#tab-properties" class="tabbar-label" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on">Properties</f7-link>
     </f7-toolbar>
 
     <f7-tabs>

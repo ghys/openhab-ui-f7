@@ -6,6 +6,7 @@
           class="searchbar-enable"
           data-searchbar=".searchbar-demo"
           icon-ios="f7:search_strong"
+          icon-aurora="f7:search_strong"
           icon-md="material:search"
         ></f7-link>
       </f7-nav-right>

@@ -14,7 +14,7 @@
         <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
                 :link="'/sitemap/' + sitemap.name + '/' + sitemap.name"
                 :title="sitemap.label" view=".view-main" panel-close>
-          <f7-icon slot="media" ios="f7:list" md="material:list"></f7-icon>
+          <f7-icon slot="media" ios="f7:list" aurora="material:list" md="material:list"></f7-icon>
         </f7-list-item>
       </f7-list>
       <f7-block-title>Administration</f7-block-title>

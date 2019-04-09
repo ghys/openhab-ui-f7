@@ -124,11 +124,11 @@
     </f7-tabs>
 
     <f7-fab position="right-bottom" color="blue" slot="fixed" @click="codePopupOpened = true">
-      <f7-icon ios="f7:document_text" md="material:assignment"></f7-icon>
+      <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text" ></f7-icon>
       <f7-icon ios="f7:close" md="material:close"></f7-icon>
     </f7-fab>
 
-    <f7-sheet tablet-fullscreen :opened="codePopupOpened" @sheet:closed="codePopupOpened = false">
+    <f7-popup tablet-fullscreen :opened="codePopupOpened" @popup:closed="codePopupOpened = false">
       <f7-page>
         <!-- <f7-navbar>
           <f7-nav-left>
@@ -143,13 +143,13 @@
             <f7-link @click="copyTextualDefinition">Copy</f7-link>
           </div>
           <div class="right">
-            <f7-link sheet-close>Close</f7-link>
+            <f7-link popup-close>Close</f7-link>
           </div>
         </f7-toolbar>
         <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
         <textarea class="textual-definition" id="textual-definition" :value="textualDefinition"></textarea>
       </f7-page>
-    </f7-sheet>
+    </f7-popup>
   </f7-page>
 </template>
 
@@ -165,10 +165,10 @@ pre.textual-definition {
 
 textarea.textual-definition {
   position: absolute;
-  top: 5px;
+  top: var(--f7-toolbar-height);
   left: 5px;
   right: 5px;
-  bottom: 50px;
+  bottom: 0;
   width: calc(100% - 10px);
   font-family: monospace;
 }
@@ -185,7 +185,7 @@ textarea.textual-definition {
   width: 100%;
   position: fixed;
   bottom: 0 !important;
-  top: auto !important;
+  top: var(--f7-toolbar-height) !important;
   // margin -2px !important
   background-color: white !important;
   border-top: 2px solid #555;

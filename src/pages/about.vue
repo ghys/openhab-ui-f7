@@ -12,18 +12,19 @@
       <p>Blanditiis, cumque quo adipisci. Molestiae, dolores dolorum quos doloremque ipsa ullam eligendi commodi deserunt doloribus inventore magni? Ea mollitia veniam nostrum nihil, iusto doloribus a at! Ea molestiae ullam delectus!</p>
     </f7-block>
 
+    <theme-switcher />
+
     <f7-button href="/analyzer/?items=MultiSensorSalon_Temperature">Analyzer</f7-button>
 
-    <!-- <expandable-card />
-    <expandable-card />
-    <expandable-card /> -->
   </f7-page>
 </template>
 
 <script>
-// import ExpandableCard from '../components/expandable-card.vue'
+import ThemeSwitcher from '../components/theme-switcher.vue'
 
 export default {
-
+  components: {
+    ThemeSwitcher
+  }
 }
 </script>

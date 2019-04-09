@@ -54,7 +54,7 @@
           class="searchbar-found"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 64 : 73}"
+          :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 64 : $theme.aurora ? 46 : 73}"
         >
           <ul>
             <f7-list-item
@@ -85,8 +85,8 @@
       </f7-col>
     </f7-block>-->
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
-      <f7-icon ios="f7:add" md="material:add"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close"></f7-icon>
+      <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
+      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
     </f7-fab>
   </f7-page>
 </template>
