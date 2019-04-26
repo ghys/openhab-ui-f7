@@ -20,4 +20,20 @@ module.exports = {
     // "@babel/plugin-transform-runtime",
     '@babel/plugin-syntax-dynamic-import',
   ],
+  env: {
+    test: {
+      plugins: ["@babel/plugin-transform-modules-commonjs"],
+      presets: [
+        [
+          "@babel/preset-env",
+          {
+            "modules": "commonjs",
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    }
+  }
 };

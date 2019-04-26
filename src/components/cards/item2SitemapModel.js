@@ -7,6 +7,7 @@ export default function (item) {
   model.type = 'Text'
   if (!item.readonly) {
     if (item.type === 'Switch') model.type = 'Switch'
+    if (item.type === 'Dimmer') model.type = 'Slider'
     if (item.type === 'Rollershutter') model.type = 'Rollershutter'
     if (item.metadata && item.metadata.semantics) {
       if (item.metadata.semantics.value === 'Point_Setpoint') model.type = 'Setpoint'
