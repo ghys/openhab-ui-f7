@@ -55,6 +55,7 @@ export default {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
       this.smartSelectParams.virtualList = true
+      if (this.$theme.aurora) this.smartSelectParams.virtualListHeight = 32
     } else {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
