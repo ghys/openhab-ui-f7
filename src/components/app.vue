@@ -1,12 +1,15 @@
 <template>
-<f7-app :params="f7params">
+<f7-app :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark == 'dark', 'theme-filled': this.themeOptions.bars === 'default' }">
   <!-- Status bar overlay for fullscreen mode-->
   <f7-statusbar></f7-statusbar>
 
   <!-- Left Panel -->
   <f7-panel left :cover="showSidebar" class="sidebar">
     <f7-page>
-      <f7-list-item link="/" class="logo" panel-close>
+      <f7-list-item link="/" class="logo" panel-close v-if="themeOptions.dark === 'dark'">
+        <img src="../static/img/openhab-logo-white.png" width="100%">
+      </f7-list-item>
+      <f7-list-item link="/" class="logo" panel-close v-else>
         <img src="../static/img/openhab-logo.png" width="100%">
       </f7-list-item>
       <!-- <f7-block-title>Sitemaps</f7-block-title> -->
@@ -111,6 +114,12 @@
     height 50px
   .list
     margin-top 0
+.theme-dark
+  .panel-left
+    .page
+      background #232323 !important
+  .logo
+    background #111111 !important
 </style>
 
 <script>
@@ -136,11 +145,6 @@ export default {
         // App root data
         data: function () {
           return {
-            user: {
-              firstName: 'John',
-              lastName: 'Doe'
-            }
-
           }
         },
 
@@ -182,7 +186,12 @@ export default {
       sitemaps: null,
       showSidebar: true,
       loginScreenOpened: false,
-      loggedIn: false
+      loggedIn: false,
+
+      themeOptions: {
+        dark: false,
+        filled: true
+      }
     }
   },
   methods: {
@@ -218,6 +227,8 @@ export default {
     }
   },
   created () {
+    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
+    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || 'default'
     // this.loginScreenOpened = true
   },
   mounted () {

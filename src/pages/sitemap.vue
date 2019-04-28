@@ -2,7 +2,7 @@
   <f7-page class="sitemap">
     <f7-navbar :back-link="(sitemapId !== pageId) ? 'Back' : null">
       <f7-nav-left v-if="sitemapId === pageId">
-        <f7-link icon-if-ios="f7:menu" icon-if-md="material:menu" panel-open="left"></f7-link>
+        <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
       <f7-nav-title v-if="sitemap.title">{{sitemap.title}}</f7-nav-title>
     </f7-navbar>

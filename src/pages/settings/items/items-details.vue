@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar :title="item.name" back-link="Back">
+    <f7-navbar :title="item.name" back-link="Back" no-shadow :no-hairline="true" hidden>
       <f7-nav-right>
         <f7-link icon-md="material:edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
       </f7-nav-right>
