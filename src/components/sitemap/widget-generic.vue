@@ -12,7 +12,7 @@
     </f7-list>
   </f7-block>
   <f7-list-item v-else :title="title" :after="state" :link="link">
-    <img v-if="model.icon" slot="media" :src="iconUrl" height="32" width="32" />
+    <oh-icon v-if="model.icon" slot="media" :icon="model.icon" height="32" width="32" />
     <f7-segmented round v-if="model.type === 'Rollershutter' || (model.item && model.item.type === 'Rollershutter')">
       <f7-button round icon-size="18" icon-f7="chevron_down" color="blue"></f7-button>
       <f7-button round icon-size="18" icon-f7="close_round_fill" color="blue"></f7-button>
@@ -74,13 +74,17 @@ export default {
       this.link = '/sitemap/' + this.sitemapId + '/' + this.model.linkedPage.id
     }
 
-    if (this.model && this.model.icon) {
-      this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.model.icon + '?format=svg'
-    }
+    this.hasIcon = (this.model && this.model.icon)
   },
   computed: {
     componentType () {
       return 'sitemap-widget-generic'
+    }
+  },
+  asyncComputed: {
+    iconUrl () {
+      if (!this.model || !this.model.icon) return Promise.resolve('')
+      return this.$oh.media.getIcon(this.model.icon)
     }
   }
 }

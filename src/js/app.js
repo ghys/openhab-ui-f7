@@ -2,6 +2,7 @@
 import Vue from 'vue'
 
 import SitemapWidgetGeneric from '../components/sitemap/widget-generic.vue'
+import OHIconComponent from '../components/oh-icon.vue'
 
 // Import Framework7
 import Framework7 from 'framework7/framework7.esm.bundle.js'
@@ -43,3 +44,4 @@ const app = new Vue({
 })
 
 Vue.component('sitemap-widget-generic', SitemapWidgetGeneric)
+Vue.component('oh-icon', OHIconComponent)

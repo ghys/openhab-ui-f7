@@ -70,7 +70,7 @@
               :after="item.type"
               :style="`top: ${vlData.topPosition}px`"
             >
-              <img v-if="item.category" slot="media" :src="`/icon/${item.category}?format=svg`" height="32" width="32" />
+              <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
               <span v-else slot="media" class="item-initial">{{item.name[0]}}</span>
             </f7-list-item>
           </ul>
@@ -177,6 +177,11 @@ export default {
       } else {
         this.selectedItems.push(item)
       }
+    }
+  },
+  asyncComputed: {
+    iconUrl () {
+      return icon => this.$oh.media.getIcon(icon)
     }
   }
 }

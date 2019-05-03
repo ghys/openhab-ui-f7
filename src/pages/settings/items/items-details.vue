@@ -1,13 +1,13 @@
 <template>
   <f7-page>
-    <f7-navbar :title="item.name" back-link="Back" no-shadow :no-hairline="true" hidden>
+    <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline>
       <f7-nav-right>
         <f7-link icon-md="material:edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-subnavbar sliding class="item-header">
       <div class="item-icon" v-if="item.name">
-        <img v-if="item.category" :src="iconUrl" />
+        <oh-icon v-if="item.category" :icon="item.category" height="60" width="60" />
         <span v-else>
           {{item.label ? item.label[0] : item.name[0]}}
         </span>
