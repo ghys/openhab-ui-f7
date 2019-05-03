@@ -14,13 +14,13 @@ export default {
         }
 
         return new Promise((resolve, reject) => {
-          window.resolveLocalFileSystemURL(`${cordova.file.cacheDirectory}/icon_${icon}.${format}`, (entry) => {
+          window.resolveLocalFileSystemURL(`${cordova.file.tempDirectory}/icon_${icon}.${format}`, (entry) => {
             // icon found in cache
             resolve(entry.toURL())
           }, () => {
             // download icon to cache
             cordova.plugin.http.downloadFile(`${serverUrl}/icon/${icon}`, { format: format },
-              {}, `${cordova.file.cacheDirectory}/icon_${icon}.${format}`, (entry) => {
+              {}, `${cordova.file.tempDirectory}/icon_${icon}.${format}`, (entry) => {
                 resolve(entry.toURL())
               }, (response) => {
                 reject(response.error)
