@@ -14,7 +14,7 @@ export default {
     const server = new URL(serverUrl)
     const hostname = server.hostname
     const tls = server.protocol === 'https:'
-    const port = server.port || (tls ? 443 : 80)
+    const port = parseInt(server.port) || (tls ? 443 : 80)
 
     const requestString = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\n\r\n`
     const request = new ArrayBuffer(requestString.length)
