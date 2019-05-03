@@ -1,3 +1,8 @@
+import Vue from 'vue'
+import openHABCordovaApi from './openhab/cordova/api.js'
+import openHABCordovaSSE from './openhab/cordova/sse.js'
+import openHABCordovaMedia from './openhab/cordova/media.js'
+
 var cordovaApp = {
   f7: null,
   /*
@@ -87,6 +92,13 @@ var cordovaApp = {
 
     // Handle Keyboard
     cordovaApp.handleKeyboard()
+
+    // register Cordova-compatible API interface
+    Vue.prototype.$oh = {
+      api: openHABCordovaApi,
+      sse: openHABCordovaSSE,
+      media: openHABCordovaMedia
+    }
   }
 }
 export default cordovaApp

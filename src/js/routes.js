@@ -30,6 +30,8 @@ import Analyzer from '../pages/analyzer/analyzer.vue'
 import MasterDetailMaster from '../pages/master-detail-master.vue'
 import MasterDetailDetail from '../pages/master-detail-detail.vue'
 
+import DeveloperToolsPage from '../pages/developer/developer-tools.vue'
+
 export default [
   {
     path: '/',
@@ -164,6 +166,10 @@ export default [
         component: ServiceSettingsPage
       }
     ]
+  },
+  {
+    path: '/developer/',
+    component: DeveloperToolsPage
   },
   // {
   //   path: '/setup-wizard/',
