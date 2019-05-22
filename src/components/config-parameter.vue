@@ -1,7 +1,7 @@
 <template>
-    <f7-list :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length">
+    <f7-list :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && configDescription.context !== 'script'">
       <f7-list-input
-        v-if="configDescription.type === 'TEXT' && !configDescription.options.length"
+        v-if="configDescription.type === 'TEXT' && !configDescription.options.length && configDescription.context !== 'script'"
         :label="configDescription.label"
         :name="configDescription.name"
         :value="value"
@@ -12,7 +12,11 @@
         :label="configDescription.label"
         :value="actualValue"
         type="number" />
-      <f7-list-item v-if="configDescription.type === 'TEXT' && configDescription.options.length"
+      <f7-list-item v-if="configDescription.type === 'TEXT' && configDescription.context === 'script'"
+         :title="configDescription.label">
+         <f7-button slot="after" @click="codeEditorOpened = true">Edit script</f7-button>
+      </f7-list-item>
+      <f7-list-item v-else-if="configDescription.type === 'TEXT' && configDescription.options.length"
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams">
         <select :name="configDescription.name">
           <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="actualValue === option.value">{{option.label}}</option>
@@ -24,18 +28,25 @@
       <f7-block-footer slot="after-list" class="param-description">
         <small v-html="configDescription.description"></small>
       </f7-block-footer>
+      <script-editor-popup :title="configDescription.label" :code="value" :opened="codeEditorOpened" @closed="codeEditorOpened = false"></script-editor-popup>
     </f7-list>
 </template>
 
 <script>
+import ScriptEditorPopup from './config/script-editor-popup.vue'
+
 export default {
+  components: {
+    ScriptEditorPopup
+  },
   props: [
     'configDescription',
     'value'
   ],
   data () {
     return {
-      smartSelectParams: {}
+      smartSelectParams: {},
+      codeEditorOpened: false
     }
   },
   computed: {

@@ -66,6 +66,7 @@
     "template7": "^1.4.1",
     "vue": "^2.6.6",
     "vue-async-computed": "^3.6.1",
+    "vue-codemirror": "^4.0.6",
     "vue-echarts": "^4.0.1"
   },
   "devDependencies": {
