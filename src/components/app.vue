@@ -26,11 +26,11 @@
           <f7-icon slot="media" ios="f7:gears" md="material:settings"></f7-icon>
         </f7-list-item>
 
-        <f7-list-item link="/about/" title="Help &amp; About" view=".view-main" panel-close>
-          <f7-icon slot="media" ios="f7:help_round" md="material:help"></f7-icon>
-        </f7-list-item>
         <f7-list-item link="/developer/" title="Developer Tools" panel-close>
           <f7-icon slot="media" ios="f7:fire" aurora="f7:fire" md="material:extension"></f7-icon>
+        </f7-list-item>
+        <f7-list-item link="/about/" title="Help &amp; About" view=".view-main" panel-close>
+          <f7-icon slot="media" ios="f7:help_round" md="material:help"></f7-icon>
         </f7-list-item>
         <f7-list-item v-if="loggedIn" link="/" title="Logout" @click="logout()" panel-close>
           <f7-icon slot="media" ios="f7:exit" md="material:exit_to_app"></f7-icon>
