@@ -169,7 +169,10 @@ export default [
   },
   {
     path: '/developer/',
-    component: DeveloperToolsPage
+    component: DeveloperToolsPage,
+    options: {
+      animate: false
+    }
   },
   // {
   //   path: '/setup-wizard/',
@@ -196,8 +199,17 @@ export default [
       component: Analyzer
     }
   },
+  /* For Cordova */
   {
     path: '/static/(.*)',
+    redirect: '/'
+  },
+  {
+    path: '/android_asset/(.*)',
+    redirect: '/'
+  },
+  {
+    path: '/var/containers/(.*)',
     redirect: '/'
   },
   {
