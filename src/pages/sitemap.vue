@@ -46,4 +46,6 @@ export default {
 .sitemap .block
   padding 0
   margin 0
+.sitemap .block-title
+  padding-left calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
 </style>

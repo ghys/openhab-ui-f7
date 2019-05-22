@@ -22,7 +22,9 @@
 <style lang="stylus">
 .habot-wrapper
   --f7-searchbar-bg-color: transparent
-  width 100%
+  padding-left var(--f7-block-padding-horizontal)
+  padding-right var(--f7-block-padding-horizontal)
+  width calc(100% - 2*var(--f7-block-padding-horizontal))
   .searchbar
     width 100%
     &:after
