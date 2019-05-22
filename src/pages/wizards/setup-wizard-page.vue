@@ -50,7 +50,7 @@
               <f7-list>
                 <f7-list-button tab-link="#location" tab-link-active color="blue">
                   <big>Next</big>
-                  <f7-icon ios="f7:arrow_right" md="material:arrow_forward"/>
+                  <f7-icon ios="f7:arrow_right" aurora="f7:arrow_right" md="material:arrow_forward"/>
                 </f7-list-button>
                 <f7-list-button title="Close" color="red" link="/"></f7-list-button>
               </f7-list>
@@ -59,8 +59,9 @@
             <f7-tab id="location">
               <f7-block>
                 <f7-link
-                  icon-if-ios="f7:arrow_left"
-                  icon-if-md="material:arrow_back"
+                  icon-ios="f7:arrow_left"
+                  icon-aurora="f7:arrow_left"
+                  icon-md="material:arrow_back"
                   tab-link="#intro"
                   color="blue"
                   tab-link-active
@@ -72,7 +73,7 @@
               >Would you like to give access to your location? It will help determining data dependent on your position (like sunrise/sunset times).
                 <br>
                 <br>
-                <f7-button fill raised>Share location</f7-button>
+                <f7-button fill raised @click="getCurrentPosition()">Share location</f7-button>
               </f7-block>
               <f7-list>
                 <f7-list-input label="Longitude" type="text" disabled :value="long"></f7-list-input>
@@ -81,7 +82,7 @@
               <f7-list>
                 <f7-list-button tab-link="#package" tab-link-active color="blue">
                   <big>Next</big>
-                  <f7-icon ios="f7:arrow_right" md="material:arrow_forward"/>
+                  <f7-icon ios="f7:arrow_right" aurora="f7:arrow_right" md="material:arrow_forward"/>
                 </f7-list-button>
                 <f7-list-button title="Close" color="red" link="/"></f7-list-button>
               </f7-list>
@@ -90,8 +91,9 @@
             <f7-tab id="package">
               <f7-block>
                 <f7-link
-                  icon-if-ios="f7:arrow_left"
-                  icon-if-md="material:arrow_back"
+                  icon-ios="f7:arrow_left"
+                  icon-aurora="f7:arrow_left"
+                  icon-md="material:arrow_back"
                   tab-link="#location"
                   color="blue"
                   tab-link-active
@@ -143,7 +145,7 @@
               <f7-list>
                 <f7-list-button tab-link="#finish" tab-link-active color="blue">
                   <big>Next</big>
-                  <f7-icon ios="f7:arrow_right" md="material:arrow_forward"/>
+                  <f7-icon ios="f7:arrow_right" aurora="f7:arrow_right" md="material:arrow_forward"/>
                 </f7-list-button>
                 <f7-list-button title="Close" color="red" link="/"></f7-list-button>
               </f7-list>
@@ -152,8 +154,9 @@
             <f7-tab id="finish">
               <f7-block>
                 <f7-link
-                  icon-if-ios="f7:arrow_left"
-                  icon-if-md="material:arrow_back"
+                  icon-ios="f7:arrow_left"
+                  icon-aurora="f7:arrow_left"
+                  icon-md="material:arrow_back"
                   tab-link="#package"
                   color="blue"
                   tab-link-active
@@ -203,7 +206,28 @@ export default {
   },
   methods: {
     configure () {
-      alert('Not yet done!')
+      this.$f7.dialog.alert(
+        'Not yet done!',
+        'Sorry'
+      )
+    },
+    getCurrentPosition () {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          this.long = position.coords.longitude
+          this.lat = position.coords.latitude
+        }, (error) => {
+          this.$f7.dialog.alert(
+            error.message,
+            'Error while retrieving current position'
+          )
+        })
+      } else {
+        this.$f7.dialog.alert(
+          'Geolocation is not available',
+          'Sorry'
+        )
+      }
     }
   },
   created () {
