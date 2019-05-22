@@ -1,6 +1,6 @@
 export default function (item) {
   let model = {}
-  let state = item.state // do a sprintf if necessary
+  let state = item.transformedState || item.state // do a sprintf if necessary
   model.label = `${item.label || item.name} [${state}]`
   model.item = item.name
   if (item.category) model.icon = item.category

@@ -21,7 +21,7 @@
         <f7-col>
           <f7-block-title>Current State</f7-block-title>
           <f7-block strong class="state-block">
-            {{item.state}}
+            {{item.transformedState || item.state}}
             <f7-button v-show="$theme.md" :href="'/analyzer/?items=' + item.name">Analyze</f7-button>
           </f7-block>
           <f7-list class="analyze-button" v-show="!$theme.md">
