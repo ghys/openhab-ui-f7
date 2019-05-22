@@ -1,7 +1,7 @@
 <template>
-    <f7-list :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && configDescription.context !== 'script'">
+    <f7-list :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && !configDescription.context">
       <f7-list-input
-        v-if="configDescription.type === 'TEXT' && !configDescription.options.length && configDescription.context !== 'script'"
+        v-if="configDescription.type === 'TEXT' && !configDescription.options.length && !configDescription.context"
         :label="configDescription.label"
         :name="configDescription.name"
         :value="value"
@@ -16,6 +16,8 @@
          :title="configDescription.label">
          <f7-button slot="after" @click="codeEditorOpened = true">Edit script</f7-button>
       </f7-list-item>
+      <item-picker v-if="configDescription.type === 'TEXT' && configDescription.context === 'item'"
+         :title="configDescription.label" />
       <f7-list-item v-else-if="configDescription.type === 'TEXT' && configDescription.options.length"
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams">
         <select :name="configDescription.name">
@@ -34,10 +36,12 @@
 
 <script>
 import ScriptEditorPopup from './config/script-editor-popup.vue'
+import ItemPicker from './config/item-picker.vue'
 
 export default {
   components: {
-    ScriptEditorPopup
+    ScriptEditorPopup,
+    ItemPicker
   },
   props: [
     'configDescription',
