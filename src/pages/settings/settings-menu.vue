@@ -36,35 +36,34 @@
               color="red"
               link="inbox/"
               title="Inbox"
-              badge="1"
+              :badge="inboxCount"
               badge-color="red"
               :footer="objectsSubtitles.inbox"
             ></f7-list-item>
             <f7-list-item
               link="things/"
               title="Things"
-              after="24"
+              :after="thingsCount"
               badge-color="blue"
               :footer="objectsSubtitles.things"
             ></f7-list-item>
             <f7-list-item
               link="items/"
               title="Items"
-              after="192"
+              :after="itemsCount"
               badge-color="blue"
               :footer="objectsSubtitles.items"
             ></f7-list-item>
             <f7-list-item
               link="items-virtual/"
               title="Items (virtual)"
-              after="192"
+              :after="itemsCount"
               badge-color="blue"
               :footer="objectsSubtitles.items"
             ></f7-list-item>
             <f7-list-item
               link="rules/"
               title="Rules"
-              after="3"
               badge-color="blue"
               :footer="objectsSubtitles.rules"
             ></f7-list-item>
@@ -128,7 +127,10 @@ export default {
         misc: 'Integrations to external systems and more',
         ui: 'Alternative frontends for user interaction',
         voice: 'Convert between text and speech, interpret human language queries'
-      }
+      },
+      inboxCount: '',
+      thingsCount: '',
+      itemsCount: ''
     }
   },
   beforeCreate () {
@@ -142,6 +144,9 @@ export default {
       this.addonTypes = data
       this.addonsLoaded = true
     })
+    this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.length.toString() })
+    this.$oh.api.get('/rest/things').then((data) => { this.thingsCount = data.length.toString() })
+    this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
   }
 }
 </script>
