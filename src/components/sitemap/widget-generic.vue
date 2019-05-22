@@ -45,6 +45,8 @@
     color #007aff !important
     font-size var(--f7-stepper-value-font-size) !important
     height 22px !important
+.aurora .sitemap-stepper .stepper-input-wrap input, .stepper-value
+    margin-top -2px
 </style>
 
 <script>
