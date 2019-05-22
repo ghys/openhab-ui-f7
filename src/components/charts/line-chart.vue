@@ -126,10 +126,8 @@ export default {
         let promises = []
         for (let item of this.items) {
           promises.push(this.$oh.api.get('/rest/persistence/items/' + item, {
-            data: {
-              starttime: new Date(this.startTime).toISOString(),
-              endtime: new Date(this.endTime).toISOString()
-            }
+            starttime: new Date(this.startTime).toISOString(),
+            endtime: new Date(this.endTime).toISOString()
           }).then((data) => {
             return data
           }))
