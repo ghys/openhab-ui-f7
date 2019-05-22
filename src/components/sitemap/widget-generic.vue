@@ -32,6 +32,14 @@
         :value="state"
       ></f7-range>
     </f7-list-item-cell>
+    <f7-list-item-cell style="max-width: 40%; text-align: right;" v-else-if="model.type === 'Colorpicker'">
+      <f7-list-input type="colorpicker" placeholder="Color" readonly hidden :value="state"
+          :color-picker-params="{
+            targetEl: '.color-picker-target'
+          }"
+      ></f7-list-input>
+      <i style="background-color: black; width: 18px; height: 18px" class="icon color-picker-target"></i>
+    </f7-list-item-cell>
   </f7-list-item>
   <!-- <f7-list-item v-else :title="title" :after="state">
     <img v-if="model.icon" slot="media" :src="'/icon/' + model.icon + '?format=svg'" width="32" />
