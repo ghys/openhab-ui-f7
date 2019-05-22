@@ -16,7 +16,7 @@
         <f7-checkbox checked disabled v-if="theme === 'dark'" />
       </f7-col>
     </f7-row>
-    <p>Switch navigation bars to filled style:</p>
+    <p>Navigation bars style</p>
     <f7-row>
       <f7-col width="50" class="demo-bars-picker demo-bars-picker-fill" @click="setBarsStyle('default')">
         <div class="demo-navbar"></div>

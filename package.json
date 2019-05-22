@@ -14,7 +14,7 @@
     ],
     "name": "openHAB",
     "pkg": "org.openhab.ui",
-    "platform": [
+    "platforms": [
       "ios",
       "android"
     ],
@@ -23,7 +23,20 @@
     "cssPreProcessor": "stylus",
     "customColor": true,
     "color": "ff7700",
-    "bundler": "webpack"
+    "bundler": "webpack",
+    "cordova": {
+      "folder": "cordova",
+      "platforms": [
+        "ios",
+        "android"
+      ],
+      "plugins": [
+        "cordova-plugin-statusbar",
+        "cordova-plugin-keyboard",
+        "cordova-plugin-splashscreen",
+        "cordova-plugin-wkwebview-engine"
+      ]
+    }
   },
   "scripts": {
     "build-prod": "cross-env NODE_ENV=production node ./build/build.js",
