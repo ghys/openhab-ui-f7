@@ -65,8 +65,10 @@
                 :link="'/settings/items/' + member.name"
                 :title="(member.label) ? member.label : member.name"
                 :subtitle="(member.label) ? member.name : ''"
-                :after="member.type"
-              ></f7-list-item>
+                :after="member.type">
+                <oh-icon v-if="member.category" slot="media" :icon="member.category" height="32" width="32" />
+                <span v-else slot="media" class="item-initial">{{member.label ? member.label[0] : member.name[0]}}</span>
+              </f7-list-item>
             </f7-list>
           </f7-card>
         </f7-col>

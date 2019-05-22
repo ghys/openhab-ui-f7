@@ -3,7 +3,7 @@
     <f7-navbar title="Items" back-link="Back">
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
-        :text="($theme.ios) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+        :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
       </f7-nav-right>
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -16,8 +16,8 @@
         ></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios>
-      <f7-link v-show="selectedItems.length" v-if="$theme.ios" class="delete" icon-ios="f7:trash">Delete {{selectedItems.length}}</f7-link>
+    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
+      <f7-link v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash">Delete {{selectedItems.length}}</f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" @click="showCheckboxes = false"></f7-link>
       <div class="title" v-if="$theme.md">
         {{selectedItems.length}} selected
@@ -186,14 +186,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus">
-.item-initial
-  color #c0c0c0
-  font-size 32px
-  font-weight lighter
-  height 32px
-  width 32px
-  text-align center
-  line-height 32px
-</style>
