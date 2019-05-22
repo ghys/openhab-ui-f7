@@ -27,7 +27,12 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <addon-details-popup
+    <!-- <addon-details-popup
+      :addon-id="currentAddonId"
+      :opened="addonPopupOpened"
+      @closed="addonPopupOpened = false"
+    /> -->
+    <addon-details-sheet
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
       @closed="addonPopupOpened = false"
@@ -37,10 +42,12 @@
 
 <script>
 import AddonDetailsPopup from './addon-details-popup.vue'
+import AddonDetailsSheet from './addon-details-sheet.vue'
 
 export default {
   components: {
-    AddonDetailsPopup
+    AddonDetailsPopup,
+    AddonDetailsSheet
   },
   props: ['addonType'],
   data () {

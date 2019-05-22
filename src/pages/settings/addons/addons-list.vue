@@ -39,20 +39,26 @@
       <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
     </f7-fab>
-    <addon-details-popup
+    <!-- <addon-details-popup
       :addon-id="currentAddonId"
       :opened="addonPopupOpened"
       @closed="addonPopupOpened = false; currentAddonId = null"
+    /> -->
+    <addon-details-sheet
+      :addon-id="currentAddonId"
+      :opened="addonPopupOpened"
+      @closed="addonPopupOpened = false"
     />
   </f7-page>
 </template>
 
 <script>
-import AddonDetailsPopup from './addon-details-popup.vue'
+// import AddonDetailsPopup from './addon-details-popup.vue'
+import AddonDetailsSheet from './addon-details-sheet.vue'
 
 export default {
   components: {
-    AddonDetailsPopup
+    AddonDetailsSheet
   },
   props: ['addonType'],
   data () {
@@ -75,6 +81,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>
