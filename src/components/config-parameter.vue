@@ -20,7 +20,7 @@
          :title="configDescription.label" />
       <f7-list-item v-else-if="configDescription.options.length"
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams">
-        <select :name="configDescription.name">
+        <select :name="configDescription.name" @change="updateValue($event.target.value)">
           <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="actualValue === option.value">{{option.label}}</option>
         </select>
       </f7-list-item>
@@ -61,6 +61,11 @@ export default {
         return parseInt(this.value)
       }
       return this.value
+    }
+  },
+  methods: {
+    updateValue (value) {
+      console.log('update value to ' + value)
     }
   },
   created () {

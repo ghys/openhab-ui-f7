@@ -20,7 +20,8 @@ import AddonsAddPage from '../pages/settings/addons/addons-add.vue'
 
 import ItemsListPage from '../pages/settings/items/items-list.vue'
 import ItemsVirtualListPage from '../pages/settings/items/items-list-vlist.vue'
-import ItemDetailsPage from '../pages/settings/items/items-details.vue'
+import ItemDetailsPage from '../pages/settings/items/item-details.vue'
+import ItemEditPage from '../pages/settings/items/item-edit.vue'
 
 import ThingsListPage from '../pages/settings/things/things-list.vue'
 import ThingDetailsPage from '../pages/settings/things/thing-details.vue'
@@ -115,15 +116,15 @@ export default [
         routes: [
           {
             path: ':itemName',
-            component: ItemDetailsPage
+            component: ItemDetailsPage,
+            routes: [
+              {
+                path: 'edit',
+                component: ItemEditPage
+              }
+            ]
           }
         ]
-        // routes: [
-        //   {
-        //     path: 'add',
-        //     component: AddonsAddPage
-        //   }
-        // ]
       },
       {
         path: 'items-virtual',
@@ -131,15 +132,15 @@ export default [
         routes: [
           {
             path: ':itemName',
-            component: ItemDetailsPage
+            component: ItemDetailsPage,
+            routes: [
+              {
+                path: 'edit',
+                component: ItemEditPage
+              }
+            ]
           }
         ]
-        // routes: [
-        //   {
-        //     path: 'add',
-        //     component: AddonsAddPage
-        //   }
-        // ]
       },
       {
         path: 'things/',

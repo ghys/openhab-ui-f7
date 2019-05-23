@@ -2,7 +2,7 @@
   <f7-page>
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline>
       <f7-nav-right>
-        <f7-link icon-md="material:edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
+        <f7-link icon-md="material:edit" href="edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-subnavbar sliding class="item-header">
@@ -75,7 +75,7 @@
       </f7-row>
       <f7-row  v-if="item && item.metadata && item.metadata.semantics">
         <f7-col>
-          <f7-block-title>Semantic Metadata</f7-block-title>
+          <f7-block-title>Semantic Classification</f7-block-title>
           <f7-list>
             <f7-list-item title="class" :after="item.metadata.semantics.value"></f7-list-item>
             <f7-list-item

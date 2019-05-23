@@ -1,3 +1,5 @@
+import Framework7 from 'framework7/framework7.esm.bundle.js'
+
 export default {
   getIcon: (icon, format) => {
     if (!format) format = 'svg'
@@ -14,13 +16,14 @@ export default {
         }
 
         return new Promise((resolve, reject) => {
-          window.resolveLocalFileSystemURL(`${cordova.file.tempDirectory}/icon_${icon}.${format}`, (entry) => {
+          const directory = (Framework7.device.android) ? cordova.file.cacheDirectory : cordova.file.tempDirectory
+          window.resolveLocalFileSystemURL(`${directory}/icon_${icon}.${format}`, (entry) => {
             // icon found in cache
             resolve(entry.toURL())
           }, () => {
             // download icon to cache
             cordova.plugin.http.downloadFile(`${serverUrl}/icon/${icon}`, { format: format },
-              {}, `${cordova.file.tempDirectory}/icon_${icon}.${format}`, (entry) => {
+              {}, `${directory}/icon_${icon}.${format}`, (entry) => {
                 resolve(entry.toURL())
               }, (response) => {
                 reject(response.error)
