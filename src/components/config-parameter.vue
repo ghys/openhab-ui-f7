@@ -7,7 +7,7 @@
         :value="value"
         type="text" />
       <f7-list-input
-        v-if="configDescription.type === 'INTEGER'"
+        v-if="configDescription.type === 'INTEGER' && !configDescription.options.length && !configDescription.context"
         :name="configDescription.name"
         :label="configDescription.label"
         :value="actualValue"
@@ -18,7 +18,7 @@
       </f7-list-item>
       <item-picker v-if="configDescription.type === 'TEXT' && configDescription.context === 'item'"
          :title="configDescription.label" />
-      <f7-list-item v-else-if="configDescription.type === 'TEXT' && configDescription.options.length"
+      <f7-list-item v-else-if="configDescription.options.length"
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams">
         <select :name="configDescription.name">
           <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="actualValue === option.value">{{option.label}}</option>
