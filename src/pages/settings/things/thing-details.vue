@@ -9,7 +9,7 @@
 
     <f7-tabs v-if="thing.UID">
       <f7-tab id="info" tab-active>
-        <f7-block class="block-narrow" strong>
+        <f7-block class="block-narrow padding-left padding-right" strong>
           <f7-col>Status:
             <f7-chip
               :text="thing.statusInfo.status"
@@ -24,7 +24,7 @@
             </div>
           </f7-col>
         </f7-block>
-        <f7-block class="block-narrow">
+        <f7-block class="block-narrow padding-left padding-right">
           <f7-col>
             <h3>{{thingType.label}}</h3>
             <div v-html="thingType.description"></div>
@@ -33,33 +33,24 @@
 
         <f7-block class="block-narrow">
           <f7-col>
-            <f7-list accordion-list>
-              <f7-list-item accordion-item title="Properties">
-                <f7-accordion-content>
-                  <f7-list>
-                    <f7-list-item
-                      v-for="(value, key) in thing.properties"
-                      :key="key"
-                      :title="key"
-                      :after="value"
-                    ></f7-list-item>
-                  </f7-list>
-                </f7-accordion-content>
-              </f7-list-item>
-              <f7-list-item accordion-item title="Textual definition equivalent">
-                <f7-accordion-content>
-                  <f7-block>
-                    <p>Use the definition below in a .things file. Note: this is provided without guarantees as a convenience only.</p>
-                    <p v-if="this.thing.bridgeUID">
-                      Attention: This Thing is provided by a Bridge (
-                      <strong>{{this.thing.bridgeUID}}</strong>). You can also include it within the Bridge block and remove the reference between parentheses.
-                    </p>
-                    <code class="textual-definition">
-                      <pre>{{textualDefinition}}</pre>
-                    </code>
-                  </f7-block>
-                </f7-accordion-content>
-              </f7-list-item>
+            <f7-block-title v-if="Object.keys(thing.properties).length > 0">Properties</f7-block-title>
+            <f7-list>
+              <!-- <f7-list-item v-if="Object.keys(thing.properties).length > 0" divider>Properties</f7-list-item> -->
+              <f7-list-item
+                v-for="(value, key) in thing.properties"
+                :key="key"
+                :title="key"
+                :after="value"
+              ></f7-list-item>
+            </f7-list>
+          </f7-col>
+        </f7-block>
+
+        <f7-block class="block-narrow">
+          <f7-col>
+            <f7-list>
+              <!-- <f7-list-item v-if="Object.keys(thing.properties).length > 0" divider>Properties</f7-list-item> -->
+              <f7-list-button color="red" title="Delete this Thing"></f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>

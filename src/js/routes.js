@@ -24,6 +24,10 @@ import ItemDetailsPage from '../pages/settings/items/items-details.vue'
 
 import ThingsListPage from '../pages/settings/things/things-list.vue'
 import ThingDetailsPage from '../pages/settings/things/thing-details.vue'
+import AddThingChooseBindingPage from '../pages/settings/things/add/choose-binding.vue'
+import AddThingChooseThingTypePage from '../pages/settings/things/add/choose-thing-type.vue'
+
+import InboxListPage from '../pages/settings/inbox/inbox-list.vue'
 
 import Analyzer from '../pages/analyzer/analyzer.vue'
 
@@ -142,9 +146,25 @@ export default [
         component: ThingsListPage,
         routes: [
           {
+            path: 'add',
+            component: AddThingChooseBindingPage,
+            routes: [
+              {
+                path: ':bindingId',
+                component: AddThingChooseThingTypePage
+              }
+            ]
+          },
+          {
             path: ':thingId',
             component: ThingDetailsPage
           }
+        ]
+      },
+      {
+        path: 'inbox/',
+        component: InboxListPage,
+        routes: [
           // {
           //   path: 'add',
           //   component: AddonsAddPage
