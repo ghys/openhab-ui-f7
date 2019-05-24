@@ -30,6 +30,9 @@ import AddThingChooseThingTypePage from '../pages/settings/things/add/choose-thi
 
 import InboxListPage from '../pages/settings/inbox/inbox-list.vue'
 
+import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
+import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
+
 import Analyzer from '../pages/analyzer/analyzer.vue'
 
 import MasterDetailMaster from '../pages/master-detail-master.vue'
@@ -163,6 +166,24 @@ export default [
         ]
       },
       {
+        path: 'rules/',
+        component: RuleEditPage,
+        routes: [
+          {
+            path: 'add',
+            component: RuleEditPage
+          },
+          {
+            path: 'module',
+            component: RuleConfigureModulePage
+          },
+          {
+            path: ':ruleId',
+            component: RuleEditPage
+          }
+        ]
+      },
+      {
         path: 'inbox/',
         component: InboxListPage,
         routes: [
@@ -225,14 +246,15 @@ export default [
     path: '/static/(.*)',
     redirect: '/'
   },
-  {
-    path: '/android_asset/(.*)',
-    redirect: '/'
-  },
-  {
-    path: '/var/containers/(.*)',
-    redirect: '/'
-  },
+  // temp disable
+  // {
+  //   path: '/android_asset/(.*)',
+  //   redirect: '/'
+  // },
+  // {
+  //   path: '/var/containers/(.*)',
+  //   redirect: '/'
+  // },
   {
     path: '(.*)',
     component: NotFoundPage

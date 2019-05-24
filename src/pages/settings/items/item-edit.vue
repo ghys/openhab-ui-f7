@@ -8,7 +8,7 @@
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col v-if="!item.editable">
-        Note: this item is not editable because it has been created with textual configuration.
+        <div class="padding-left">Note: this item is not editable because it has been created with textual configuration.</div>
       </f7-col>
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
