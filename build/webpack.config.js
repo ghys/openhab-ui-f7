@@ -32,7 +32,7 @@ module.exports = {
     publicPath: '',
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['.mjs', '.js', '.vue', '.json'],
     alias: {
       vue$: 'vue/dist/vue.esm.js',
       '@': resolvePath('src'),
@@ -57,6 +57,11 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        type: 'javascript/auto',
+        test: /\.mjs$/,
+        use: []
+      },
       {
         test: /\.(js|jsx)$/,
         use: 'babel-loader',

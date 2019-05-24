@@ -65,6 +65,7 @@
     "framework7-icons": "^2.2.0",
     "framework7-vue": "^4.4.0",
     "template7": "^1.4.1",
+    "tern": "^0.23.0",
     "vue": "^2.6.6",
     "vue-async-computed": "^3.6.1",
     "vue-codemirror": "^4.0.6",
