@@ -4,7 +4,7 @@
 
 <style lang="stylus">
 .no-icon
-  display none
+  display none !important
 </style>
 
 <script>

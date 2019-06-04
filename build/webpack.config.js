@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
+const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const path = require('path');
 
@@ -223,6 +224,9 @@ module.exports = {
         swSrc: resolvePath('src/service-worker.js'),
       })
     ] : []),
-
+    new WebpackAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: '../report.html'
+    })
   ],
 };

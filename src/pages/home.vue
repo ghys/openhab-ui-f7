@@ -57,7 +57,7 @@ export default {
   },
   created () {
     this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
-
+      // get the location items
       this.semanticItems.locations = data.filter((item, index, items) => {
         return item.metadata && item.metadata.semantics &&
           item.metadata.semantics.value.indexOf('Location_') === 0
@@ -92,7 +92,7 @@ export default {
         }
       })
 
-
+      // get the equipment items
       this.semanticItems.equipments = data.filter((item, index, items) => {
         return item.metadata && item.metadata.semantics &&
           item.metadata.semantics &&
@@ -112,7 +112,7 @@ export default {
         return prev
       }, {})
 
-
+      // get the property items
       this.semanticItems.properties = data.filter((item, index, items) => {
         return item.metadata && item.metadata.semantics &&
           item.metadata.semantics && item.metadata.semantics.config &&
@@ -123,7 +123,6 @@ export default {
         prev[property].push(item)
         return prev
       }, {})
-
     })
   },
   methods: {

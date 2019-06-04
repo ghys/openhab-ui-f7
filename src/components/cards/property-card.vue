@@ -16,23 +16,31 @@
           icon-f7="close_round_fill"
         ></f7-link>
       </div>
-      <div class="card-content-padding" v-if="opened">
+      <!-- <div class="card-content-padding" v-if="opened">
         <f7-block>
-          <div class="row">
+          <div class="row padding-bottom">
             <div class="col-50 tablet-75"></div>
             <div class="col-50 tablet-25">
               <f7-button outline round :color="color" :href="`/analyzer/?items=${sitemapModels.map((m) => m.item).join(',')}`">Analyze{{sitemapModels.length > 1 ? ' all' : ''}}</f7-button>
             </div>
           </div>
         </f7-block>
-      </div>
+      </div> -->
       <div class="card-content-padding" v-if="opened">
         <f7-list>
-          <ul>
+          <!-- <ul>
             <sitemap-widget-generic v-for="model in sitemapModels" :key="model.item"
+              :model="model" />
+          </ul> -->
+          <ul v-for="(models, pointType) in sitemapModelsByPointType" :key="pointType">
+            <f7-list-item divider :title="pointType"></f7-list-item>
+            <sitemap-widget-generic v-for="model in models" :key="model.item"
               :model="model" />
           </ul>
         </f7-list>
+        <p class="padding-top">
+          <f7-button outline round :color="color" :href="`/analyzer/?items=${sitemapModels.map((m) => m.item).join(',')}`">Analyze{{sitemapModels.length > 1 ? ' all' : ''}}</f7-button>
+        </p>
         <p>
           <f7-button fill round large card-close :color="color">Close</f7-button>
         </p>
@@ -64,6 +72,15 @@ export default {
   computed: {
     sitemapModels () {
       return this.items.map(item2SitemapModel)
+    },
+    sitemapModelsByPointType () {
+      const models = {}
+      this.items.forEach((item) => {
+        const pointType = item.metadata.semantics.value.replace('Point_', '')
+        if (!models[pointType]) models[pointType] = []
+        models[pointType].push(item2SitemapModel(item))
+      })
+      return models
     }
   }
 }

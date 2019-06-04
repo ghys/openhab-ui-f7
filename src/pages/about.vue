@@ -1,19 +1,28 @@
 <template>
   <f7-page name="about">
     <f7-navbar title-large="About" title="About" back-link="Back"></f7-navbar>
-    <f7-block-title class="after-big-title">About This App</f7-block-title>
-    <f7-block strong>
-      <p>openHAB Default UI version {{this.$f7.version}}</p>
-      <p>Laudantium neque magnam vitae nemo quam commodi, in cum dolore obcaecati laborum, excepturi harum, optio qui, consequuntur? Obcaecati dolor sequi nesciunt culpa quia perspiciatis, reiciendis ex debitis, ut tenetur alias.</p>
-    </f7-block>
-    <f7-block>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni molestiae laudantium dignissimos est nobis delectus nemo ea alias voluptatum architecto, amet similique, saepe iste consectetur in repellat ut minus quibusdam!</p>
-      <p>Molestias et distinctio porro nesciunt ratione similique, magni doloribus, rerum nobis, aliquam quae reiciendis quasi modi. Nam a recusandae, fugiat in ea voluptates fuga eius, velit corrupti reprehenderit dignissimos consequatur!</p>
-      <p>Blanditiis, cumque quo adipisci. Molestiae, dolores dolorum quos doloremque ipsa ullam eligendi commodi deserunt doloribus inventore magni? Ea mollitia veniam nostrum nihil, iusto doloribus a at! Ea molestiae ullam delectus!</p>
-    </f7-block>
+    <f7-block class="block-narrow after-big-title">
+      <f7-row>
+        <f7-col>
+          <!-- <f7-block-title>About openHAB</f7-block-title> -->
+          <f7-block>
+            <img src="static/icons/128x128.png" width="96" class="padding float-right">
+            <h3>openHAB version {{this.$f7.version}}</h3>
+            <p><a target="_blank" href="https://www.openhab.org/">Home page</a></p>
+            <p><a target="_blank" href="https://www.openhab.org/docs/">Documentation</a></p>
+            <p><a target="_blank" href="https://community.openhab.org/">Community forum</a></p>
+          </f7-block>
+          <!-- <f7-block>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni molestiae laudantium dignissimos est nobis delectus nemo ea alias voluptatum architecto, amet similique, saepe iste consectetur in repellat ut minus quibusdam!</p>
+            <p>Molestias et distinctio porro nesciunt ratione similique, magni doloribus, rerum nobis, aliquam quae reiciendis quasi modi. Nam a recusandae, fugiat in ea voluptates fuga eius, velit corrupti reprehenderit dignissimos consequatur!</p>
+            <p>Blanditiis, cumque quo adipisci. Molestiae, dolores dolorum quos doloremque ipsa ullam eligendi commodi deserunt doloribus inventore magni? Ea mollitia veniam nostrum nihil, iusto doloribus a at! Ea molestiae ullam delectus!</p>
+          </f7-block> -->
 
-    <f7-block-title class="after-big-title">Appearance Options (local to this device)</f7-block-title>
-    <theme-switcher />
+        </f7-col>
+      </f7-row>
+      <f7-block-title>Appearance Options (local to this device)</f7-block-title>
+      <theme-switcher />
+    </f7-block>
 
     <!-- <f7-button href="/analyzer/?items=MultiSensorSalon_Temperature">Analyzer</f7-button> -->
 

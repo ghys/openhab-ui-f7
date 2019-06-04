@@ -93,7 +93,8 @@
 </template>
 
 <script>
-import ConfigParameter from '../../../components/config-parameter.vue'
+import ConfigParameter from '@/components/config/config-parameter.vue'
+import RuleConfigureModulePage from './rule-configure-module.vue'
 
 export default {
   components: {
@@ -102,7 +103,7 @@ export default {
   data () {
     return {
       ready: false,
-      rule: {},
+      rule: { name: 'Sample' },
       moduleTypes: {
         actions: [],
         conditions: [],
@@ -134,13 +135,44 @@ export default {
   methods: {
     addModule (section) {
       this.currentSection = section
-      this.$f7router.navigate('/settings/rules/module', {
+      const f7 = this.$f7
+      f7.data.rule = this.rule
+      this.$f7router.navigate({
+        url: 'confmodule',
+        route: {
+          component: RuleConfigureModulePage,
+          path: 'confmodule',
+          props: {
+            rule: this.rule,
+            currentSection: this.currentSection,
+            moduleTypes: this.moduleTypes
+          },
+          on: {
+            pageAfterOut (e, page) {
+              console.log(f7)
+              debugger
+            }
+          }
+        }
+      }, {
         props: {
           rule: this.rule,
           currentSection: this.currentSection,
           moduleTypes: this.moduleTypes
         }
       })
+      // this.$f7router.navigate('/settings/rules/module', {
+      //   props: {
+      //     rule: this.rule,
+      //     currentSection: this.currentSection,
+      //     moduleTypes: this.moduleTypes
+      //   },
+      //   on: {
+      //     pageAfterOut (e, page) {
+      //       debugger
+      //     }
+      //   }
+      // })
     }
   }
 }

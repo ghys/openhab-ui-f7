@@ -1,4 +1,4 @@
-import ConfigParameter from 'src/components/config-parameter.vue'
+import ConfigParameter from 'src/components/config/config-parameter.vue'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Framework7 from 'framework7'
 import Framework7Vue from 'f7vue'

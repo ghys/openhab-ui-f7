@@ -2,18 +2,18 @@
   <f7-block strong>
     <p>Theme</p>
     <f7-segmented>
-      <f7-button round color="blue" raised @click="switchTheme('auto')">Auto</f7-button>
-      <f7-button round color="blue" raised @click="switchTheme('md')">MD</f7-button>
-      <f7-button round color="blue" raised @click="switchTheme('ios')">iOS</f7-button>
-      <f7-button round color="blue" raised @click="switchTheme('aurora')">Aurora</f7-button>
+      <f7-button round color="blue" raised :fill="theme === 'auto'" @click="switchTheme('auto')">Auto</f7-button>
+      <f7-button round color="blue" raised :fill="theme === 'md'" @click="switchTheme('md')">MD</f7-button>
+      <f7-button round color="blue" raised :fill="theme === 'ios'" @click="switchTheme('ios')">iOS</f7-button>
+      <f7-button round color="blue" raised :fill="theme === 'aurora'" @click="switchTheme('aurora')">Aurora</f7-button>
     </f7-segmented>
     <p>Dark mode</p>
     <f7-row>
       <f7-col width="50" class="bg-color-white demo-theme-picker" @click="setThemeDark('light')">
-        <f7-checkbox checked disabled v-if="theme === 'light'" />
+        <f7-checkbox checked disabled v-if="darkMode === 'light'" />
       </f7-col>
       <f7-col width="50" class="bg-color-black demo-theme-picker" @click="setThemeDark('dark')">
-        <f7-checkbox checked disabled v-if="theme === 'dark'" />
+        <f7-checkbox checked disabled v-if="darkMode === 'dark'" />
       </f7-col>
     </f7-row>
     <p>Navigation bars style</p>
@@ -44,6 +44,17 @@ export default {
     setBarsStyle (value) {
       localStorage.setItem('openhab.ui:theme.bars', value)
       location.reload()
+    }
+  },
+  computed: {
+    theme () {
+      return localStorage.getItem('openhab.ui:theme') || 'auto'
+    },
+    darkMode () {
+      return localStorage.getItem('openhab.ui:theme.dark') || 'light'
+    },
+    barsStyle () {
+      return localStorage.getItem('openhab.ui:theme.bars') || 'default'
     }
   }
 }

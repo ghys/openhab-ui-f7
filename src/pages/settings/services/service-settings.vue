@@ -8,11 +8,10 @@
     </f7-navbar>
     <f7-block form v-if="configDescriptions && config" class="service-config block-narrow">
       <f7-col>
-        <config-parameter
-          v-for="parameter in configDescriptions.parameters"
-          :key="parameter.name"
-          :config-description="parameter"
-          :value="config[parameter.name]"
+        <config-sheet
+          :parameter-groups="configDescriptions.parameterGroups"
+          :parameters="configDescriptions.parameters"
+          :configuration="config"
         />
       </f7-col>
       <!-- <f7-list-input
@@ -37,10 +36,12 @@
 </template>
 
 <script>
-import ConfigParameter from '../../../components/config-parameter.vue'
+import ConfigSheet from '@/components/config/config-sheet.vue'
+import ConfigParameter from '@/components/config/config-parameter.vue'
 
 export default {
   components: {
+    ConfigSheet,
     ConfigParameter
   },
   props: ['serviceId'],

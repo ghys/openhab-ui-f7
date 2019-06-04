@@ -1,5 +1,5 @@
 <template>
-    <f7-list :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && !configDescription.context">
+    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && !configDescription.context">
       <f7-list-input
         v-if="configDescription.type === 'TEXT' && !configDescription.options.length && !configDescription.context"
         :label="configDescription.label"
@@ -14,7 +14,8 @@
         type="number" />
       <f7-list-item v-if="configDescription.type === 'TEXT' && configDescription.context === 'script'"
          :title="configDescription.label">
-         <f7-button slot="after" @click="codeEditorOpened = true">Edit script</f7-button>
+        <f7-button slot="after" @click="codeEditorOpened = true">Edit script</f7-button>
+        <script-editor-popup :title="configDescription.label" :code="value" :opened="codeEditorOpened" @closed="codeEditorOpened = false"></script-editor-popup>
       </f7-list-item>
       <item-picker v-if="configDescription.type === 'TEXT' && configDescription.context === 'item'"
          :title="configDescription.label" />
@@ -30,13 +31,13 @@
       <f7-block-footer slot="after-list" class="param-description">
         <small v-html="configDescription.description"></small>
       </f7-block-footer>
-      <script-editor-popup :title="configDescription.label" :code="value" :opened="codeEditorOpened" @closed="codeEditorOpened = false"></script-editor-popup>
     </f7-list>
 </template>
 
 <script>
-import ScriptEditorPopup from './config/script-editor-popup.vue'
-import ItemPicker from './config/item-picker.vue'
+const ScriptEditorPopup = () => import('./controls/script-editor-popup.vue')
+// import ScriptEditorPopup from './config/script-editor-popup.vue'
+import ItemPicker from './controls/item-picker.vue'
 
 export default {
   components: {
@@ -91,4 +92,6 @@ export default {
   padding-left 16px !important
   p
     margin 0 !important
+.smart-select-popover.popover
+  --f7-popover-width 320px
 </style>

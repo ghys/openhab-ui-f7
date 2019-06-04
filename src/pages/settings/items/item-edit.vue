@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:beforeremove="onPageBeforeRemove" @page:init="onPageInit">
-    <f7-navbar :title="'Edit: ' + item.name" back-link="Cancel" no-shadow no-hairline>
+    <f7-navbar :title="'Edit: ' + item.name" back-link="Cancel">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
@@ -131,7 +131,7 @@ import { Categories } from '@/assets/categories.js'
 import * as Types from '@/assets/item-types.js'
 import * as SemanticClasses from '@/assets/semantics.js'
 
-import ItemPicker from '../../../components/config/item-picker.vue'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 export default {
   props: ['itemName'],

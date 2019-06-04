@@ -1,5 +1,5 @@
 <template>
-  <f7-card expandable card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
+  <f7-card expandable :animate="false" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
     <f7-card-content :padding="false">
       <div
         v-if="header === 'image'"
@@ -195,21 +195,20 @@
 </template>
 
 <style lang="stylus">
-.md .card-expandable
-  transition-duration 100ms !important
-.md .card-expandable.card-opening,
-.md .card-expandable.card-closing,
-.md .card-expandable.card-transitioning {
-  transition-duration: 100ms;
-}
-.md .card-expandable.card-opening .card-content {
-  transition-duration: 100ms;
-}
-.md .card-expandable.card-closing .card-content {
-  transition-duration: 100ms;
-}  
+// .md .card-expandable
+//   transition-duration 100ms !important
+// .md .card-expandable.card-opening,
+// .md .card-expandable.card-closing,
+// .md .card-expandable.card-transitioning {
+//   transition-duration: 100ms;
+// }
+// .md .card-expandable.card-opening .card-content {
+//   transition-duration: 100ms;
+// }
+// .md .card-expandable.card-closing .card-content {
+//   transition-duration: 100ms;
+// }
 </style>
-
 
 <script>
 export default {

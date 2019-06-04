@@ -75,7 +75,7 @@
               media-item
               :link="thing.UID"
               :title="thing.label"
-              :subtitle="thing.UID"
+              :footer="thing.UID"
               :badge="thing.statusInfo.status"
               :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
             >

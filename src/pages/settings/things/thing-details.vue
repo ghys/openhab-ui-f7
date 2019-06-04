@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar :title="thing.label" back-link="Back"></f7-navbar>
+    <f7-navbar :title="thing.label" back-link="Back" no-hairline></f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link tab-link="#info" tab-link-active>Info</f7-link>
       <f7-link tab-link="#config" v-if="thingType.configParameters">Config</f7-link>
@@ -58,58 +58,18 @@
 
       <f7-tab id="config" v-if="thing.configuration && thingType.configParameters">
         <f7-block class="block-narrow">
-          <f7-col v-if="!thingType.parameterGroups.length">
-            <config-parameter
-              v-for="parameter in thingType.configParameters"
-              :key="parameter.name"
-              :config-description="parameter"
-              :value="thing.configuration[parameter.name]"
-            />
-          </f7-col>
-          <f7-col v-if="thingType.parameterGroups.length">
-            <f7-list accordion-list>
-              <f7-list-item
-                accordion-item
-                v-for="group in thingType.parameterGroups"
-                :key="group.name"
-                :title="group.label"
-              >
-                <f7-accordion-content>
-                  <f7-block>
-                    <config-parameter
-                      v-for="parameter in thingType.configParameters.filter((p) => p.groupName === group.name)"
-                      :key="parameter.name"
-                      :config-description="parameter"
-                      :value="thing.configuration[parameter.name]"
-                    />
-                  </f7-block>
-                </f7-accordion-content>
-              </f7-list-item>
-            </f7-list>
-          </f7-col>
+          <config-sheet
+            :parameter-groups="thingType.parameterGroups"
+            :parameters="thingType.configParameters"
+            :configuration="thing.configuration"
+          />
         </f7-block>
       </f7-tab>
 
       <f7-tab id="channels" v-if="thingType.channels">
         <f7-block class="block-narrow">
-          <f7-col v-if="thingType.channels.length">
-            <channel-link :channelTypes="thingType.channels" :thing="thing"/>
-          </f7-col>
-          <f7-col v-if="thingType.channelGroups.length">
-            <f7-list accordion-list>
-              <f7-list-item
-                accordion-item
-                v-for="group in thingType.channelGroups"
-                :key="group.id"
-                :title="group.label"
-                :footer="group.description"
-              >
-                <f7-accordion-content>
-                  <channel-link :channelTypes="group.channels" :thing="thing"/>
-                </f7-accordion-content>
-              </f7-list-item>
-            </f7-list>
-          </f7-col>
+          <channel-list :thingType="thingType" :thing="thing"
+          />
         </f7-block>
       </f7-tab>
     </f7-tabs>
@@ -121,14 +81,6 @@
 
     <f7-popup tablet-fullscreen :opened="codePopupOpened" @popup:closed="codePopupOpened = false">
       <f7-page>
-        <!-- <f7-navbar>
-          <f7-nav-left>
-            <f7-link icon-if-ios="f7:arrow_left" icon-if-md="material:arrow_back" popup-close></f7-link>
-          </f7-nav-left>
-          <f7-nav-title>
-            Textual Definition
-          </f7-nav-title>
-        </f7-navbar>-->
         <f7-toolbar>
           <div class="left">
             <f7-link @click="copyTextualDefinition">Copy</f7-link>
@@ -137,7 +89,6 @@
             <f7-link popup-close>Close</f7-link>
           </div>
         </f7-toolbar>
-        <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
         <textarea class="textual-definition" id="textual-definition" :value="textualDefinition"></textarea>
       </f7-page>
     </f7-popup>
@@ -190,15 +141,15 @@ textarea.textual-definition {
 </style>
 
 <script>
-import ChannelLink from '../../../components/channel-link.vue'
-import ConfigParameter from '../../../components/config-parameter.vue'
+import ChannelList from '@/components/thing/channel-list.vue'
+import ConfigSheet from '@/components/config/config-sheet.vue'
 
 let copyToast = null
 
 export default {
   components: {
-    ConfigParameter,
-    ChannelLink
+    ConfigSheet,
+    ChannelList
   },
   props: ['thingId'],
   data () {

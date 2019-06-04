@@ -3,13 +3,14 @@
     <f7-navbar title="Edit module" back-link="Cancel" no-shadow no-hairline>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Done</f7-link>
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
-          <f7-list-input type="text" placeholder="Name" :value="rule.name">
+          <f7-list-input type="text" placeholder="Name" :value="rule.name"
+                         @input="rule.name = $event.target.value" clear-button>
           </f7-list-input>
           <f7-list-input type="text" placeholder="Description" :value="rule.description"
                          @input="rule.description = $event.target.value" clear-button>
@@ -39,21 +40,27 @@
 </template>
 
 <script>
-import ConfigParameter from '../../../components/config-parameter.vue'
+import ConfigParameter from '@/components/config/config-parameter.vue'
 
 export default {
   components: {
     ConfigParameter
   },
-  props: ['rule', 'moduleTypes', 'currentSection'],
+  props: ['moduleTypes', 'currentSection'],
   data () {
+    debugger
     return {
+      rule: this.$f7.data.rule,
       currentModuleType: null,
       currentModuleConfig: {}
     }
   },
   methods: {
     setPreviousPage ($ev) {
+    },
+    save () {
+      debugger
+      this.$f7.data.currentConfig = this.currentModuleConfig
     }
   }
 }
