@@ -49,12 +49,12 @@ module.exports = {
     '.*css$': '<rootDir>/test/jest/utils/stub.css'
   },
   transform: {
-    ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest",
+    '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
     '.*\\.js$': 'babel-jest',
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub'
   },
   transformIgnorePatterns: [
-    "/node_modules/(?!framework7|framework7-vue|template7|dom7/)"
+    '/node_modules/(?!framework7|framework7-vue|template7|dom7/)'
   ],
   // transformIgnorePatterns: [
   //   '.*\\.js$'
