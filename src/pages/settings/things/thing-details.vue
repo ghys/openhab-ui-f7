@@ -89,6 +89,7 @@
             <f7-link popup-close>Close</f7-link>
           </div>
         </f7-toolbar>
+        <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
         <textarea class="textual-definition" id="textual-definition" :value="textualDefinition"></textarea>
       </f7-page>
     </f7-popup>
