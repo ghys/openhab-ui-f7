@@ -59,7 +59,6 @@ export default {
     setPreviousPage ($ev) {
     },
     save () {
-      debugger
       this.$f7.data.currentConfig = this.currentModuleConfig
     }
   }

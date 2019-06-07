@@ -34,7 +34,8 @@ export default {
       return (this.group) ? this.group.id + '#' + channelType.id : channelType.id
     },
     getChannel (channelId) {
-      return this.thing.channels.find((c) => c.id === channelId)
+      return this.channels[channelId]
+      // return this.thing.channels.find((c) => c.id === channelId)
     },
     getLinkedItems (channelType) {
       const channelId = this.getChannelId(channelType)
@@ -45,9 +46,15 @@ export default {
     getItemType (channelType) {
       const channelId = this.getChannelId(channelType)
       const channel = this.getChannel(channelId)
-      if (channel && channel.kind === 'TRIGGER') return 'Event'
+      if (channel && channel.kind === 'TRIGGER') return 'Trigger'
       if (!channel || !channel.itemType) return '?'
       return channel.itemType
+    },
+    getChannelKind (channelType) {
+      const channelId = this.getChannelId(channelType)
+      const channel = this.getChannel(channelId)
+      if (channel && channel.kind === 'TRIGGER') return 'Trigger'
+      return ''
     },
     opened (channelType) {
       console.log('channel opened')
@@ -55,6 +62,16 @@ export default {
         channelId: this.getChannelId(channelType),
         channel: this.getChannel(channelType)
       })
+    }
+  },
+  computed: {
+    channels () {
+      let channels = {}
+      this.channelTypes.forEach((channelType) => {
+        const channelId = this.getChannelId(channelType)
+        channels[channelId] = this.thing.channels.find((c) => c.id === channelId)
+      })
+      return channels
     }
   }
 }
