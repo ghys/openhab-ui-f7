@@ -18,8 +18,8 @@
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the thing type"
-              subtitle="This contains the description of the thing type"
-              footer="thingType UID"
+              footer="This contains the description of the thing type"
+              header="thingTypeUID"
               media-item
             >
             </f7-list-item>
@@ -36,9 +36,9 @@
             :key="thingType.UID"
             :link="thingType.UID"
             :title="thingType.label"
-            :subtitle="thingType.description"
-            :footer="thingType.UID"
-            :badge="thingType.bridge ? 'Bridge' : ''"
+            :footer="thingType.description"
+            :header="thingType.UID"
+            :badge="thingType.bridge ? 'Bridge' : ''" badge-color="blue"
             media-item
           >
           </f7-list-item>
@@ -53,14 +53,6 @@
         </f7-block>
       </f7-col>
     </f7-block>
-    <f7-fab position="right-bottom" slot="fixed" color="blue">
-      <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
-      <!-- <f7-fab-buttons position="top">
-        <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>
-        <f7-fab-button label="Add thing manually">M</f7-fab-button>
-      </f7-fab-buttons> -->
-    </f7-fab>
   </f7-page>
 </template>
 
@@ -80,7 +72,12 @@ export default {
     // this.$f7.preloader.show()
     this.loading = true
     this.$oh.api.get('/rest/thing-types').then((data) => {
-      this.thingTypes = data.filter((tt) => tt.UID.split(':')[0] === this.bindingId && tt.listed).sort((a, b) => a.label.localeCompare(b.label))
+      this.thingTypes = data.filter((tt) => tt.UID.split(':')[0] === this.bindingId && tt.listed)
+        .sort((a, b) => {
+          if (a.bridge && !b.bridge) return -1
+          if (b.bridge && !a.bridge) return 1
+          return a.label.localeCompare(b.label)
+        })
       this.loading = false
     })
     // simulate scan

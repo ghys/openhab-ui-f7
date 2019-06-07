@@ -18,7 +18,8 @@
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the binding"
-              subtitle="This contains the description of the binding"
+              header="BindingID"
+              footer="This contains the description of the binding"
               media-item
             >
             </f7-list-item>
@@ -29,7 +30,8 @@
             :key="binding.id"
             :link="binding.id"
             :title="binding.name"
-            :subtitle="binding.description"
+            :header="binding.id"
+            :footer="binding.description"
             media-item
           >
           </f7-list-item>
@@ -44,14 +46,6 @@
         </f7-block>
       </f7-col>
     </f7-block>
-    <f7-fab position="right-bottom" slot="fixed" color="blue">
-      <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
-      <!-- <f7-fab-buttons position="top">
-        <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>
-        <f7-fab-button label="Add thing manually">M</f7-fab-button>
-      </f7-fab-buttons> -->
-    </f7-fab>
   </f7-page>
 </template>
 
