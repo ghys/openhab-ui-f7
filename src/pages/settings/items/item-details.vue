@@ -1,6 +1,6 @@
 <template>
-  <f7-page>
-    <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline>
+  <f7-page class="item-details-page">
+    <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
       <f7-nav-right>
         <f7-link icon-md="material:edit" href="edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
       </f7-nav-right>
@@ -62,12 +62,18 @@
               <f7-list-item
                 v-for="member in item.members" :key="member.name"
                 media-item
-                :link="'/settings/items/' + member.name"
+                class="itemlist-item"
+                @change="(e) => toggleItemCheck(e, member.name)"
+                link="edit"
                 :title="(member.label) ? member.label : member.name"
-                :subtitle="(member.label) ? member.name : ''"
-                :after="member.type">
+                :footer="(member.label) ? member.name : '\xa0'"
+                :subtitle="getItemTypeAndMetaLabel(member)"
+                :after="member.state"
+              >
                 <oh-icon v-if="member.category" slot="media" :icon="member.category" height="32" width="32" />
-                <span v-else slot="media" class="item-initial">{{member.label ? member.label[0] : member.name[0]}}</span>
+                <span v-else slot="media" class="item-initial">{{member.name[0]}}</span>
+                <f7-icon v-if="!member.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+                <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
               </f7-list-item>
             </f7-list>
           </f7-card>
@@ -157,6 +163,20 @@ export default {
       this.item = data
       this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
     })
+  },
+  methods: {
+    getItemTypeAndMetaLabel (item) {
+      let ret = item.type
+      if (item.metadata && item.metadata.semantics) {
+        ret += ' · '
+        const classParts = item.metadata.semantics.value.split('_')
+        ret += classParts[0]
+        if (classParts.length > 1) {
+          ret += '>' + classParts.pop()
+        }
+      }
+      return ret
+    }
   }
 }
 </script>

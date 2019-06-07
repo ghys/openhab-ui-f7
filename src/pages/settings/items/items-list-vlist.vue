@@ -11,7 +11,7 @@
           class="searchbar-items"
           :init="initSearchbar"
           search-container=".virtual-list"
-          search-in=".item-title"
+          search-in=".item-title, .item-subtitle, .item-footer"
           remove-diacritics
         ></f7-searchbar>
       </f7-subnavbar>
@@ -33,7 +33,7 @@
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow" v-if="!ready">
       <f7-block-title class="col wide">Loading...</f7-block-title>
-      <f7-list class="col wide">
+      <f7-list media-list class="col wide">
         <f7-list-group>
           <f7-list-item
             media-item
@@ -41,9 +41,11 @@
             :key="n"
             :class="`skeleton-text skeleton-effect-blink`"
             title="Label of the item"
-            subtitle="This contains the name of the item"
-            after="The item type"
+            subtitle="type + semantic metadata"
+            after="The item state"
+            footer="This contains the type of the item"
           >
+            <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media"></f7-skeleton-block>
           </f7-list-item>
         </f7-list-group>
       </f7-list>
@@ -55,24 +57,28 @@
           class="searchbar-found col wide"
           media-list
           virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 64 : $theme.aurora ? 46 : 73}"
+          :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 78 : $theme.aurora ? 60 : 87}"
         >
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
               :key="index"
               media-item
+              class="itemlist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(item.name)"
               @change="(e) => toggleItemCheck(e, item.name)"
               :link="showCheckboxes ? null : item.name"
               :title="(item.label) ? item.label : item.name"
-              :subtitle="(item.label) ? item.name : '-'"
-              :after="item.type"
+              :footer="(item.label) ? item.name : '\xa0'"
+              :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
+              :after="item.state"
             >
               <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
               <span v-else slot="media" class="item-initial">{{item.name[0]}}</span>
+              <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+              <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
             </f7-list-item>
           </ul>
         </f7-list>
@@ -91,6 +97,16 @@
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.itemlist-item .item-after
+  overflow hidden
+  max-width 30%
+  span
+    overflow hidden
+    text-overflow ellipsis
+</style>
+
 
 <script>
 export default {
@@ -115,7 +131,7 @@ export default {
     onPageAfterIn () {
       if (this.ready) return
       this.loading = true
-      this.$oh.api.get('/rest/items').then(data => {
+      this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
           const labelB = b.label || b.name
@@ -143,6 +159,7 @@ export default {
       for (let i = 0; i < items.length; i += 1) {
         var haystack = items[i].name
         if (items[i].label) haystack += ' ' + items[i].label
+        haystack += this.getItemTypeAndMetaLabel(items[i])
         if (
           haystack.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
           query.trim() === ''
@@ -152,6 +169,18 @@ export default {
     },
     renderExternal (vl, vlData) {
       this.vlData = vlData
+    },
+    getItemTypeAndMetaLabel (item) {
+      let ret = item.type
+      if (item.metadata && item.metadata.semantics) {
+        ret += ' · '
+        const classParts = item.metadata.semantics.value.split('_')
+        ret += classParts[0]
+        if (classParts.length > 1) {
+          ret += '>' + classParts.pop()
+        }
+      }
+      return ret
     },
     toggleCheck () {
       this.showCheckboxes = !this.showCheckboxes

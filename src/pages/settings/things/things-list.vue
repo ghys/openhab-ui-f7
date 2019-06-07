@@ -52,6 +52,7 @@
               :badge="thing.statusInfo.status"
               :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
             >
+              <f7-icon v-if="!thing.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
             </f7-list-item>
           </f7-list-group>
         </f7-list>

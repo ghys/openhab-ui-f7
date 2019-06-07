@@ -4,7 +4,7 @@
   <f7-statusbar></f7-statusbar>
 
   <!-- Left Panel -->
-  <f7-panel left :cover="showSidebar" class="sidebar">
+  <f7-panel left :cover="showSidebar" class="sidebar" resizable>
     <f7-page>
       <f7-list-item link="/" class="logo" panel-close v-if="themeOptions.dark === 'dark'">
         <img src="../static/img/openhab-logo-white.png" width="100%">
