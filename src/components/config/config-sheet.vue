@@ -3,17 +3,12 @@
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
       Show advanced <f7-checkbox :value="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
-    <f7-col v-if="parameterGroups.length">
-      <f7-block width="100" class="parameter-group" v-for="group in parameterGroups" :key="group.name">
+    <f7-col>
+      <f7-block width="100" class="parameter-group">
         <f7-row>
           <f7-col>
-            <f7-block-title class="parameter-group-title">{{group.label}}</f7-block-title>
-            <f7-block-footer class="param-description" v-if="group.description">
-              {{group.description}}
-            </f7-block-footer>
-
             <config-parameter
-              v-for="parameter in displayedParameters.filter((p) => p.groupName === group.name)"
+              v-for="parameter in displayedParameters.filter((p) => !p.groupName)"
               :key="parameter.name"
               :config-description="parameter"
               :value="configuration[parameter.name]"
@@ -22,12 +17,17 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-else>
-      <f7-block width="100" class="parameter-group">
+    <f7-col v-if="parameterGroups.length">
+      <f7-block width="100" class="parameter-group" v-for="group in parameterGroups" :key="group.name">
         <f7-row>
-          <f7-col>
+          <f7-col v-if="displayedParameters.some((p) => p.groupName === group.name)">
+            <f7-block-title class="parameter-group-title">{{group.label}}</f7-block-title>
+            <f7-block-footer class="param-description" v-if="group.description">
+              {{group.description}}
+            </f7-block-footer>
+
             <config-parameter
-              v-for="parameter in displayedParameters"
+              v-for="parameter in displayedParameters.filter((p) => p.groupName === group.name)"
               :key="parameter.name"
               :config-description="parameter"
               :value="configuration[parameter.name]"

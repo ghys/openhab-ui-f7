@@ -1,23 +1,17 @@
 <template>
-    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && !configDescription.context">
-      <f7-list-input
-        v-if="configDescription.type === 'TEXT' && !configDescription.options.length && !configDescription.context"
-        :label="configDescription.label"
-        :name="configDescription.name"
-        :value="value"
-        type="text" />
+    <f7-list class="config-parameter" :no-hairlines-md="configDescription.type !== 'BOOLEAN' && !configDescription.options.length && ['item'].indexOf(configDescription.context) < 0">
       <f7-list-input
         v-if="configDescription.type === 'INTEGER' && !configDescription.options.length && !configDescription.context"
         :name="configDescription.name"
         :label="configDescription.label"
         :value="actualValue"
         type="number" />
-      <f7-list-item v-if="configDescription.type === 'TEXT' && configDescription.context === 'script'"
+      <f7-list-item v-else-if="configDescription.type === 'TEXT' && configDescription.context === 'script'"
          :title="configDescription.label">
         <f7-button slot="after" @click="codeEditorOpened = true">Edit script</f7-button>
         <script-editor-popup :title="configDescription.label" :code="value" :opened="codeEditorOpened" @closed="codeEditorOpened = false"></script-editor-popup>
       </f7-list-item>
-      <item-picker v-if="configDescription.type === 'TEXT' && configDescription.context === 'item'"
+      <item-picker v-else-if="configDescription.type === 'TEXT' && configDescription.context === 'item'"
          :title="configDescription.label" />
       <f7-list-item v-else-if="configDescription.options.length"
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams">
@@ -25,9 +19,14 @@
           <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="actualValue === option.value">{{option.label}}</option>
         </select>
       </f7-list-item>
-      <f7-list-item v-if="configDescription.type === 'BOOLEAN'" :title="configDescription.label">
+      <f7-list-item v-else-if="configDescription.type === 'BOOLEAN'" :title="configDescription.label">
         <f7-toggle slot="after" :name="configDescription.name" :checked="actualValue"></f7-toggle>
       </f7-list-item>
+      <f7-list-input v-else
+        :label="configDescription.label"
+        :name="configDescription.name"
+        :value="value"
+        type="text" />
       <f7-block-footer slot="after-list" class="param-description">
         <small v-html="configDescription.description"></small>
       </f7-block-footer>
