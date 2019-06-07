@@ -224,9 +224,9 @@ module.exports = {
         swSrc: resolvePath('src/service-worker.js'),
       })
     ] : []),
-    new WebpackAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: '../report.html'
-    })
+    // new WebpackAnalyzerPlugin({
+    //   analyzerMode: 'static',
+    //   reportFilename: '../report.html'
+    // })
   ],
 };
