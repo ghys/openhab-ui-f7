@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar :title="`${rule.uid ? 'Edit' : 'Create'} rule`" back-link="Cancel" no-shadow no-hairline>
+    <f7-navbar :title="`${rule.uid ? 'Edit' : 'Create'} rule`" back-link="Cancel">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>

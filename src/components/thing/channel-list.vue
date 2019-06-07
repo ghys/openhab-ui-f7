@@ -90,11 +90,11 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-block v-if="isExtensible">
-      <f7-list>
+    <f7-col v-if="isExtensible">
+      <f7-list class="padding-left">
         <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" @click="addChannel()"></f7-list-button>
       </f7-list>
-    </f7-block>
+    </f7-col>
   </f7-block>
 </template>
 

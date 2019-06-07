@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Choose Binding" back-link="Back">
     </f7-navbar>
 
@@ -11,7 +11,7 @@
     ></f7-list-index>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-list v-if="loading" class="col binding-list">
+        <f7-list v-if="!ready" class="col binding-list">
           <f7-list-group>
             <f7-list-item
               v-for="n in 10"
@@ -39,7 +39,7 @@
 
       </f7-col>
     </f7-block>
-    <f7-block v-if="!loading && !bindings.length" class="block-narrow">
+    <f7-block v-if="ready && !bindings.length" class="block-narrow">
       <f7-col>
         <f7-block strong>
           <p>No bindings available.</p>
@@ -53,20 +53,26 @@
 export default {
   data () {
     return {
+      ready: false,
       loading: false,
       initSearchbar: false,
       bindings: []
     }
   },
   created () {
-    // this.$f7.preloader.show()
-    this.loading = true
-    this.$oh.api.get('/rest/bindings').then((data) => {
-      this.bindings = data.sort((a, b) => a.name.localeCompare(b.name))
-      this.loading = false
-    })
+
   },
-  methods: {}
+  methods: {
+    onPageAfterIn () {
+      // this.$f7.preloader.show()
+      this.loading = true
+      this.$oh.api.get('/rest/bindings').then((data) => {
+        this.bindings = data.sort((a, b) => a.name.localeCompare(b.name))
+        this.loading = false
+        this.ready = true
+      })
+    }
+  }
 }
 </script>
 

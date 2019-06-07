@@ -1,25 +1,10 @@
 <template>
-  <f7-page>
+  <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Things" back-link="Back">
-      <!-- <f7-nav-right>
-        <f7-link
-          class="searchbar-enable"
-          data-searchbar=".searchbar-things"
-          icon-ios="f7:search_strong"
-          icon-md="material:search"
-        ></f7-link>
-      </f7-nav-right>
-      <f7-searchbar
-        class="searchbar-things"
-        expandable
-        search-container=".contacts-list"
-        search-in=".item-title"
-        remove-diacritics
-      ></f7-searchbar> -->
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
-          class="searchbar-items"
+          class="searchbar-things"
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-title"
@@ -41,19 +26,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>{{things.length}} things</f7-block-title>
-        <!-- <f7-list class="search-list searchbar-found" media-list>
-          <f7-list-item
-            v-for="thing in things"
-            :key="thing.UID"
-            media-item
-            :link="thing.UID"
-            :title="thing.label"
-            :subtitle="thing.UID"
-            :badge="thing.statusInfo.status"
-            :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
-          ></f7-list-item>
-        </f7-list> -->
-        <f7-list v-if="loading" contacts-list class="col things-list">
+        <f7-list v-if="!ready" contacts-list class="col things-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -107,6 +80,7 @@
 export default {
   data () {
     return {
+      ready: false,
       loading: false,
       initSearchbar: false,
       things: [],
@@ -114,26 +88,29 @@ export default {
     }
   },
   created () {
-    // this.$f7.preloader.show()
-    this.loading = true
-    this.$oh.api.get('/rest/things').then((data) => {
-      this.things = data.sort((a, b) => a.label.localeCompare(b.label))
-      this.indexedThings = this.things.reduce((prev, thing, i, items) => {
-        const initial = thing.label.substring(0, 1).toUpperCase()
-        if (!prev[initial]) {
-          prev[initial] = []
-        }
-        prev[initial].push(thing)
 
-        return prev
-      }, {})
-      this.initSearchbar = true
-      this.loading = false
-      setTimeout(() => { this.$refs.listIndex.update() })
-      // this.$f7.preloader.hide()
-    })
   },
-  methods: {}
+  methods: {
+    onPageAfterIn () {
+      this.loading = true
+      this.$oh.api.get('/rest/things').then((data) => {
+        this.things = data.sort((a, b) => a.label.localeCompare(b.label))
+        this.indexedThings = this.things.reduce((prev, thing, i, items) => {
+          const initial = thing.label.substring(0, 1).toUpperCase()
+          if (!prev[initial]) {
+            prev[initial] = []
+          }
+          prev[initial].push(thing)
+
+          return prev
+        }, {})
+        this.initSearchbar = true
+        this.loading = false
+        this.ready = true
+        setTimeout(() => { this.$refs.listIndex.update() })
+      })
+    }
+  }
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page @page:init="onPageInit">
     <f7-navbar title-large="Settings" title="Settings" back-link="Back">
       <f7-nav-right>
         <f7-link
@@ -54,13 +54,13 @@
               badge-color="blue"
               :footer="objectsSubtitles.items"
             ></f7-list-item>
-            <f7-list-item
+            <!-- <f7-list-item
               link="items-virtual/"
               title="Items (virtual)"
               :after="itemsCount"
               badge-color="blue"
               :footer="objectsSubtitles.items"
-            ></f7-list-item>
+            ></f7-list-item> -->
             <f7-list-item
               link="rules/"
               title="Rules"
@@ -133,20 +133,22 @@ export default {
       itemsCount: ''
     }
   },
-  beforeCreate () {
-    // can be done in parallel!
-    this.$oh.api.get('/rest/services').then((data) => {
-      this.systemServices = data.filter(s => s.category === 'system')
-      this.otherServices = data.filter(s => s.category !== 'system')
-      this.servicesLoaded = true
-    })
-    this.$oh.api.get('/rest/extensions/types').then((data) => {
-      this.addonTypes = data
-      this.addonsLoaded = true
-    })
-    this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.length.toString() })
-    this.$oh.api.get('/rest/things').then((data) => { this.thingsCount = data.length.toString() })
-    this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
+  methods: {
+    onPageInit () {
+      // can be done in parallel!
+      this.$oh.api.get('/rest/services').then((data) => {
+        this.systemServices = data.filter(s => s.category === 'system')
+        this.otherServices = data.filter(s => s.category !== 'system')
+        this.servicesLoaded = true
+      })
+      this.$oh.api.get('/rest/extensions/types').then((data) => {
+        this.addonTypes = data
+        this.addonsLoaded = true
+      })
+      this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.length.toString() })
+      this.$oh.api.get('/rest/things').then((data) => { this.thingsCount = data.length.toString() })
+      this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
+    }
   }
 }
 </script>

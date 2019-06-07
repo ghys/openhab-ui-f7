@@ -1,10 +1,10 @@
 <template>
-  <f7-page>
+  <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Inbox" back-link="Back">
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
-          class="searchbar-items"
+          class="searchbar-inbox"
           :init="initSearchbar"
           search-container=".contacts-list"
           search-in=".item-title"
@@ -26,7 +26,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title>{{inbox.length}} entries</f7-block-title>
-        <f7-list v-if="loading" contacts-list class="col inbox-list">
+        <f7-list v-if="!ready" contacts-list class="col inbox-list">
           <f7-list-group>
             <f7-list-item
               media-item
@@ -34,8 +34,8 @@
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the thing"
-              subtitle="This contains the thing UID"
-              after="status badge"
+              subtitle="This contains the inbox UID"
+              footer="binding:thingUID"
             >
             </f7-list-item>
           </f7-list-group>
@@ -61,7 +61,7 @@
 
       </f7-col>
     </f7-block>
-    <f7-block v-if="!loading && !inbox.length" class="block-narrow">
+    <f7-block v-if="ready && !inbox.length" class="block-narrow">
       <f7-col>
         <f7-block strong>
           <p>Inbox is empty.</p>
@@ -83,6 +83,7 @@
 export default {
   data () {
     return {
+      ready: false,
       loading: false,
       initSearchbar: false,
       inbox: [],
@@ -90,26 +91,30 @@ export default {
     }
   },
   created () {
-    // this.$f7.preloader.show()
-    this.loading = true
-    this.$oh.api.get('/rest/inbox').then((data) => {
-      this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
-      this.indexedInbox = this.inbox.reduce((prev, entry, i, inbox) => {
-        const initial = entry.label.substring(0, 1).toUpperCase()
-        if (!prev[initial]) {
-          prev[initial] = []
-        }
-        prev[initial].push(entry)
 
-        return prev
-      }, {})
-      this.initSearchbar = true
-      this.loading = false
-      setTimeout(() => { this.$refs.listIndex.update() })
-      // this.$f7.preloader.hide()
-    })
   },
   methods: {
+    onPageAfterIn () {
+      // this.$f7.preloader.show()
+      this.loading = true
+      this.$oh.api.get('/rest/inbox').then((data) => {
+        this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
+        this.indexedInbox = this.inbox.reduce((prev, entry, i, inbox) => {
+          const initial = entry.label.substring(0, 1).toUpperCase()
+          if (!prev[initial]) {
+            prev[initial] = []
+          }
+          prev[initial].push(entry)
+
+          return prev
+        }, {})
+        this.initSearchbar = true
+        this.loading = false
+        this.ready = true
+        setTimeout(() => { this.$refs.listIndex.update() })
+        // this.$f7.preloader.hide()
+      })
+    },
     openEntryActions (entry) {
       let actions = this.$f7.actions.create({
         convertToPopover: true,

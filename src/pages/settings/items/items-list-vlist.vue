@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Items" back-link="Back">
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
@@ -30,9 +30,10 @@
     <f7-list class="searchbar-not-found">
       <f7-list-item title="Nothing found"></f7-list-item>
     </f7-list>
-    <f7-block class="block-narrow" v-if="loading">
+    <!-- skeleton for not ready -->
+    <f7-block class="block-narrow" v-if="!ready">
       <f7-block-title class="col wide">Loading...</f7-block-title>
-      <f7-list v-if="loading" class="col wide">
+      <f7-list class="col wide">
         <f7-list-group>
           <f7-list-item
             media-item
@@ -47,11 +48,11 @@
         </f7-list-group>
       </f7-list>
     </f7-block>
-    <f7-block class="block-narrow" v-if="items.length > 0">
+    <f7-block class="block-narrow" v-else>
       <f7-col>
-        <f7-block-title>{{items.length}} items</f7-block-title>
+        <f7-block-title class="col wide">{{items.length}} items</f7-block-title>
         <f7-list
-          class="searchbar-found"
+          class="searchbar-found col wide"
           media-list
           virtual-list
           :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 64 : $theme.aurora ? 46 : 73}"
@@ -95,6 +96,7 @@
 export default {
   data () {
     return {
+      ready: false,
       loading: false,
       items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       indexedItems: {},
@@ -107,48 +109,35 @@ export default {
     }
   },
   created () {
-    this.loading = true
-    this.$oh.api.get('/rest/items').then(data => {
-      this.items = data
-      // simulate a large list
-      // this.items = [
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data,
-      //   ...data
-      // ]
-      this.items = this.items.sort((a, b) => {
-        const labelA = a.label || a.name
-        const labelB = b.label || b.name
-        return labelA.localeCompare(labelB)
-      })
-      this.indexedItems = this.items.reduce((prev, item, i, items) => {
-        const initial = (item.label) ? item.label.substring(0, 1).toUpperCase() : item.name.substring(0, 1).toUpperCase()
-        if (!prev[initial]) {
-          prev[initial] = []
-        }
-        prev[initial].push(item)
 
-        return prev
-      }, {})
-      this.loading = false
-
-      setTimeout(() => {
-        this.initSearchbar = true
-      })
-    })
   },
   methods: {
+    onPageAfterIn () {
+      if (this.ready) return
+      this.loading = true
+      this.$oh.api.get('/rest/items').then(data => {
+        this.items = data.sort((a, b) => {
+          const labelA = a.label || a.name
+          const labelB = b.label || b.name
+          return labelA.localeCompare(labelB)
+        })
+        this.indexedItems = this.items.reduce((prev, item, i, items) => {
+          const initial = (item.label) ? item.label.substring(0, 1).toUpperCase() : item.name.substring(0, 1).toUpperCase()
+          if (!prev[initial]) {
+            prev[initial] = []
+          }
+          prev[initial].push(item)
+
+          return prev
+        }, {})
+        this.loading = false
+        this.ready = true
+
+        setTimeout(() => {
+          this.initSearchbar = true
+        })
+      })
+    },
     searchAll (query, items) {
       const found = []
       for (let i = 0; i < items.length; i += 1) {
