@@ -28,6 +28,7 @@ import ThingsListPage from '../pages/settings/things/things-list.vue'
 import ThingDetailsPage from '../pages/settings/things/thing-details.vue'
 import AddThingChooseBindingPage from '../pages/settings/things/add/choose-binding.vue'
 import AddThingChooseThingTypePage from '../pages/settings/things/add/choose-thing-type.vue'
+import AddThingPage from '../pages/settings/things/add/thing-add.vue'
 
 import InboxListPage from '../pages/settings/inbox/inbox-list.vue'
 
@@ -156,7 +157,13 @@ export default [
             routes: [
               {
                 path: ':bindingId',
-                component: AddThingChooseThingTypePage
+                component: AddThingChooseThingTypePage,
+                routes: [
+                  {
+                    path: ':thingTypeId',
+                    component: AddThingPage
+                  }
+                ]
               }
             ]
           },

@@ -1,7 +1,7 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet">
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
-      Show advanced <f7-checkbox :value="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
+      <label @click="toggleAdvanced">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
     <f7-col>
       <f7-block width="100" class="parameter-group">
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     toggleAdvanced (event) {
-      this.showAdvanced = event.target.checked
+      this.showAdvanced = !this.showAdvanced // event.target.checked
     }
   }
 }

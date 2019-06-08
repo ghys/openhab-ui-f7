@@ -1,101 +1,34 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar :title="thing.label" back-link="Back" no-hairline></f7-navbar>
-    <f7-toolbar tabbar position="top">
-      <f7-link tab-link="#info" tab-link-active>Info</f7-link>
-      <f7-link tab-link="#config">Config</f7-link>
-      <f7-link tab-link="#channels">Channels</f7-link>
-    </f7-toolbar>
+    <f7-navbar :title="(ready) ? 'New ' + thingType.label : 'New Thing'" back-link="Back">
+      <f7-nav-right>
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Add</f7-link>
+      </f7-nav-right>
+    </f7-navbar>
 
-    <f7-tabs>
-      <f7-tab id="info" tab-active @tab:show="() => this.currentTab = 'info'">
-        <f7-block v-if="ready" class="block-narrow padding-left padding-right" strong>
-          <f7-col>Status:
-            <f7-chip class="margin-left"
-              :text="thing.statusInfo.status"
-              :color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
-            >{{thing.statusInfo.status}}</f7-chip>
-            <div v-if="thing.statusInfo.statusDetail !== 'NONE' || thing.statusInfo.description">
-              <strong
-                v-if="thing.statusInfo.statusDetail !== 'NONE'"
-              >{{thing.statusInfo.statusDetail}}</strong>
-              <br>
-              <div v-if="thing.statusInfo.description">{{thing.statusInfo.description}}</div>
-            </div>
-          </f7-col>
-        </f7-block>
-        <!-- skeletons for not ready -->
-        <f7-block v-else class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
-          <f7-col>______:
-            <f7-chip class="margin-left" text="________"></f7-chip>
-            <div>
-              <strong>____ _______</strong>
-              <br>
-            </div>
-          </f7-col>
-        </f7-block>
+    <f7-block v-if="ready" class="block-narrow padding-left padding-right">
+      <f7-col>
+        <h3>{{thingType.label}}</h3>
+        <div v-html="thingType.description"></div>
+      </f7-col>
+    </f7-block>
+    <!-- skeletons for not ready -->
+    <f7-block v-else class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink">
+      <f7-col>
+        <h3>____ _______</h3>
+        <div>____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
+      </f7-col>
+    </f7-block>
 
-        <f7-block v-if="ready" class="block-narrow padding-left padding-right">
-          <f7-col>
-            <h3>{{thingType.label}}</h3>
-            <div v-html="thingType.description"></div>
-          </f7-col>
-        </f7-block>
-        <!-- skeletons for not ready -->
-        <f7-block v-else class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink">
-          <f7-col>
-            <h3>____ _______</h3>
-            <div>____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
-          </f7-col>
-        </f7-block>
-
-        <f7-block class="block-narrow" v-if="ready && thing.properties">
-          <f7-col>
-            <f7-block-title v-if="Object.keys(thing.properties).length > 0">Properties</f7-block-title>
-            <f7-list>
-              <!-- <f7-list-item v-if="Object.keys(thing.properties).length > 0" divider>Properties</f7-list-item> -->
-              <f7-list-item
-                v-for="(value, key) in thing.properties"
-                :key="key"
-                :title="key"
-                :after="value"
-              ></f7-list-item>
-            </f7-list>
-          </f7-col>
-        </f7-block>
-
-        <f7-block class="block-narrow" v-if="ready">
-          <f7-col>
-            <f7-list>
-              <f7-list-item>
-                <span>Thing is activated</span>
-                <f7-toggle :checked="thingEnabled"></f7-toggle>
-              </f7-list-item>
-              <!-- <f7-list-item v-if="Object.keys(thing.properties).length > 0" divider>Properties</f7-list-item> -->
-              <f7-list-button color="red" title="Delete Thing"></f7-list-button>
-            </f7-list>
-          </f7-col>
-        </f7-block>
-      </f7-tab>
-
-      <f7-tab id="config" :disabled="!(thing.configuration && thingType.configParameters)" @tab:show="() => this.currentTab = 'config'">
-        <f7-block v-if="currentTab === 'config'" class="block-narrow">
-          <thing-general-settings :thing="thing" :thing-type="thingType" />
-          <config-sheet
-            :parameter-groups="thingType.parameterGroups"
-            :parameters="thingType.configParameters"
-            :configuration="thing.configuration"
-          />
-        </f7-block>
-      </f7-tab>
-
-      <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'">
-        <f7-block v-if="currentTab === 'channels'" class="block-narrow">
-          <channel-list :thingType="thingType" :thing="thing"
-          />
-        </f7-block>
-      </f7-tab>
-    </f7-tabs>
+    <f7-block v-if="ready" class="block-narrow">
+      <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" />
+      <config-sheet
+        :parameter-groups="thingType.parameterGroups"
+        :parameters="thingType.configParameters"
+        :configuration="thing.configuration"
+      />
+    </f7-block>
 
     <f7-fab position="right-bottom" color="blue" slot="fixed" @click="codePopupOpened = true">
       <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text" ></f7-icon>
@@ -167,25 +100,34 @@ textarea.textual-definition {
 <script>
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
-import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
 let copyToast = null
 
+function uuidv4 () {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  )
+}
+
 export default {
   components: {
     ConfigSheet,
-    ChannelList,
     ThingGeneralSettings
   },
-  props: ['thingId'],
+  props: ['thingTypeId'],
   data () {
     return {
       ready: false,
       currentTab: 'info',
-      thing: {},
+      thing: {
+        UID: '',
+        label: '',
+        configuration: {},
+        channels: [],
+        thingTypeUID: this.thingTypeId
+      },
       thingType: {},
-      thingEnabled: true,
       codePopupOpened: false
     }
   },
@@ -261,13 +203,16 @@ export default {
   methods: {
     onPageAfterIn () {
       if (this.ready) return
-      this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
-        this.thing = data
-
-        this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID).then(data2 => {
-          this.thingType = data2
-          this.ready = true
-        })
+      this.$oh.api.get('/rest/thing-types/' + this.thingTypeId).then(data => {
+        this.thingType = data
+        try {
+          this.thing.ID = uuidv4().split('-')[0]
+          this.thing.UID = this.thingTypeId + ':' + this.thing.ID
+        } catch (e) {
+          console.log('Cannot generate ID: ' + e)
+        }
+        this.thing.label = this.thingType.label
+        this.ready = true
       })
     },
     copyTextualDefinition () {
@@ -277,5 +222,10 @@ export default {
       copyToast.open()
     }
   }
+  // watch: {
+  //   thingId (val) {
+  //     this.thing.UID = this.thingTypeUID.UID + ':' + this.thingId
+  //   }
+  // }
 }
 </script>
