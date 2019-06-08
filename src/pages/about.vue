@@ -8,9 +8,9 @@
           <f7-block>
             <img src="static/icons/128x128.png" width="96" class="padding float-right">
             <h3>openHAB version {{this.$f7.version}}</h3>
-            <p><a target="_blank" href="https://www.openhab.org/">Home page</a></p>
-            <p><a target="_blank" href="https://www.openhab.org/docs/">Documentation</a></p>
-            <p><a target="_blank" href="https://community.openhab.org/">Community forum</a></p>
+            <p><f7-link external target="_blank" href="https://www.openhab.org/">Home page</f7-link></p>
+            <p><f7-link external target="_blank" href="https://www.openhab.org/docs/">Documentation</f7-link></p>
+            <p><f7-link external target="_blank" href="https://community.openhab.org/">Community forum</f7-link></p>
           </f7-block>
           <!-- <f7-block>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni molestiae laudantium dignissimos est nobis delectus nemo ea alias voluptatum architecto, amet similique, saepe iste consectetur in repellat ut minus quibusdam!</p>

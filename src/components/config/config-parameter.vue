@@ -4,7 +4,10 @@
         v-if="configDescription.type === 'INTEGER' && !configDescription.options.length && !configDescription.context"
         :name="configDescription.name"
         :label="configDescription.label"
+        :floating-label="$theme.md"
         :value="actualValue"
+        :required="configDescription.required" validate
+        :clear-button="!configDescription.required"
         type="number" />
       <f7-list-item v-else-if="configDescription.type === 'TEXT' && configDescription.context === 'script'"
          :title="configDescription.label">
@@ -23,9 +26,12 @@
         <f7-toggle slot="after" :name="configDescription.name" :checked="actualValue"></f7-toggle>
       </f7-list-item>
       <f7-list-input v-else
+        :floating-label="$theme.md"
         :label="configDescription.label"
         :name="configDescription.name"
         :value="value"
+        :required="configDescription.required" validate
+        :clear-button="!configDescription.required"
         type="text" />
       <f7-block-footer slot="after-list" class="param-description">
         <small v-html="configDescription.description"></small>
@@ -70,7 +76,7 @@ export default {
   },
   created () {
     if (this.configDescription.options.length < 10) {
-      this.smartSelectParams.openIn = 'popover'
+      this.smartSelectParams.openIn = (this.configDescription.options.some((o) => o.label.length > 25)) ? 'sheet' : 'popover'
     } else if (this.configDescription.options.length > 100) {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
@@ -87,8 +93,14 @@ export default {
 </script>
 
 <style lang="stylus">
+.parameter-group.block
+  margin-top 0
+  margin-bottom 0
 .param-description
   padding-left 16px !important
+  &.block-footer
+    margin-top 2px
+    margin-bottom 1rem
   p
     margin 0 !important
 .smart-select-popover.popover
