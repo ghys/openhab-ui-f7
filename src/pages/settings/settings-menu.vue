@@ -27,7 +27,7 @@
         </f7-col>
       </f7-row>
     </f7-block>-->
-    <f7-block class="block-narrow after-big-title" v-show="addonsLoaded && servicesLoaded">
+    <f7-block class="block-narrow after-big-title settings-menu" v-show="addonsLoaded && servicesLoaded">
       <f7-row>
         <f7-col width="100" tablet-width="50">
           <f7-block-title>Configuration &amp; Automation</f7-block-title>
@@ -153,5 +153,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="stylus">
+.device-desktop .settings-menu
+  --f7-list-item-footer-line-height 1.3
 </style>
