@@ -41,7 +41,7 @@
             :key="n"
             :class="`skeleton-text skeleton-effect-blink`"
             title="Label of the item"
-            subtitle="type + semantic metadata"
+            subtitle="type, semantic metadata"
             after="The item state"
             footer="This contains the type of the item"
           >
@@ -106,7 +106,6 @@
     overflow hidden
     text-overflow ellipsis
 </style>
-
 
 <script>
 export default {

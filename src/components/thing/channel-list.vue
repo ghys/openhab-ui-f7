@@ -9,7 +9,7 @@
             disable-link-text="Cancel"
             placeholder="Search channels"
             search-container=".channel-group"
-            search-in=".item-title, .item-subtitle, .item-footer"
+            search-in=".channel-item .item-title, .channel-item .item-subtitle, .channel-item .item-footer"
             search-group=".channel-group .row"
             :clear-button="true"
           ></f7-searchbar>

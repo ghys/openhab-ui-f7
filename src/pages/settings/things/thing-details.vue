@@ -251,6 +251,7 @@ export default {
   },
   methods: {
     onPageAfterIn () {
+      if (this.ready) return
       this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
         this.thing = data
 

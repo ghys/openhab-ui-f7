@@ -64,7 +64,7 @@
                 media-item
                 class="itemlist-item"
                 @change="(e) => toggleItemCheck(e, member.name)"
-                link="edit"
+                :link="'/settings/items/' + member.name"
                 :title="(member.label) ? member.label : member.name"
                 :footer="(member.label) ? member.name : '\xa0'"
                 :subtitle="getItemTypeAndMetaLabel(member)"

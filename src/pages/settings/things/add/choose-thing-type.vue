@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforein="onPageBeforeIn">
     <f7-navbar title="Add a new Thing" back-link="Back">
     </f7-navbar>
 
@@ -74,6 +74,9 @@ export default {
 
   },
   methods: {
+    onPageBeforeIn () {
+      this.scan()
+    },
     onPageAfterIn () {
       // this.$f7.preloader.show()
       this.loading = true
@@ -86,7 +89,7 @@ export default {
           })
         this.loading = false
         this.ready = true
-        this.scan()
+        // this.scan()
       })
     },
     scan () {
