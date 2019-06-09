@@ -1,5 +1,5 @@
 <template>
-  <f7-page v-on:page:afterin="displayCards">
+  <f7-page v-on:page:afterin="displayCards" class="home-page">
     <f7-navbar>  <!-- title-large="Home"> -->
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
@@ -33,6 +33,12 @@
     </f7-tabs>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.home-page .page-content::-webkit-scrollbar
+    width 0
+</style>
+
 <script>
 import OverviewTab from './home/overview-tab.vue'
 import LocationsTab from './home/locations-tab.vue'
