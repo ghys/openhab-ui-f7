@@ -51,8 +51,8 @@
       </f7-list>
     </f7-block>
     <f7-block class="block-narrow" v-else>
+      <f7-block-title class="col wide">{{items.length}} items</f7-block-title>
       <f7-col>
-        <f7-block-title class="col wide">{{items.length}} items</f7-block-title>
         <f7-list
           class="searchbar-found col wide"
           media-list

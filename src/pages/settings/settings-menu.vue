@@ -54,6 +54,12 @@
               badge-color="blue"
               :footer="objectsSubtitles.items"
             ></f7-list-item>
+            <f7-list-item
+              link="model/"
+              title="Semantic Model"
+              badge-color="blue"
+              :footer="objectsSubtitles.model"
+            ></f7-list-item>
             <!-- <f7-list-item
               link="items-virtual/"
               title="Items (virtual)"
@@ -115,8 +121,9 @@ export default {
       otherServices: [],
       objectsSubtitles: {
         inbox: 'Add new things to your system',
-        things: 'Manage the physical layer, link to items',
-        items: 'The conceptual model of your home',
+        things: 'Manage the physical layer',
+        items: 'Manage the functional layer',
+        model: 'The conceptual model of your home',
         rules: 'Automate without programming'
       },
       addonsSubtitles: {

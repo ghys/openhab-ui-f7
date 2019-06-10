@@ -32,6 +32,8 @@ import AddThingPage from '../pages/settings/things/add/thing-add.vue'
 
 import InboxListPage from '../pages/settings/inbox/inbox-list.vue'
 
+import SemanticModelPage from '../pages/settings/model/model.vue'
+
 import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
 import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
 
@@ -172,6 +174,22 @@ export default [
             component: ThingDetailsPage
           }
         ]
+      },
+      {
+        path: 'model',
+        component: SemanticModelPage
+        // routes: [
+        //   {
+        //     path: ':itemName',
+        //     component: ItemDetailsPage,
+        //     routes: [
+        //       {
+        //         path: 'edit',
+        //         component: ItemEditPage
+        //       }
+        //     ]
+        //   }
+        // ]
       },
       {
         path: 'rules/',
