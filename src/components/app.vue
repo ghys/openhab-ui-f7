@@ -135,18 +135,23 @@ export default {
     PanelRight
   },
   data () {
+    let theme = localStorage.getItem('openhab.ui:theme')
+    // choose Aurora as default theme for desktops
+    if ((!theme || theme === 'auto') && this.$device.desktop) {
+      theme = 'aurora'
+    }
+
     return {
       // Framework7 Parameters
       f7params: {
         id: 'org.openhab.ui', // App bundle ID
         name: 'openHAB', // App name
-        theme: localStorage.getItem('openhab.ui:theme') || 'auto',
+        theme: theme,
         // theme: (document.documentURI && document.documentURI.indexOf('?theme=ios') > 0) ? 'ios'
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'
         //     : 'auto', // Automatic theme detection
-        autoDarkTheme: true,
         // App root data
-        data: function () {
+        data () {
           return {
           }
         },
