@@ -146,7 +146,7 @@ export default {
       f7params: {
         id: 'org.openhab.ui', // App bundle ID
         name: 'openHAB', // App name
-        theme: theme,
+        theme: theme || 'auto',
         // theme: (document.documentURI && document.documentURI.indexOf('?theme=ios') > 0) ? 'ios'
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'
         //     : 'auto', // Automatic theme detection
