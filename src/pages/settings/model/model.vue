@@ -185,35 +185,85 @@ export default {
       })
     },
     getChildren (parent) {
-      parent.children.locations = this.locations
-        .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-        .map((i) => {
-          return {
-            item: i,
-            class: i.metadata.semantics.value,
-            children: {
-              locations: [],
-              equipments: [],
-              points: []
+      if (parent.class.indexOf('Location_') === 0) {
+        parent.children.locations = this.locations
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
+          .map((i) => {
+            return {
+              item: i,
+              class: i.metadata.semantics.value,
+              children: {
+                locations: [],
+                equipments: [],
+                points: []
+              }
             }
-          }
+          })
+        parent.children.locations.forEach((l) => {
+          this.getChildren(l)
         })
-      parent.children.locations.forEach((l) => {
-        this.getChildren(l)
-      })
-      parent.children.equipments = this.equipments
-        .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-        .map((i) => {
-          return {
-            item: i,
-            class: i.metadata.semantics.value,
-            children: {
-              locations: [],
-              equipments: [],
-              points: []
+        parent.children.equipments = this.equipments
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
+          .map((i) => {
+            return {
+              item: i,
+              class: i.metadata.semantics.value,
+              children: {
+                locations: [],
+                equipments: [],
+                points: []
+              }
             }
-          }
+          })
+        parent.children.equipments.forEach((e) => {
+          this.getChildren(e)
         })
+
+        parent.children.points = this.points
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
+          .map((i) => {
+            return {
+              item: i,
+              class: i.metadata.semantics.value,
+              children: {
+                locations: [],
+                equipments: [],
+                points: []
+              }
+            }
+          })
+      } else {
+        parent.children.equipments = this.equipments
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
+          .map((i) => {
+            return {
+              item: i,
+              class: i.metadata.semantics.value,
+              children: {
+                locations: [],
+                equipments: [],
+                points: []
+              }
+            }
+          })
+        parent.children.equipments.forEach((e) => {
+          this.getChildren(e)
+        })
+
+        parent.children.points = this.points
+          .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
+          .map((i) => {
+            return {
+              item: i,
+              class: i.metadata.semantics.value,
+              children: {
+                locations: [],
+                equipments: [],
+                points: []
+              }
+            }
+          })
+      }
     },
     selectItem (item) {
       this.selectedItem = item

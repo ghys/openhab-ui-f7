@@ -15,6 +15,12 @@
       :model="equipment" @selected="(event) => $emit('selected', event)"
       :selected="selected" />
     </div>
+    <div v-if="model.children.points.length > 0">
+      <model-treeview-item v-for="point in model.children.points"
+      :key="point.item.name"
+      :model="point" @selected="(event) => $emit('selected', event)"
+      :selected="selected" />
+    </div>
     <div slot="label" class="semantic-class"> {{className()}}</div>
   </f7-treeview-item>
 </template>
@@ -26,13 +32,19 @@ export default {
     icon (theme) {
       if (this.model.class.indexOf('Location_') === 0) {
         return (theme === 'md') ? 'material:place' : 'f7:placemark'
-      }
-      if (this.model.class.indexOf('Equipment_') === 0) {
+      } else if (this.model.class.indexOf('Equipment_') === 0) {
         return (theme === 'md') ? 'material:highlight' : 'f7:bulb'
+      } else if (this.model.class.indexOf('Point_') === 0) {
+        return (theme === 'md') ? 'material:flash_on' : 'f7:bolt_fill'
       }
+      return ''
     },
     className () {
-      return this.model.class.substring(this.model.class.lastIndexOf('_') + 1)
+      const semantics = this.model.item.metadata.semantics
+      const property = (semantics.config && semantics.config.relatesTo)
+        ? semantics.config.relatesTo : null
+      return this.model.class.substring(this.model.class.lastIndexOf('_') + 1) +
+        ((property) ? ' (' + property.replace('Property_', '') + ')' : '')
     },
     select (event) {
       var self = this
