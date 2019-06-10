@@ -1,10 +1,11 @@
 <template>
   <f7-page v-on:page:afterin="displayCards" class="home-page">
-    <f7-navbar>  <!-- title-large="Home"> -->
+    <f7-navbar>
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
-      <f7-nav-title>Home</f7-nav-title>
+      <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'">{{title}}</f7-nav-title-large>
+      <f7-nav-title>{{title}}</f7-nav-title>
       <f7-nav-right>
         <f7-link icon-ios="f7:tabs" icon-aurora="f7:tabs" icon-md="material:exit_to_app" panel-open="right"></f7-link>
       </f7-nav-right>
@@ -17,7 +18,7 @@
       <f7-link tab-link="#tab-properties" class="tabbar-label" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on">Properties</f7-link>
     </f7-toolbar>
 
-    <f7-tabs>
+    <f7-tabs :class="{ 'after-big-title': $f7.data.themeOptions.homeNavbar !== 'simple' }">
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
         <overview-tab v-if="currentTab === 'overview'" />
       </f7-tab>
@@ -147,6 +148,22 @@ export default {
     },
     displayCards () {
       setTimeout(() => { this.showCards = true }, 3000)
+    }
+  },
+  computed: {
+    title () {
+      switch (this.currentTab) {
+        case 'overview':
+          return 'Home'
+        case 'locations':
+          return 'Locations'
+        case 'equipments':
+          return 'Equipments'
+        case 'properties':
+          return 'Properties'
+        default:
+          return 'Home'
+      }
     }
   }
 }

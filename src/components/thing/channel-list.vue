@@ -17,7 +17,7 @@
       </f7-row>
     </f7-block>
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
-      Show advanced <f7-checkbox :value="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
+      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :value="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
     <f7-col v-if="thingType.channelGroups.length">
       <f7-block width="100" class="channel-group">
@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     toggleAdvanced (event) {
-      this.showAdvanced = event.target.checked
+      this.showAdvanced = !this.showAdvanced // event.target.checked
     },
     channelOpened (payload) {
       console.log('caught channel-opened')

@@ -36,6 +36,10 @@
   .message
     max-width initial
 
+.habot-chatbar
+  transform none !important
+  top 0 !important
+
 .ios .habot-chatbar input
   border-radius 22px !important
 

@@ -1,5 +1,5 @@
 <template>
-  <f7-card expandable card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
+  <f7-card expandable :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
     <f7-card-content :padding="false">
       <div :class="`bg-color-${color}`" :style="{height: '300px'}">
         <f7-card-header text-color="white" class="display-block">

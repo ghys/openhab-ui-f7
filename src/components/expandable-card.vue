@@ -1,5 +1,5 @@
 <template>
-  <f7-card expandable :animate="false" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
+  <f7-card expandable :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
     <f7-card-content :padding="false">
       <div
         v-if="header === 'image'"

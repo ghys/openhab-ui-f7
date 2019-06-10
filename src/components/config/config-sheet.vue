@@ -1,7 +1,7 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet">
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
-      <label @click="toggleAdvanced">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
+      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
     <f7-col>
       <f7-block width="100" class="parameter-group">
@@ -49,6 +49,9 @@
   padding-right 0
 .param-description.block-footer h1
   font-size 1em
+
+.advanced-label
+  cursor pointer
 </style>
 
 <script>

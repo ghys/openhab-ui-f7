@@ -232,10 +232,14 @@ export default {
   created () {
     this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
     this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || 'default'
+    this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+    this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
     // this.loginScreenOpened = true
   },
   mounted () {
     this.$f7ready((f7) => {
+      this.$f7.data.themeOptions = this.themeOptions
+
       // Init cordova APIs (see cordova-app.js)
       if (f7.device.cordova) {
         cordovaApp.init(f7)

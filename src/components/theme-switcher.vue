@@ -1,13 +1,13 @@
 <template>
   <f7-block strong>
-    <p>Theme</p>
+    <f7-block-title class="padding-left">Theme</f7-block-title>
     <f7-segmented>
       <f7-button round color="blue" raised :fill="theme === 'auto'" @click="switchTheme('auto')">Auto</f7-button>
       <f7-button round color="blue" raised :fill="theme === 'md'" @click="switchTheme('md')">MD</f7-button>
       <f7-button round color="blue" raised :fill="theme === 'ios'" @click="switchTheme('ios')">iOS</f7-button>
       <f7-button round color="blue" raised :fill="theme === 'aurora'" @click="switchTheme('aurora')">Aurora</f7-button>
     </f7-segmented>
-    <p>Dark mode</p>
+    <f7-block-title>Dark mode</f7-block-title>
     <f7-row>
       <f7-col width="50" class="bg-color-white demo-theme-picker" @click="setThemeDark('light')">
         <f7-checkbox checked disabled v-if="darkMode === 'light'" />
@@ -16,7 +16,7 @@
         <f7-checkbox checked disabled v-if="darkMode === 'dark'" />
       </f7-col>
     </f7-row>
-    <p>Navigation bars style</p>
+    <f7-block-title>Navigation bars style</f7-block-title>
     <f7-row>
       <f7-col width="50" class="demo-bars-picker demo-bars-picker-fill" @click="setBarsStyle('default')">
         <div class="demo-navbar"></div>
@@ -25,6 +25,22 @@
       <f7-col width="50" class="demo-bars-picker demo-bars-picker-empty" @click="setBarsStyle('light')">
         <div class="demo-navbar"></div>
         <f7-checkbox checked disabled v-if="barsStyle === 'light'" />
+      </f7-col>
+    </f7-row>
+
+    <f7-row>
+      <f7-col>
+        <f7-block-title>Home page</f7-block-title>
+        <f7-list>
+          <f7-list-item>
+            <span>Simple navigation bar</span>
+            <f7-toggle :checked="homePageNavbarStyle === 'simple'" @toggle:change="setHomePageNavbarStyle"></f7-toggle>
+          </f7-list-item>
+          <f7-list-item>
+            <span>Disable card expansion animations</span>
+            <f7-toggle :checked="expandableCardsAnimation === 'disabled'" @toggle:change="setExpandableCardAnimation"></f7-toggle>
+          </f7-list-item>
+        </f7-list>
       </f7-col>
     </f7-row>
   </f7-block>
@@ -44,6 +60,14 @@ export default {
     setBarsStyle (value) {
       localStorage.setItem('openhab.ui:theme.bars', value)
       location.reload()
+    },
+    setHomePageNavbarStyle (value) {
+      localStorage.setItem('openhab.ui:theme.home.navbar', (value) ? 'simple' : 'default')
+      location.reload()
+    },
+    setExpandableCardAnimation (value) {
+      localStorage.setItem('openhab.ui:theme.home.cardanimation', (value) ? 'disabled' : 'default')
+      location.reload()
     }
   },
   computed: {
@@ -55,6 +79,12 @@ export default {
     },
     barsStyle () {
       return localStorage.getItem('openhab.ui:theme.bars') || 'default'
+    },
+    homePageNavbarStyle () {
+      return localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+    },
+    expandableCardsAnimation () {
+      return localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
     }
   }
 }
