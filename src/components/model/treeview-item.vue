@@ -1,5 +1,5 @@
 <template>
-  <f7-treeview-item selectable :label="model.item.label || model.item.name"
+  <f7-treeview-item selectable :label="(model.item.label || model.item.name)"
     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
     :selected="selected === model"
     @click="select">
@@ -15,7 +15,7 @@
       :model="equipment" @selected="(event) => $emit('selected', event)"
       :selected="selected" />
     </div>
-    <small slot="content-end" style="display:block"> ({{className()}})</small>
+    <div slot="label" class="semantic-class"> {{className()}}</div>
   </f7-treeview-item>
 </template>
 

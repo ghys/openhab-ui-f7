@@ -2,8 +2,8 @@
   <f7-page @page:afterin="onPageAfterIn" @click="selectItem(null)">
     <f7-navbar title="Semantic Model" back-link="Back">
       <f7-nav-right>
-        <f7-link icon-md="material:done_all" @click="toggleCheck()"
-        :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
+        <!-- <f7-link icon-md="material:done_all" @click="toggleCheck()"
+        :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link> -->
       </f7-nav-right>
       <!-- <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -16,17 +16,18 @@
         ></f7-searchbar>
       </f7-subnavbar> -->
     </f7-navbar>
-    <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="selectedItem != null" bottom>
+    <f7-toolbar v-if="selectedItem != null" bottom class="toolbar-details">
+      <f7-link @click="detailsOpened = true">Details</f7-link>
     </f7-toolbar>
 
     <f7-block v-if="!ready" class="text-align-center">
       <f7-preloader></f7-preloader>
       <div>Loading...</div>
     </f7-block>
-    <f7-block v-else>
+    <f7-block v-else class="semantic-tree-wrapper">
       <f7-row>
         <f7-col width="100" desktop-width="50" tablet-width="50">
-          <f7-block strong>
+          <f7-block strong class="semantic-tree" no-gap>
             <f7-treeview>
               <model-treeview-item v-for="location in rootLocations" :key="location.item.name" :model="location"
                 @selected="selectItem" :selected="selectedItem">
@@ -34,8 +35,8 @@
             </f7-treeview>
           </f7-block>
         </f7-col>
-        <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50">
-          <f7-block>
+        <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50" class="details-pane">
+          <f7-block no-gap>
             <f7-card>
               <f7-card-header>{{selectedItem.item.label || selectedItem.item.name}}</f7-card-header>
               <f7-card-content>
@@ -79,20 +80,63 @@
       </f7-col>
     </f7-block> -->
 
-    <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
+    <f7-fab position="right-bottom" slot="fixed" color="blue">
       <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-fab-buttons position="top">
+        <f7-fab-button label="Add Equipment"><f7-icon ios="f7:bulb" md="material:highlight" aurora="f7:bulb"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Add Thing as Equipment">2</f7-fab-button>
+        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location_') === 0" label="Add Location"><f7-icon ios="f7:placemark" md="material:placemark" aurora="f7:placemark"></f7-icon></f7-fab-button>
+      </f7-fab-buttons>
     </f7-fab>
+
+    <f7-sheet tablet-fullscreen :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+      <f7-page>
+        <f7-toolbar>
+          <div class="left">
+            <!-- <f7-link @click="copyTextualDefinition">Copy</f7-link> -->
+          </div>
+          <div class="right">
+            <f7-link sheet-close>Close</f7-link>
+          </div>
+        </f7-toolbar>
+        <f7-card v-if="selectedItem">
+          <f7-card-header>{{selectedItem.item.label || selectedItem.item.name}}</f7-card-header>
+          <f7-card-content>
+          </f7-card-content>
+        </f7-card>
+
+      </f7-page>
+    </f7-sheet>
+
   </f7-page>
 </template>
 
 <style lang="stylus">
-.itemlist-item .item-after
-  overflow hidden
-  max-width 30%
-  span
-    overflow hidden
-    text-overflow ellipsis
+.semantic-tree-wrapper
+  padding 0
+  margin-bottom var(--f7-sheet-height)
+  .block
+    padding 0
+.semantic-tree
+  .treeview
+    --f7-treeview-item-height 40px
+    overflow-x auto
+    .treeview-item-label
+      font-size 10pt
+      white-space nowrap
+      overflow-x hidden
+    .semantic-class
+      font-size 8pt
+      color var(--f7-list-item-footer-text-color)
+
+@media (min-width: 768px)
+  .toolbar-details
+    display none
+
+@media (max-width: 767px)
+  .details-pane
+    display none
 </style>
 
 <script>
@@ -107,7 +151,7 @@ export default {
       equipments: {},
       initSearchbar: false,
       selectedItem: null,
-      showCheckboxes: false
+      detailsOpened: false
     }
   },
   created () {
@@ -173,6 +217,7 @@ export default {
     },
     selectItem (item) {
       this.selectedItem = item
+      // this.detailsOpened = true
       console.log('selected ' + item.item.name)
     },
     getItemTypeAndMetaLabel (item) {
