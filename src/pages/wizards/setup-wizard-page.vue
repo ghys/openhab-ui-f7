@@ -1,5 +1,5 @@
 <template>
-  <f7-page no-toolbar no-navbar no-swipeback login-screen class="setup-wizard">
+  <f7-page no-toolbar no-navbar no-swipeback no-swipe-panel login-screen class="setup-wizard" @page:init="pageBeforeIn" @page:beforeout="pageBeforeOut">
          <f7-tabs animated>
             <f7-tab id="intro" tab-active>
               <f7-login-screen-title>
@@ -52,7 +52,7 @@
                   <big>Next</big>
                   <f7-icon ios="f7:arrow_right" aurora="f7:arrow_right" md="material:arrow_forward"/>
                 </f7-list-button>
-                <f7-list-button title="Close" color="red" link="/"></f7-list-button>
+                <f7-list-button title="Close" color="red" reload-all ignore-cache link="/"></f7-list-button>
               </f7-list>
             </f7-tab>
 
@@ -228,6 +228,15 @@ export default {
           'Sorry'
         )
       }
+    },
+    pageBeforeIn () {
+      delete this.$f7.params.panel.leftBreakpoint
+      this.$f7.panel.left.initBreakpoints()
+    },
+    pageBeforeOut (e, page) {
+      if (e.from === 'current') return
+      this.$f7.params.panel.leftBreakpoint = 768
+      this.$f7.panel.left.initBreakpoints()
     }
   },
   created () {

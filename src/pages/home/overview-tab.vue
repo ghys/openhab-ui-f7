@@ -88,6 +88,7 @@ import ExpandableCard from '../../components/expandable-card.vue'
 import Habot from '../../components/home/habot.vue'
 
 export default {
+  props: ['items'],
   components: {
     ExpandableCard,
     Habot
@@ -97,11 +98,16 @@ export default {
       showSetup: false,
       showTasks: false,
       showCards: false,
-      showHABot: true
+      showHABot: false
     }
   },
   created () {
-    this.showCards = true
+    if (Object.keys(this.items).length === 0) {
+      this.showSetup = true
+    } else {
+      this.showCards = true
+      this.showHABot = true
+    }
   },
   methods: {
     skipSetupWizard () {

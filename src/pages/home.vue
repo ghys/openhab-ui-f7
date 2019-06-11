@@ -18,9 +18,9 @@
       <f7-link tab-link="#tab-properties" class="tabbar-label" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on">Properties</f7-link>
     </f7-toolbar>
 
-    <f7-tabs :class="{ 'after-big-title': $f7.data.themeOptions.homeNavbar !== 'simple' }">
+    <f7-tabs :class="{ 'after-big-title': $f7.data.themeOptions.homeNavbar !== 'simple' }" v-if="items">
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview'" @tab:show="() => this.currentTab = 'overview'">
-        <overview-tab v-if="currentTab === 'overview'" />
+        <overview-tab v-if="currentTab === 'overview'" :items="items" />
       </f7-tab>
       <f7-tab id="tab-locations" :tab-active="currentTab === 'locations'" @tab:show="() => this.currentTab = 'locations'">
         <locations-tab v-if="currentTab === 'locations'" :semantic-items="semanticItems" />
@@ -59,11 +59,13 @@ export default {
       showTasks: true,
       showCards: false,
       currentTab: 'overview',
+      items: [],
       semanticItems: {}
     }
   },
   created () {
     this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
+      this.items = data
       // get the location items
       this.semanticItems.locations = data.filter((item, index, items) => {
         return item.metadata && item.metadata.semantics &&

@@ -108,7 +108,10 @@ export default [
   },
   {
     path: '/setup-wizard/',
-    component: SetupWizardPage
+    component: SetupWizardPage,
+    options: {
+      animate: false
+    }
   },
   {
     path: '/settings/',
