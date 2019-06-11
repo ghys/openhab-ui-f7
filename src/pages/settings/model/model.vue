@@ -24,7 +24,7 @@
       <f7-preloader></f7-preloader>
       <div>Loading...</div>
     </f7-block>
-    <f7-block v-else class="semantic-tree-wrapper">
+    <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
       <f7-row>
         <f7-col width="100" desktop-width="50" tablet-width="50">
           <f7-block strong class="semantic-tree" no-gap>
@@ -37,11 +37,7 @@
         </f7-col>
         <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50" class="details-pane">
           <f7-block no-gap>
-            <f7-card>
-              <f7-card-header>{{selectedItem.item.label || selectedItem.item.name}}</f7-card-header>
-              <f7-card-content>
-              </f7-card-content>
-            </f7-card>
+            <item-details :model="selectedItem" />
           </f7-block>
         </f7-col>
       </f7-row>
@@ -100,12 +96,7 @@
             <f7-link sheet-close>Close</f7-link>
           </div>
         </f7-toolbar>
-        <f7-card v-if="selectedItem">
-          <f7-card-header>{{selectedItem.item.label || selectedItem.item.name}}</f7-card-header>
-          <f7-card-content>
-          </f7-card-content>
-        </f7-card>
-
+        <item-details :model="selectedItem" />
       </f7-page>
     </f7-sheet>
 
@@ -115,13 +106,11 @@
 <style lang="stylus">
 .semantic-tree-wrapper
   padding 0
-  margin-bottom var(--f7-sheet-height)
   .block
     padding 0
 .semantic-tree
   .treeview
     --f7-treeview-item-height 40px
-    overflow-x auto
     .treeview-item-label
       font-size 10pt
       white-space nowrap
@@ -131,16 +120,33 @@
       color var(--f7-list-item-footer-text-color)
 
 @media (min-width: 768px)
-  .toolbar-details
-    display none
+  .semantic-tree-wrapper
+    height calc(100% - var(--f7-navbar-height))
+    .row
+      height 100%
+      .col-100
+        height 100%
+        overflow auto
+        .semantic-tree
+          margin 0
+          height auto
+  // .toolbar-details
+  //   display none
 
 @media (max-width: 767px)
   .details-pane
     display none
+  .semantic-tree-wrapper.sheet-opened
+    margin-bottom var(--f7-sheet-height)
 </style>
 
 <script>
+import ItemDetails from '@/components/model/item-details.vue'
+
 export default {
+  components: {
+    ItemDetails
+  },
   data () {
     return {
       ready: false,
