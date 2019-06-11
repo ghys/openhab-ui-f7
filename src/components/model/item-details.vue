@@ -1,6 +1,6 @@
 <template>
   <f7-card v-if="model">
-    <f7-card-header>{{model.item.label || model.item.name}}</f7-card-header>
+    <f7-card-header>Item</f7-card-header>
     <f7-card-content>
       <f7-list media-list>
         <ul>
@@ -17,6 +17,7 @@
             <span v-else slot="media" class="item-initial">{{model.item.name[0]}}</span>
             <f7-icon v-if="!model.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
           </f7-list-item>
+          <f7-list-button color="blue" title="Edit Item">Edit Item</f7-list-button>
         </ul>
       </f7-list>
     </f7-card-content>
@@ -26,7 +27,11 @@
 
 <script>
 export default {
-  props: ['model'],
+  props: ['model', 'links'],
+  data () {
+    return {
+    }
+  },
   methods: {
     getItemTypeAndMetaLabel (item) {
       let ret = item.type

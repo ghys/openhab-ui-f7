@@ -37,7 +37,8 @@
         </f7-col>
         <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50" class="details-pane">
           <f7-block no-gap>
-            <item-details :model="selectedItem" />
+            <item-details :model="selectedItem" :links="links" />
+            <link-details :model="selectedItem" :links="links" />
           </f7-block>
         </f7-col>
       </f7-row>
@@ -96,7 +97,8 @@
             <f7-link sheet-close>Close</f7-link>
           </div>
         </f7-toolbar>
-        <item-details :model="selectedItem" />
+        <item-details :model="selectedItem" :links="links" />
+        <link-details :model="selectedItem" :links="links" />
       </f7-page>
     </f7-sheet>
 
@@ -142,16 +144,19 @@
 
 <script>
 import ItemDetails from '@/components/model/item-details.vue'
+import LinkDetails from '@/components/model/link-details.vue'
 
 export default {
   components: {
-    ItemDetails
+    ItemDetails,
+    LinkDetails
   },
   data () {
     return {
       ready: false,
       loading: false,
-      items: [], // [{ label: 'Staircase', name: 'Staircase'}],
+      items: [],
+      links: [],
       locations: [],
       rootLocations: [],
       equipments: {},
@@ -167,8 +172,11 @@ export default {
     onPageAfterIn () {
       if (this.ready) return
       this.loading = true
-      this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
-        this.items = data
+      const items = this.$oh.api.get('/rest/items?metadata=semantics')
+      const links = this.$oh.api.get('/rest/links')
+      Promise.all([items, links]).then((data) => {
+        this.items = data[0]
+        this.links = data[1]
         this.locations = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location_') === 0)
         this.equipments = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment_') === 0)
         this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point_') === 0)
