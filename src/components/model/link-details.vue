@@ -1,6 +1,5 @@
 <template>
   <f7-card>
-    <f7-card-header>Channel Links</f7-card-header>
     <f7-card-content>
       <f7-list media-list>
         <ul>

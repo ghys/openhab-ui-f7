@@ -1,6 +1,5 @@
 <template>
   <f7-card v-if="model">
-    <f7-card-header>Item</f7-card-header>
     <f7-card-content>
       <f7-list media-list>
         <ul>

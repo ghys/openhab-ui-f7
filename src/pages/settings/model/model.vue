@@ -18,6 +18,7 @@
     </f7-navbar>
     <f7-toolbar v-if="selectedItem != null" bottom class="toolbar-details">
       <f7-link @click="detailsOpened = true">Details</f7-link>
+      <f7-link @click="selectedItem = null">Clear</f7-link>
     </f7-toolbar>
 
     <f7-block v-if="!ready" class="text-align-center">
@@ -37,8 +38,10 @@
         </f7-col>
         <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50" class="details-pane">
           <f7-block no-gap>
-            <item-details :model="selectedItem" :links="links" />
-            <link-details :model="selectedItem" :links="links" />
+            <model-details-pane :model="selectedItem" :links="links" />
+            <!-- <item-details :model="selectedItem" :links="links" />
+            <semantics-picker :item="selectedItem.item" :same-class-only="true" />
+            <link-details :model="selectedItem" :links="links" /> -->
           </f7-block>
         </f7-col>
       </f7-row>
@@ -77,7 +80,7 @@
       </f7-col>
     </f7-block> -->
 
-    <f7-fab position="right-bottom" slot="fixed" color="blue">
+    <f7-fab position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || selectedItem.class.indexOf('Point_') < 0">
       <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
       <f7-fab-buttons position="top">
@@ -87,8 +90,8 @@
       </f7-fab-buttons>
     </f7-fab>
 
-    <f7-sheet tablet-fullscreen :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
-      <f7-page>
+    <f7-sheet class="details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+      <f7-page v-if="selectedItem">
         <f7-toolbar>
           <div class="left">
             <!-- <f7-link @click="copyTextualDefinition">Copy</f7-link> -->
@@ -97,8 +100,12 @@
             <f7-link sheet-close>Close</f7-link>
           </div>
         </f7-toolbar>
-        <item-details :model="selectedItem" :links="links" />
-        <link-details :model="selectedItem" :links="links" />
+        <f7-block style="margin-bottom: 6rem">
+          <model-details-pane :model="selectedItem" :links="links" />
+        </f7-block>
+        <!-- <item-details :model="selectedItem" :links="links" />
+        <semantics-picker :item="selectedItem.item" :same-class-only="true" />
+        <link-details :model="selectedItem" :links="links" /> -->
       </f7-page>
     </f7-sheet>
 
@@ -108,6 +115,7 @@
 <style lang="stylus">
 .semantic-tree-wrapper
   padding 0
+  margin-bottom 0
   .block
     padding 0
 .semantic-tree
@@ -130,8 +138,13 @@
         height 100%
         overflow auto
         .semantic-tree
+          min-height 100%
           margin 0
           height auto
+      .details-pane
+        padding-top 0
+        .block
+          margin-top 0
   // .toolbar-details
   //   display none
 
@@ -140,16 +153,16 @@
     display none
   .semantic-tree-wrapper.sheet-opened
     margin-bottom var(--f7-sheet-height)
+  .details-sheet
+    height calc(1.4*var(--f7-sheet-height))
 </style>
 
 <script>
-import ItemDetails from '@/components/model/item-details.vue'
-import LinkDetails from '@/components/model/link-details.vue'
+import ModelDetailsPane from '@/components/model/details-pane.vue'
 
 export default {
   components: {
-    ItemDetails,
-    LinkDetails
+    ModelDetailsPane
   },
   data () {
     return {
