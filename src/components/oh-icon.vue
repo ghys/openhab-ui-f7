@@ -1,10 +1,12 @@
 <template>
-  <img :src="iconUrl" :width="width" :height="height" onload="this.className=''" onerror="this.className='no-icon'" />
+  <img :src="iconUrl" :width="width" :height="height"
+    :style="{ width: (width) ? width + 'px' : 'auto', height: (height) ? height + 'px' : 'auto' }"
+    onload="this.className=''" onerror="this.className='no-icon'" />
 </template>
 
 <style lang="stylus">
 .no-icon
-  display none !important
+  visibility hidden !important
 </style>
 
 <script>

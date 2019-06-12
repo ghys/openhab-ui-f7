@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @click="selectItem(null)">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
     <f7-navbar title="Semantic Model" back-link="Back">
       <f7-nav-right>
         <!-- <f7-link icon-md="material:done_all" @click="toggleCheck()"
@@ -90,7 +90,7 @@
       </f7-fab-buttons>
     </f7-fab>
 
-    <f7-sheet class="details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
+    <f7-sheet class="model-details-sheet" :backdrop="false" :close-on-escape="true" :opened="detailsOpened" @sheet:closed="detailsOpened = false">
       <f7-page v-if="selectedItem">
         <f7-toolbar>
           <div class="left">
@@ -128,6 +128,8 @@
     .semantic-class
       font-size 8pt
       color var(--f7-list-item-footer-text-color)
+.model-details-sheet
+  z-index 10900
 
 @media (min-width: 768px)
   .semantic-tree-wrapper
@@ -210,6 +212,9 @@ export default {
         this.loading = false
         this.ready = true
       })
+    },
+    onPageBeforeOut () {
+      this.detailsOpened = false
     },
     getChildren (parent) {
       if (parent.class.indexOf('Location_') === 0) {

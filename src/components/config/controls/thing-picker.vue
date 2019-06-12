@@ -1,9 +1,9 @@
 <template>
 <ul>
   <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready">
-    <select :name="name" :multiple="multiple">
+    <select :name="name" :multiple="multiple" @change="select">
       <option value=""></option>
-      <option v-for="thing in things" :value="thing.label" :key="thing.UID" :selected="(multiple) ? value.indexOf(thing.UID) >= 0 : value === thing.UID">
+      <option v-for="thing in things" :value="thing.UID" :key="thing.UID" :selected="(multiple) ? value.indexOf(thing.UID) >= 0 : value === thing.UID">
         {{thing.label}}
       </option>
     </select>
@@ -44,6 +44,11 @@ export default {
       }
       this.ready = true
     })
+  },
+  methods: {
+    select (e) {
+      this.$emit('input', e.target.value)
+    }
   }
 }
 </script>

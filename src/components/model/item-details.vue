@@ -3,7 +3,8 @@
     <f7-card-content>
       <f7-list media-list>
         <ul>
-          <f7-list-item
+          <item :item="model.item" :link="'/settings/items/' + model.item.name" />
+          <!-- <f7-list-item
             media-item
             class="itemlist-item"
             :link="'/settings/items/' + model.item.name"
@@ -15,7 +16,7 @@
             <oh-icon v-if="model.item.category" slot="media" :icon="model.item.category" height="32" width="32" />
             <span v-else slot="media" class="item-initial">{{model.item.name[0]}}</span>
             <f7-icon v-if="!model.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
-          </f7-list-item>
+          </f7-list-item> -->
           <f7-list-button color="blue" title="Edit Item">Edit Item</f7-list-button>
         </ul>
       </f7-list>
@@ -25,8 +26,13 @@
 </template>
 
 <script>
+import Item from '@/components/item/item.vue'
+
 export default {
   props: ['model', 'links'],
+  components: {
+    Item
+  },
   data () {
     return {
     }

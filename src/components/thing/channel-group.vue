@@ -1,19 +1,24 @@
 <template>
-  <f7-list accordion-list>
+  <f7-list :accordion-list="!pickerMode">
     <f7-list-item group-title v-if="group"
       :title="group.label"
       :description="group.description"
       :footer="group.description" />
-    <f7-list-item accordion-item media-item class="channel-item"
+    <f7-list-item
+      :accordion-item="!pickerMode"
+      :radio="pickerMode"
+      name="channel-picker"
+      media-item class="channel-item"
       v-for="channelType in channelTypes"
       :key="channelType.id" :title="channelType.label"
       :footer="channelType.description"
       :subtitle="getChannelId(channelType) + ' (' + getItemType(channelType) + ')'"
       :badge="getLinkedItems(channelType).length || ''" badge-color="blue"
+      @change="$emit('selected', getChannel(getChannelId(channelType)))"
       @accordion:open="opened(channelType)">
       <oh-icon v-if="!extensible && channelType.category" slot="media" :icon="channelType.category" height="32" width="32" />
       <span v-else-if="!extensible && channelType.label" slot="media" class="item-initial">{{channelType.label[0]}}</span>
-      <f7-accordion-content>
+      <f7-accordion-content v-if="!pickerMode">
         <slot :channelType="channelType" :channelId="getChannelId(channelType)"></slot>
       </f7-accordion-content>
     </f7-list-item>
@@ -26,7 +31,9 @@ export default {
     'extensible',
     'group',
     'channelTypes',
-    'thing'
+    'thing',
+    'pickerMode',
+    'itemTypeFilter'
   ],
   methods: {
     getChannelId (channelType) {
@@ -62,6 +69,10 @@ export default {
         channelId: this.getChannelId(channelType),
         channel: this.getChannel(channelType)
       })
+    },
+    isItemTypeCompatible (channelType) {
+      if (!this.pickerMode || !this.itemTypeFilter) return true
+      return this.getItemType(channelType) === this.itemTypeFilter
     }
   },
   computed: {

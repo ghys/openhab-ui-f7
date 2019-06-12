@@ -1,5 +1,5 @@
 <template>
-  <f7-page class="item-details-page">
+  <f7-page class="item-details-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn">
     <f7-navbar :title="item.name" back-link="Back" no-shadow no-hairline class="item-details-navbar">
       <f7-nav-right>
         <f7-link icon-md="material:edit" href="edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
@@ -93,6 +93,12 @@
           </f7-list>
         </f7-col>
       </f7-row>
+      <f7-row  v-if="item && links.length > 0">
+        <f7-col>
+          <f7-block-title>Channel Links</f7-block-title>
+          <link-details :item="item" :links="links" />
+        </f7-col>
+      </f7-row>
     </f7-block>
   </f7-page>
 </template>
@@ -151,20 +157,31 @@
 </style>
 
 <script>
+import LinkDetails from '@/components/model/link-details.vue'
+
 export default {
   props: ['itemName'],
+  components: {
+    LinkDetails
+  },
   data () {
     return {
-      item: {}
+      item: {},
+      links: []
     }
   },
-  created () {
-    this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=semantics').then((data) => {
-      this.item = data
-      this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
-    })
-  },
   methods: {
+    onPageBeforeIn () {
+      this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=semantics').then((data) => {
+        this.item = data
+        this.iconUrl = (localStorage.getItem('openhab.ui:serverUrl') || '') + '/icon/' + this.item.category + '?format=svg'
+      })
+    },
+    onPageAfterIn () {
+      this.$oh.api.get('/rest/links').then((data) => {
+        this.links = data
+      })
+    },
     getItemTypeAndMetaLabel (item) {
       let ret = item.type
       if (item.metadata && item.metadata.semantics) {

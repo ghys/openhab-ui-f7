@@ -17,7 +17,7 @@
       </f7-row>
     </f7-block>
     <div style="text-align:right" class="padding-right" v-if="hasAdvanced">
-      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox :value="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
+      <label @click="toggleAdvanced" class="advanced-label">Show advanced</label> <f7-checkbox name="channel-advanced" :checked="showAdvanced" @change="toggleAdvanced"></f7-checkbox>
     </div>
     <f7-col v-if="thingType.channelGroups.length">
       <f7-block width="100" class="channel-group">
@@ -32,8 +32,10 @@
               :group="group"
               :channelTypes="displayedChannels(group)"
               :thing="thing"
+              :picker-mode="pickerMode" :item-type-filter="itemTypeFilter"
+              @selected="(e) => $emit('selected', e)"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }">
+              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode">
                 <channel-link :opened="openedChannelId === channelId"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
                 </channel-link>
@@ -51,8 +53,10 @@
             <channel-group
               :channelTypes="displayedChannels()"
               :thing="thing"
+              :picker-mode="pickerMode" :item-type-filter="itemTypeFilter"
+              @selected="(e) => $emit('selected', e)"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }">
+              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode">
                 <channel-link :opened="openedChannelId === channelId"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
                 </channel-link>
@@ -70,8 +74,10 @@
               :extensible="true"
               :channelTypes="displayedChannels()"
               :thing="thing"
+              :picker-mode="pickerMode" :item-type-filter="itemTypeFilter"
+              @selected="(e) => $emit('selected', e)"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }">
+              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode">
                 <channel-link :opened="openedChannelId === channelId" :extensible="true"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
                 </channel-link>
@@ -90,7 +96,7 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-if="isExtensible">
+    <f7-col v-if="isExtensible && !pickerMode">
       <f7-list class="padding-left">
         <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" @click="addChannel()"></f7-list-button>
       </f7-list>
@@ -117,7 +123,7 @@ import ChannelLink from './channel-link.vue'
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 
 export default {
-  props: ['thingType', 'thing'],
+  props: ['thingType', 'thing', 'pickerMode', 'itemTypeFilter'],
   components: {
     ChannelGroup,
     ChannelLink

@@ -1,6 +1,6 @@
 <template>
   <f7-list no-hairlines-md v-if="show">
-    <f7-list-item title="Semantic Class" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item title="Semantic Class" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-semantics-class" @change="semanticClass = $event.target.value">
         <option :value="''">None</option>
         <optgroup label="Locations" v-if="!sameClassOnly || (sameClassOnly && currentSemanticType === 'Location')">
