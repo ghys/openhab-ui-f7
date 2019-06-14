@@ -8,7 +8,7 @@
         <semantics-picker :item="model.item" :same-class-only="true" />
       </f7-card-content>
     </f7-card>
-    <f7-block-title>Channel Links</f7-block-title>
+    <f7-block-title v-if="model.item.type !== 'Group'">Channel Links</f7-block-title>
     <link-details :item="model.item" :links="links" />
   </div>
 </template>

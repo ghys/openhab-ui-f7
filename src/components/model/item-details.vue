@@ -17,9 +17,14 @@
             <span v-else slot="media" class="item-initial">{{model.item.name[0]}}</span>
             <f7-icon v-if="!model.item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
           </f7-list-item> -->
-          <f7-list-button color="blue" title="Edit Item">Edit Item</f7-list-button>
+          <f7-list-button v-if="!editMode" color="blue" title="Edit Item" @click="editMode = true">Edit Item</f7-list-button>
         </ul>
       </f7-list>
+
+      <div class="padding-top" v-if="editMode">
+        <quick-new-item-form :new-item="model.item" :hide-type="true"></quick-new-item-form>
+        <f7-button filled color="blue" @click="save">Save</f7-button>
+      </div>
     </f7-card-content>
 
   </f7-card>
@@ -27,14 +32,17 @@
 
 <script>
 import Item from '@/components/item/item.vue'
+import QuickNewItemForm from '@/components/item/quick-new-item-form.vue'
 
 export default {
   props: ['model', 'links'],
   components: {
-    Item
+    Item,
+    QuickNewItemForm
   },
   data () {
     return {
+      editMode: false
     }
   },
   methods: {
@@ -49,6 +57,14 @@ export default {
         }
       }
       return ret
+    },
+    save () {
+      this.editMode = false
+    }
+  },
+  watch: {
+    model () {
+      this.editMode = false
     }
   }
 }

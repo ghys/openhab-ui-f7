@@ -93,7 +93,7 @@
           </f7-list>
         </f7-col>
       </f7-row>
-      <f7-row  v-if="item && links.length > 0">
+      <f7-row  v-if="item && item.type !== 'Group'">
         <f7-col>
           <f7-block-title>Channel Links</f7-block-title>
           <link-details :item="item" :links="links" />

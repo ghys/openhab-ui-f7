@@ -17,8 +17,8 @@
       </f7-subnavbar> -->
     </f7-navbar>
     <f7-toolbar v-if="selectedItem != null" bottom class="toolbar-details">
-      <f7-link @click="detailsOpened = true">Details</f7-link>
-      <f7-link @click="selectedItem = null">Clear</f7-link>
+      <f7-link class="left details-link" @click="detailsOpened = true">Details</f7-link>
+      <f7-link class="right" @click="selectedItem = null">Clear</f7-link>
     </f7-toolbar>
 
     <f7-block v-if="!ready" class="text-align-center">
@@ -85,8 +85,8 @@
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
       <f7-fab-buttons position="top">
         <f7-fab-button label="Add Equipment"><f7-icon ios="f7:bulb" md="material:highlight" aurora="f7:bulb"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Add Thing as Equipment">2</f7-fab-button>
-        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location_') === 0" label="Add Location"><f7-icon ios="f7:placemark" md="material:placemark" aurora="f7:placemark"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Add Thing as Equipment" @click="addThingAsEquipment"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location_') === 0" label="Add Location"><f7-icon ios="f7:placemark" md="material:place" aurora="f7:placemark"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
 
@@ -147,8 +147,9 @@
         padding-top 0
         .block
           margin-top 0
-  // .toolbar-details
-  //   display none
+  .toolbar-details
+    .details-link
+      visibility hidden !important
 
 @media (max-width: 767px)
   .details-pane
@@ -161,6 +162,7 @@
 
 <script>
 import ModelDetailsPane from '@/components/model/details-pane.vue'
+import AddThingAsEquipment from './add-thing-as-equipment.vue'
 
 export default {
   components: {
@@ -313,6 +315,33 @@ export default {
         }
       }
       return ret
+    },
+    addThingAsEquipment () {
+      const self = this
+      this.$f7router.navigate({
+        url: 'add-thing',
+        route: {
+          component: AddThingAsEquipment,
+          path: 'add-thing',
+          props: {
+          },
+          on: {
+            pageAfterOut (event, page) {
+              console.log('page closed')
+              // const finalChannel = page.app.data.finalChannel
+              // if (finalChannel) {
+              //   delete page.app.data.finalChannel
+              //   self.thing.channels.push(finalChannel)
+              //   self.$emit('links-updated')
+              // }
+            }
+          }
+        }
+      }, {
+        props: {
+          parent: this.selectedItem
+        }
+      })
     }
   },
   asyncComputed: {

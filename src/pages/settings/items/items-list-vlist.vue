@@ -32,7 +32,7 @@
     </f7-list>
     <!-- skeleton for not ready -->
     <f7-block class="block-narrow" v-if="!ready">
-      <f7-block-title class="col wide">Loading...</f7-block-title>
+      <f7-block-title class="col wide padding-left">Loading...</f7-block-title>
       <f7-list media-list class="col wide">
         <f7-list-group>
           <f7-list-item
@@ -51,7 +51,7 @@
       </f7-list>
     </f7-block>
     <f7-block class="block-narrow" v-else>
-      <f7-block-title class="col wide">{{items.length}} items</f7-block-title>
+      <f7-block-title class="col wide padding-left searchbar-hide-on-search">{{items.length}} items</f7-block-title>
       <f7-col>
         <f7-list
           class="searchbar-found col wide"

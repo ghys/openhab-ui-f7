@@ -14,7 +14,7 @@
         </optgroup>
       </select>
     </f7-list-item>
-    <f7-list-item v-if="currentSemanticType" title="Semantic Type" :after="currentSemanticType" />
+    <f7-list-item v-if="currentSemanticType && !hideType" title="Semantic Type" :after="currentSemanticType" />
     <f7-list-item v-if="currentSemanticType == 'Point'" title="Semantic Property" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-semantics-proerty" :value="semanticProperty" @change="semanticProperty = $event.target.value">
         <option :value="''">None</option>
@@ -29,7 +29,7 @@ import * as Types from '@/assets/item-types.js'
 import * as SemanticClasses from '@/assets/semantics.js'
 
 export default {
-  props: ['item', 'semantics', 'sameClassOnly'],
+  props: ['item', 'sameClassOnly', 'hideType'],
   data () {
     return {
       types: Types,
@@ -48,16 +48,13 @@ export default {
     },
     isSemanticPropertyTag (tag) {
       return (this.semanticClasses.Properties.indexOf(tag) >= 0)
-    }
-  },
-  watch: {
-    item (val) {
-      if (!val) return
+    },
+    itemChanged (item) {
       this.show = false
-      console.log(val.tags)
+      console.log(item.tags)
       this.semanticClass = null
       this.semanticProperty = null
-      val.tags.forEach((t) => {
+      item.tags.forEach((t) => {
         if (this.semanticType(t) !== '') {
           this.semanticClass = t
         }
@@ -66,8 +63,8 @@ export default {
         }
       })
       if (this.semanticProperty && !this.semanticClass) {
-        if (this.item.metadata && this.item.metadata.semantics) {
-          const classFromMetadata = this.item.metadata.semantics.value.split('_')[1]
+        if (item.metadata && item.metadata.semantics) {
+          const classFromMetadata = item.metadata.semantics.value.split('_')[1]
           if (classFromMetadata) {
             this.semanticClass = classFromMetadata
           }
@@ -76,6 +73,14 @@ export default {
       this.$nextTick(() => {
         this.show = true
       })
+    }
+  },
+  mounted () {
+    this.itemChanged(this.item)
+  },
+  watch: {
+    item (val) {
+      this.itemChanged(val)
     }
   },
   computed: {

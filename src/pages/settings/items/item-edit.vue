@@ -109,9 +109,9 @@
         </f7-block>
       </f7-col>
       <f7-col>
-        <f7-list>
+        <!-- <f7-list>
           <f7-list-button color="blue" title="Edit Channel Links"></f7-list-button>
-        </f7-list>
+        </f7-list> -->
         <f7-list>
           <f7-list-button color="red" title="Delete this Item"></f7-list-button>
         </f7-list>

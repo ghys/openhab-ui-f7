@@ -32,13 +32,16 @@
               :group="group"
               :channelTypes="displayedChannels(group)"
               :thing="thing"
-              :picker-mode="pickerMode" :item-type-filter="itemTypeFilter"
-              @selected="(e) => $emit('selected', e)"
+              :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
+              @selected="selectChannel"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode">
+              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
                 </channel-link>
+              </template>
+              <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
+                <quick-new-item-form v-if="isChecked(channel)" :channel="channel" :checked="isChecked(channel)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
@@ -53,13 +56,16 @@
             <channel-group
               :channelTypes="displayedChannels()"
               :thing="thing"
-              :picker-mode="pickerMode" :item-type-filter="itemTypeFilter"
-              @selected="(e) => $emit('selected', e)"
+              :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
+              @selected="selectChannel"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode">
+              <template v-slot:default="{ channelId, channelType, channel }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
                 </channel-link>
+              </template>
+              <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
+                <quick-new-item-form v-if="isChecked(channel)" :channel="channel" :checked="isChecked(channel)" />
               </template>
             </channel-group>
           </f7-col>
@@ -74,13 +80,16 @@
               :extensible="true"
               :channelTypes="displayedChannels()"
               :thing="thing"
-              :picker-mode="pickerMode" :item-type-filter="itemTypeFilter"
-              @selected="(e) => $emit('selected', e)"
+              :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
+              @selected="selectChannel"
               @channel-opened="channelOpened">
-              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode">
+              <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId" :extensible="true"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
                 </channel-link>
+              </template>
+              <template v-slot:default="{ channel, channelId, channelType }" v-else-if="multipleLinksMode">
+                <quick-new-item-form v-if="isChecked(channel)" :channel="channel" :channelId="channelId" :channelType="channelType" :checked="isChecked(channel)" />
               </template>
             </channel-group>
           </f7-col>
@@ -96,7 +105,7 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-if="isExtensible && !pickerMode">
+    <f7-col v-if="isExtensible && !pickerMode && !multipleLinksMode">
       <f7-list class="padding-left">
         <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" @click="addChannel()"></f7-list-button>
       </f7-list>
@@ -119,20 +128,24 @@
 <script>
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
+import QuickNewItemForm from '@/components/item/quick-new-item-form.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 
 export default {
-  props: ['thingType', 'thing', 'pickerMode', 'itemTypeFilter'],
+  props: ['thingType', 'thing', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter'],
   components: {
     ChannelGroup,
-    ChannelLink
+    ChannelLink,
+    QuickNewItemForm
   },
   data () {
     return {
       showAdvanced: false,
       openedChannelId: '',
-      openedChannel: null
+      openedChannel: null,
+      selectedChannel: null,
+      selectedChannels: []
     }
   },
   computed: {
@@ -161,6 +174,25 @@ export default {
   methods: {
     toggleAdvanced (event) {
       this.showAdvanced = !this.showAdvanced // event.target.checked
+    },
+    selectChannel (channel) {
+      if (this.pickerMode) {
+        this.selectedChannel = channel
+      } else if (this.multipleLinksMode) {
+        this.toggleItemCheck(channel)
+      }
+      this.$emit('selected', channel)
+    },
+    isChecked (channel) {
+      return this.selectedChannels.indexOf(channel) >= 0
+    },
+    toggleItemCheck (channel) {
+      console.log('toggle check')
+      if (this.isChecked(channel)) {
+        this.selectedChannels.splice(this.selectedChannels.indexOf(channel), 1)
+      } else {
+        this.selectedChannels.push(channel)
+      }
     },
     channelOpened (payload) {
       console.log('caught channel-opened')

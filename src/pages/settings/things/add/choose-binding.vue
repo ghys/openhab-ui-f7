@@ -1,6 +1,16 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Choose Binding" back-link="Back">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
+        <f7-searchbar
+          v-if="initSearchbar"
+          class="searchbar-things"
+          :init="initSearchbar"
+          search-container=".binding-list"
+          search-in=".item-title, .item-header, .item-footer"
+          remove-diacritics
+        ></f7-searchbar>
+      </f7-subnavbar>
     </f7-navbar>
 
     <f7-list-index
@@ -69,6 +79,7 @@ export default {
       this.$oh.api.get('/rest/bindings').then((data) => {
         this.bindings = data.sort((a, b) => a.name.localeCompare(b.name))
         this.loading = false
+        this.initSearchbar = true
         this.ready = true
       })
     }

@@ -36,7 +36,7 @@
                 <f7-list-item
                   title="Timezone"
                   smart-select
-                  :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true}"
+                  :smart-select-params="{openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: ($theme.aurora) ? 32 : undefined }"
                 >
                   <select name="timezone">
                     <option

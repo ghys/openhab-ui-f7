@@ -5,8 +5,9 @@
       :description="group.description"
       :footer="group.description" />
     <f7-list-item
-      :accordion-item="!pickerMode"
+      :accordion-item="!pickerMode && !multipleLinksMode"
       :radio="pickerMode"
+      :checkbox="multipleLinksMode"
       name="channel-picker"
       media-item class="channel-item"
       v-for="channelType in channelTypes"
@@ -21,6 +22,9 @@
       <f7-accordion-content v-if="!pickerMode">
         <slot :channelType="channelType" :channelId="getChannelId(channelType)"></slot>
       </f7-accordion-content>
+      <div v-if="multipleLinksMode" slot="root-end">
+        <slot :channelType="channelType" :channelId="getChannelId(channelType)" :channel="getChannel(getChannelId(channelType))"></slot>
+      </div>
     </f7-list-item>
   </f7-list>
 </template>
@@ -33,6 +37,7 @@ export default {
     'channelTypes',
     'thing',
     'pickerMode',
+    'multipleLinksMode',
     'itemTypeFilter'
   ],
   methods: {

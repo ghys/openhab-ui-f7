@@ -25,7 +25,7 @@
     </f7-list>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title>{{things.length}} things</f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search">{{things.length}} things</f7-block-title>
         <f7-list v-if="!ready" contacts-list class="col things-list">
           <f7-list-group>
             <f7-list-item

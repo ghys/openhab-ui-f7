@@ -1,5 +1,5 @@
 <template>
-  <f7-card>
+  <f7-card v-if="item.type !== 'Group'">
     <f7-card-content>
       <f7-list media-list>
         <ul>

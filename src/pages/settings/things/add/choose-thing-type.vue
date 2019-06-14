@@ -1,17 +1,27 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforein="onPageBeforeIn">
     <f7-navbar title="Add a new Thing" back-link="Back">
+      <f7-subnavbar :inner="false" v-show="initSearchbar">
+        <f7-searchbar
+          v-if="initSearchbar"
+          class="searchbar-things"
+          :init="initSearchbar"
+          search-container=".thing-type-list"
+          search-in=".item-title, .item-header, .item-footer"
+          remove-diacritics
+        ></f7-searchbar>
+      </f7-subnavbar>
     </f7-navbar>
 
-    <f7-list-index
+    <!-- <f7-list-index
       ref="listIndex"
       list-el=".thing-type-list"
       :scroll-list="true"
       :label="true"
-    ></f7-list-index>
+    ></f7-list-index> -->
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-list class="col">
+        <f7-list class="col thing-type-list">
           <f7-list-item divider title="Discovered Things (not implemented)"></f7-list-item>
           <f7-list-item v-if="scanning" title="Scanning for things...">
             <f7-preloader slot="media" :size="42"></f7-preloader>
@@ -89,6 +99,7 @@ export default {
           })
         this.loading = false
         this.ready = true
+        this.initSearchbar = true
         // this.scan()
       })
     },
