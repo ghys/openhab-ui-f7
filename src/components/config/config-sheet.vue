@@ -85,7 +85,7 @@ export default {
     updateParameter (parameter, value) {
       // this.configuration[parameter.name] = value
       this.$set(this.configuration, parameter.name, value)
-      console.log(JSON.stringify(this.configuration))
+      console.debug(JSON.stringify(this.configuration))
     }
   }
 }
