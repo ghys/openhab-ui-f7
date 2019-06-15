@@ -12,6 +12,7 @@
               :key="parameter.name"
               :config-description="parameter"
               :value="configuration[parameter.name]"
+              @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>
         </f7-row>
@@ -31,6 +32,7 @@
               :key="parameter.name"
               :config-description="parameter"
               :value="configuration[parameter.name]"
+              @update="(value) => updateParameter(parameter, value)"
             />
           </f7-col>
         </f7-row>
@@ -79,6 +81,10 @@ export default {
   methods: {
     toggleAdvanced (event) {
       this.showAdvanced = !this.showAdvanced // event.target.checked
+    },
+    updateParameter (parameter, value) {
+      this.configuration[parameter.name] = value
+      console.log(JSON.stringify(this.configuration))
     }
   }
 }

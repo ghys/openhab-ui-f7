@@ -1,7 +1,7 @@
 <template>
 <ul>
   <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready">
-    <select :name="name" :multiple="multiple">
+    <select :name="name" :multiple="multiple" @change="select">
       <option value=""></option>
       <option v-for="item in items" :value="item.name" :key="item.name" :selected="(multiple) ? value.indexOf(item.name) >= 0 : value === item.name">
         {{item.label ? item.label + ' (' + item.name + ')' : item.name}}
@@ -44,6 +44,11 @@ export default {
       }
       this.ready = true
     })
+  },
+  methods: {
+    select (e) {
+      this.$emit('input', e.target.value)
+    }
   }
 }
 </script>

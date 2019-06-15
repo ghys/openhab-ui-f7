@@ -1,0 +1,30 @@
+<template>
+  <ul>
+      <f7-list-input
+        v-if="configDescription.type === 'INTEGER' && !configDescription.options.length && !configDescription.context"
+        :name="configDescription.name"
+        :label="configDescription.label"
+        :floating-label="$theme.md"
+        :value="actualValue"
+        @input="updateValue"
+        :required="configDescription.required" validate
+        :clear-button="!configDescription.required"
+        type="number" />
+  </ul>
+</template>
+
+<script>
+export default {
+  props: ['configDescription', 'value'],
+  computed: {
+    actualValue () {
+      return parseInt(this.value)
+    }
+  },
+  methods: {
+    updateValue (event) {
+      this.$emit('input', event.target.value)
+    }
+  }
+}
+</script>
