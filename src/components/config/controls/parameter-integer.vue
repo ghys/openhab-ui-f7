@@ -23,7 +23,8 @@ export default {
   },
   methods: {
     updateValue (event) {
-      this.$emit('input', event.target.value)
+      const value = parseInt(event.target.value)
+      this.$emit('input', value)
     }
   }
 }

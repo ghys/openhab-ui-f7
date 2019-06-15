@@ -83,7 +83,8 @@ export default {
       this.showAdvanced = !this.showAdvanced // event.target.checked
     },
     updateParameter (parameter, value) {
-      this.configuration[parameter.name] = value
+      // this.configuration[parameter.name] = value
+      this.$set(this.configuration, parameter.name, value)
       console.log(JSON.stringify(this.configuration))
     }
   }
