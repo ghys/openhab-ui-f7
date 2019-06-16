@@ -10,6 +10,7 @@ function prepareRequest (uri) {
 
   uri = serverUrl + uri
   if (cordova && cordova.plugin.http) {
+    cordova.plugin.http.setDataSerializer('json')
     if (username && password) {
       cordova.plugin.http.useBasicAuth(username, password)
     }
@@ -22,7 +23,7 @@ export default {
     const fullUri = prepareRequest(uri)
     if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.get(fullUri, (data) ? data.data : null, {},
+        cordova.plugin.http.get(fullUri, null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
@@ -35,7 +36,7 @@ export default {
     const fullUri = prepareRequest(uri)
     if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.post(fullUri, (data) ? data.data : null, {},
+        cordova.plugin.http.post(fullUri, (data) ? { data: data } : null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
@@ -48,7 +49,7 @@ export default {
     const fullUri = prepareRequest(uri)
     if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.put(fullUri, (data) ? data.data : null, {},
+        cordova.plugin.http.put(fullUri, (data) ? { data: data } : null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
@@ -61,7 +62,7 @@ export default {
     const fullUri = prepareRequest(uri)
     if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.delete(fullUri, (data) ? data.data : null, {},
+        cordova.plugin.http.delete(fullUri, null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
