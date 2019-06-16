@@ -37,7 +37,8 @@
               @channel-opened="channelOpened">
               <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
-                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
+                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
+                  @channel-updated="$emit('channels-updated')">
                 </channel-link>
               </template>
               <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
@@ -61,7 +62,8 @@
               @channel-opened="channelOpened">
               <template v-slot:default="{ channelId, channelType, channel }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
-                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
+                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
+                  @channel-updated="$emit('channels-updated')">
                 </channel-link>
               </template>
               <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
@@ -85,7 +87,8 @@
               @channel-opened="channelOpened">
               <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId" :extensible="true"
-                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel">
+                  :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
+                  @channel-updated="$emit('channels-updated')">
                 </channel-link>
               </template>
               <template v-slot:default="{ channel, channelId, channelType }" v-else-if="multipleLinksMode">
@@ -206,14 +209,14 @@ export default {
         route: {
           component: AddChannelPage,
           path: 'channels/new',
-          props: {
+          context: {
+            operation: 'add-channel'
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('page closed')
-              const finalChannel = page.app.data.finalChannel
+              const context = page.route.route.context
+              const finalChannel = context.finalChannel
               if (finalChannel) {
-                delete page.app.data.finalChannel
                 self.thing.channels.push(finalChannel)
                 self.$emit('channels-updated')
               }

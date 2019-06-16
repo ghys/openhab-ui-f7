@@ -116,9 +116,6 @@ export default [
   {
     path: '/settings/',
     component: SettingsMenuPage,
-    options: {
-      animate: false
-    },
     routes: [
       {
         path: 'items',

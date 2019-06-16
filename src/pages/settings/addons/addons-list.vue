@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar :title="'Add-ons: ' + addonType" back-link="Back">
+    <f7-navbar :title="'Add-ons: ' + addonType" back-link="Settings">
       <!-- <f7-nav-right>
         <f7-link href="add">Add</f7-link>
       </f7-nav-right>-->

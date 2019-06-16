@@ -1,6 +1,6 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Things" back-link="Back">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeremove="stopEventSource">
+    <f7-navbar title="Things" back-link="Settings">
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -85,7 +85,8 @@ export default {
       loading: false,
       initSearchbar: false,
       things: [],
-      indexedThings: {}
+      indexedThings: {},
+      eventSource: null
     }
   },
   created () {
@@ -93,6 +94,9 @@ export default {
   },
   methods: {
     onPageAfterIn () {
+      this.load()
+    },
+    load () {
       this.loading = true
       this.$oh.api.get('/rest/things').then((data) => {
         this.things = data.sort((a, b) => a.label.localeCompare(b.label))
@@ -109,7 +113,30 @@ export default {
         this.loading = false
         this.ready = true
         setTimeout(() => { this.$refs.listIndex.update() })
+        if (!this.eventSource) this.startEventSource()
       })
+    },
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*/*', null, (event) => {
+        console.log(event)
+        const topicParts = event.topic.split('/')
+        switch (topicParts[3]) {
+          case 'status':
+            const updatedThing = this.things.find((t) => t.UID === topicParts[2])
+            if (updatedThing) {
+              this.$set(updatedThing, 'statusInfo', JSON.parse(event.payload))
+            }
+            break
+          case 'added':
+          case 'removed':
+            this.load()
+            break
+        }
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
     }
   }
 }

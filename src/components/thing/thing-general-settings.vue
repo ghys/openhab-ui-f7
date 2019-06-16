@@ -12,10 +12,10 @@
               <f7-list-input label="Identifier" type="text" placeholder="Name" :value="thing.UID" disabled>
               </f7-list-input>
               <f7-list-input label="Label" type="text" placeholder="e.g. My Thing" :value="thing.label"
-                              @input="thing.label = $event.target.value">
+                              @input="thing.label = $event.target.value; $emit('updated')">
               </f7-list-input>
               <f7-list-input label="Location" type="text" placeholder="e.g. Kitchen" :value="thing.location"
-                              @input="item.category = $event.target.value" clear-button>
+                              @input="thing.location = $event.target.value; $emit('updated')" clear-button>
               </f7-list-input>
             </f7-list>
             <f7-block-title v-if="thingType.supportedBridgeTypeUIDs.length">Parent Bridge</f7-block-title>
@@ -26,6 +26,7 @@
             <f7-list v-if="thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
               <thing-picker
                 title="Bridge" name="bridge" :value="thing.bridgeUID"
+                @input="(value) => { thing.bridgeUID = value; $emit('updated') }"
                 :filterType="thingType.supportedBridgeTypeUIDs" />
             </f7-list>
           </f7-col>

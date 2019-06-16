@@ -41,6 +41,10 @@ export default {
       })
       if (this.filterType) {
         this.things = this.things.filter((i) => this.filterType.indexOf(i.thingTypeUID) >= 0)
+        if (this.things.length < 5) {
+          this.smartSelectParams.openIn = 'sheet'
+          this.smartSelectParams.searchbar = false
+        }
       }
       this.ready = true
     })

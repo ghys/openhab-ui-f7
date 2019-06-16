@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar :title="service.label" back-link="Back">
+    <f7-navbar :title="service.label" back-link="Settings">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
@@ -54,8 +54,14 @@ export default {
   },
   methods: {
     save () {
-      // alert('Save not implemented!')
-      this.$f7.dialog.alert('Save not implemented!')
+      this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
+        this.$f7.toast.create({
+          text: 'Saved',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+      this.$f7router.back()
     }
   },
   created () {
@@ -77,9 +83,7 @@ export default {
 </script>
 
 <style lang="stylus">
-.service-config {
-  .item-input-info {
-    white-space: normal;
-  }
-}
+.service-config
+  .item-input-info
+    white-space  normal
 </style>

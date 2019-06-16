@@ -18,7 +18,7 @@
       @change="$emit('selected', getChannel(getChannelId(channelType)))"
       @accordion:open="opened(channelType)">
       <oh-icon v-if="!extensible && channelType.category" slot="media" :icon="channelType.category" height="32" width="32" />
-      <span v-else-if="!extensible && channelType.label" slot="media" class="item-initial">{{channelType.label[0]}}</span>
+      <span v-else-if="channelType.label" slot="media" class="item-initial">{{channelType.label[0]}}</span>
       <f7-accordion-content v-if="!pickerMode">
         <slot :channelType="channelType" :channelId="getChannelId(channelType)"></slot>
       </f7-accordion-content>

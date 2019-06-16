@@ -78,12 +78,13 @@ export default {
         kind: this.currentChannelType.kind,
         itemType: this.currentChannelType.itemType,
         linkedItems: [],
+        properties: [],
+        defaultTags: [],
         configuration: this.config
       })
-      this.$f7.data.finalChannel = finalChannel
+      this.$f7route.route.context.finalChannel = finalChannel
+      // this.$f7router.emit('complete', finalChannel)
       this.$f7router.back()
-      // this.$emit('channelAddComplete', finalChannel)
-      // this.$f7.view.main.emit('complete', finalChannel)
     }
   }
 }

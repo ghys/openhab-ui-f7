@@ -179,7 +179,8 @@ export default {
       equipments: {},
       initSearchbar: false,
       selectedItem: null,
-      detailsOpened: false
+      detailsOpened: false,
+      eventSource: null
     }
   },
   created () {
@@ -187,6 +188,12 @@ export default {
   },
   methods: {
     onPageAfterIn () {
+      this.load()
+    },
+    onPageBeforeOut () {
+      this.detailsOpened = false
+    },
+    load () {
       if (this.ready) return
       this.loading = true
       const items = this.$oh.api.get('/rest/items?metadata=semantics')
@@ -213,10 +220,26 @@ export default {
         })
         this.loading = false
         this.ready = true
+        if (!this.eventSource) this.startEventSource()
       })
     },
-    onPageBeforeOut () {
-      this.detailsOpened = false
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/items/*/added,smarthome/items/*/removed', null, (event) => {
+        console.log(event)
+        const topicParts = event.topic.split('/')
+        switch (topicParts[3]) {
+          case 'added':
+          case 'removed':
+          case 'updated':
+            this.ready = false
+            this.load()
+            break
+        }
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
     },
     getChildren (parent) {
       if (parent.class.indexOf('Location_') === 0) {

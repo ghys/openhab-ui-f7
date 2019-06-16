@@ -7,23 +7,24 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow">
-      <f7-col>
-        <f7-list inline-labels no-hairlines-md>
-          <f7-list-input type="text" placeholder="Channel Identifier" :value="channel.id"
-                         disabled>
-          </f7-list-input>
-          <f7-list-input type="text" placeholder="Label" :value="channel.label"
-                         disabled>
-          </f7-list-input>
+      <f7-col v-if="channel">
+        <f7-block-title>Channel</f7-block-title>
+        <f7-list media-list>
+          <f7-list-item media-item class="channel-item"
+            :title="channel.label"
+            :footer="channel.description"
+            :subtitle="channel.uid">
+          </f7-list-item>
         </f7-list>
       </f7-col>
       <f7-col v-if="channelType != null">
         <f7-block-title v-if="configDescription.parameters">Configuration</f7-block-title>
-          <config-sheet
-            :parameter-groups="configDescription.parameterGroups"
-            :parameters="configDescription.parameters"
-            :configuration="config"
-          />
+        <f7-block-footer v-else-if="noConfig" class="padding">This channel has no configuration.<br /><br /><f7-link back>Go Back</f7-link></f7-block-footer>
+        <config-sheet
+          :parameter-groups="configDescription.parameterGroups"
+          :parameters="configDescription.parameters"
+          :configuration="config"
+        />
       </f7-col>
     </f7-block>
   </f7-page>
@@ -42,7 +43,8 @@ export default {
       ready: false,
       configDescription: {},
       currentChannelType: null,
-      config: {}
+      config: {},
+      noConfig: false
     }
   },
   methods: {
@@ -51,13 +53,17 @@ export default {
       this.$oh.api.get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`).then((ct) => {
         this.configDescription = ct
         this.ready = true
+      }).catch((err) => {
+        if (err === 404) {
+          this.noConfig = true
+        }
       })
     },
     save () {
       let finalChannel = Object.assign({}, this.channel, {
         configuration: this.config
       })
-      this.$f7.data.finalChannel = finalChannel
+      this.$f7route.route.context.finalChannel = finalChannel
       this.$f7router.back()
       // this.$emit('channelAddComplete', finalChannel)
       // this.$f7.view.main.emit('complete', finalChannel)

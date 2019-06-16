@@ -101,9 +101,15 @@ export default {
     }
     chrome.sockets.tcp.onReceive.addListener(recvListener)
 
-    return chrome.sockets.tcp.create({}, function (clientCreateInfo) {
+    let clientInfo = {
+      socketId: null,
+      path: path,
+      topics: topics
+    }
+    chrome.sockets.tcp.create({}, function (clientCreateInfo) {
       clientSockets.push(clientCreateInfo)
       console.log('socket created')
+      clientInfo.socketId = clientSockets[0].socketId
       chrome.sockets.tcp.setPaused(clientSockets[0].socketId, true, function () {
         chrome.sockets.tcp.connect(clientSockets[0].socketId, hostname, port, function (connectResult) {
           console.log('connected')
@@ -132,8 +138,12 @@ export default {
       })
       return clientSockets[0]
     })
+
+    return clientInfo
   },
-  close (client) {
-    client.close()
+  close (clientInfo, callback) {
+    if (clientInfo && clientInfo.socketId) {
+      chrome.sockets.tcp.close(clientInfo.socketId, callback)
+    }
   }
 }

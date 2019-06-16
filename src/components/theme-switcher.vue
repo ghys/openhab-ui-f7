@@ -40,6 +40,10 @@
             <span>Disable card expansion animations</span>
             <f7-toggle :checked="expandableCardsAnimation === 'disabled'" @toggle:change="setExpandableCardAnimation"></f7-toggle>
           </f7-list-item>
+          <f7-list-item>
+            <span>Disable page transition animations</span>
+            <f7-toggle :checked="pageTransitionAnimation === 'disabled'" @toggle:change="setPageTransitionAnimation"></f7-toggle>
+          </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-row>
@@ -68,6 +72,10 @@ export default {
     setExpandableCardAnimation (value) {
       localStorage.setItem('openhab.ui:theme.home.cardanimation', (value) ? 'disabled' : 'default')
       location.reload()
+    },
+    setPageTransitionAnimation (value) {
+      localStorage.setItem('openhab.ui:theme.home.pagetransition', (value) ? 'disabled' : 'default')
+      location.reload()
     }
   },
   computed: {
@@ -85,6 +93,9 @@ export default {
     },
     expandableCardsAnimation () {
       return localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+    },
+    pageTransitionAnimation () {
+      return localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     }
   }
 }

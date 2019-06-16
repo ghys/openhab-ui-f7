@@ -7,8 +7,20 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-block class="block-narrow">
+      <f7-col v-if="channel">
+        <f7-block-title>Channel</f7-block-title>
+        <f7-list media-list>
+          <f7-list-item media-item class="channel-item"
+            :title="channel.label"
+            :footer="channel.description"
+            :subtitle="channel.uid">
+          </f7-list-item>
+        </f7-list>
+      </f7-col>
+
       <!-- Option to create new item (if not supplied by prop) -->
       <f7-col v-if="!item">
+        <f7-block-title>Item</f7-block-title>
         <f7-list media-list>
           <f7-list-item radio :checked="createItem === false" value="false" @change="createItem = false" title="Use an existing Item" name="item-creation-choice" />
           <f7-list-item radio :checked="createItem === true" value="true" @change="createItem = true" title="Create a new Item" name="item-creation-choice" />
@@ -17,16 +29,17 @@
 
       <!-- Choose item to link -->
       <f7-col v-if="createItem === false && !item">
-        <f7-block-title>Link to an existing Item</f7-block-title>
         <f7-list>
-          <item-picker title="Item to Link" name="item" :value="item" :multiple="false" :filterType="channel.itemType"></item-picker>
+          <!-- TODO: filter with compatible item types -->
+          <item-picker title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
+            @input="(value) => selectedItemName = value"></item-picker>
         </f7-list>
       </f7-col>
 
       <!-- Create new item -->
       <f7-col v-else-if="createItem === true && !item">
-        <f7-block-title>New Item</f7-block-title>
-        <f7-list inline-labels no-hairlines-md>
+        <quick-new-item-form :newItem="newItem" />
+        <!-- <f7-list inline-labels no-hairlines-md>
           <f7-list-input label="Name" type="text" placeholder="Name" :value="newItem.name">
           </f7-list-input>
           <f7-list-input label="Label" type="text" placeholder="Name" :value="newItem.label"
@@ -42,8 +55,7 @@
             <select name="select-type" @change="newItem.type = $event.target.value">
               <option v-for="type in types.ItemTypes" :key="type" :value="type" :selected="type === newItem.type">{{type}}</option>
             </select>
-          </f7-list-item>
-        </f7-list>
+          </f7-list-item> -->
       </f7-col>
 
       <!-- Item to link supplied as prop -->
@@ -99,7 +111,7 @@
           <config-sheet
             :parameter-groups="profileTypeConfiguration.parameterGroups"
             :parameters="profileTypeConfiguration.parameters"
-            :configuration="link.configuration"
+            :configuration="configuration"
           />
       </f7-col>
     </f7-block>
@@ -111,6 +123,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
+import QuickNewItemForm from '@/components/item/quick-new-item-form.vue'
 
 import Item from '@/components/item/item.vue'
 
@@ -124,7 +137,8 @@ export default {
     ItemPicker,
     ThingPicker,
     Item,
-    ChannelList
+    ChannelList,
+    QuickNewItemForm
   },
   props: ['thing', 'channel', 'channelType', 'item'],
   data () {
@@ -137,6 +151,7 @@ export default {
         configuration: {}
       },
       selectedItem: null,
+      selectedItemName: null,
       selectedThingId: '',
       selectedThing: {},
       selectedThingType: {},
@@ -144,7 +159,14 @@ export default {
       profileTypes: [],
       currentProfileType: null,
       profileTypeConfiguration: null,
-      newItem: {},
+      newItem: {
+        name: null,
+        label: null,
+        groupNames: [],
+        tags: [],
+        type: null
+      },
+      configuration: {},
       types: Types,
       semanticClasses: SemanticClasses
     }
@@ -199,10 +221,48 @@ export default {
       return false
     },
     save () {
+      const link = {}
+      if (this.channel) {
+        link.channelUID = this.channel.uid
+      } else if (this.selectedChannel) {
+        link.channelUID = this.selectedChannel.uid
+      }
+
+      if (this.item) {
+        link.itemName = this.item.name
+      } else if (this.createItem) {
+        link.itemName = this.newItem.name
+      } else if (this.selectedItemName) {
+        link.itemName = this.selectedItemName
+      }
+
+      link.configuration = Object.assign({}, this.configuration)
+      if (this.currentProfileType) {
+        link.configuration.profile = this.currentProfileType.uid
+      }
+
+      // checks
+      if (!link.itemName) {
+        this.$f7.dialog.alert('Please configure the item to link')
+        return
+      }
+      if (!link.channelUID) {
+        this.$f7.dialog.alert('Please configure the channel to link')
+        return
+      }
       if (!this.itemTypeCompatible()) {
         this.$f7.dialog.alert('The channel and item type are not compatible')
         return
       }
+
+      this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
+        this.$f7.toast.create({
+          text: 'Link updated',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.$f7router.back()
+      })
     }
   },
   watch: {

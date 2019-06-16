@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Inbox" back-link="Back">
+    <f7-navbar title="Inbox" back-link="Settings">
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"

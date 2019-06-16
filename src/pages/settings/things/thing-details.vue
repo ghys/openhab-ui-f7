@@ -1,6 +1,11 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar :title="thing.label" back-link="Back" no-hairline></f7-navbar>
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeremove="stopEventSource">
+    <f7-navbar :title="thing.label" back-link="Back" no-hairline>
+      <f7-nav-right v-if="dirty">
+        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
+        <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
+      </f7-nav-right>
+    </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link tab-link="#info" tab-link-active>Info</f7-link>
       <f7-link tab-link="#config">Config</f7-link>
@@ -72,7 +77,7 @@
                 <f7-toggle :checked="thingEnabled"></f7-toggle>
               </f7-list-item>
               <!-- <f7-list-item v-if="Object.keys(thing.properties).length > 0" divider>Properties</f7-list-item> -->
-              <f7-list-button color="red" title="Delete Thing"></f7-list-button>
+              <f7-list-button color="red" title="Delete Thing" @click="deleteThing"></f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
@@ -80,11 +85,12 @@
 
       <f7-tab id="config" :disabled="!(thing.configuration && thingType.configParameters)" @tab:show="() => this.currentTab = 'config'">
         <f7-block v-if="currentTab === 'config'" class="block-narrow">
-          <thing-general-settings :thing="thing" :thing-type="thingType" />
+          <thing-general-settings :thing="thing" :thing-type="thingType" @updated="dirty = true" />
           <config-sheet
             :parameter-groups="thingType.parameterGroups"
             :parameters="thingType.configParameters"
             :configuration="thing.configuration"
+            @updated="dirty = true"
           />
         </f7-block>
       </f7-tab>
@@ -92,6 +98,7 @@
       <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing"
+            @channels-updated="save()"
           />
         </f7-block>
       </f7-tab>
@@ -182,11 +189,13 @@ export default {
   data () {
     return {
       ready: false,
+      dirty: false,
       currentTab: 'info',
       thing: {},
       thingType: {},
       thingEnabled: true,
-      codePopupOpened: false
+      codePopupOpened: false,
+      eventSource: null
     }
   },
   created () {
@@ -260,15 +269,90 @@ export default {
   },
   methods: {
     onPageAfterIn () {
+      this.load()
+    },
+    load () {
       if (this.ready) return
       this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
-        this.thing = data
+        this.$set(this, 'thing', data)
 
         this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID).then(data2 => {
           this.thingType = data2
           this.ready = true
+          this.dirty = false
+          if (!this.eventSource) this.startEventSource()
         })
       })
+    },
+    save () {
+      if (!this.ready) return
+      this.$oh.api.put('/rest/things/' + this.thingId, this.thing).then(data => {
+        this.$set(this, 'thing', data)
+        this.dirty = false
+        this.$f7.toast.create({
+          text: 'Thing updated',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+    },
+    deleteThing () {
+      let url, message
+      if (this.thing.statusInfo.status === 'REMOVING') {
+        message = `${this.thing.label} is currently being removed but the binding has not confirmed it has finished the operation yet. Would you like to force its removal? Warning: this could cause stability issues with the binding!`
+        url = '/rest/things/' + this.thingId + '?force=true'
+      } else {
+        message = `Are you sure you want to delete ${this.thing.label}?`
+        url = '/rest/things/' + this.thingId
+      }
+      this.$f7.dialog.confirm(
+        message,
+        'Delete Thing',
+        () => {
+          this.$oh.api.delete(url).then(() => {
+            this.$f7router.back('/settings/things/', { force: true })
+          })
+        }
+      )
+    },
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*,smarthome/links/*' /* + encodeURIComponent(this.thingId) */, null, (event) => {
+        // console.log(event)
+        const topicParts = event.topic.split('/')
+        switch (topicParts[1]) {
+          case 'things':
+            if (topicParts[2] !== this.thingId) return
+            switch (topicParts[3]) {
+              case 'status':
+                this.$set(this.thing, 'statusInfo', JSON.parse(event.payload))
+                break
+              case 'removed':
+                this.$f7.toast.create({
+                  text: 'The Thing was deleted',
+                  destroyOnClose: true,
+                  closeTimeout: 2000
+                }).open()
+                this.$f7router.back('/settings/things/', { force: true })
+                break
+              case 'updated':
+                console.log('reloading')
+                this.ready = false
+                this.load()
+                break
+            }
+            break
+          case 'links':
+            if (topicParts[2].indexOf(this.thingId) < 0) return
+            console.log('links updated')
+            this.ready = false
+            this.load()
+            break
+        }
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
     },
     copyTextualDefinition () {
       let el = document.getElementById('textual-definition')

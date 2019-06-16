@@ -4,6 +4,28 @@ export default {
   api: {
     get (uri, data) {
       return Framework7.request.promise.json(uri, data)
+    },
+    post (uri, data) {
+      return Framework7.request.promise.postJSON(uri, data)
+    },
+    put (uri, data) {
+      return Framework7.request.promise({
+        method: 'PUT',
+        url: uri,
+        data: JSON.stringify(data),
+        processData: false,
+        // dataType: 'json',
+        contentType: 'application/json'
+      })
+    },
+    delete (uri, data) {
+      return Framework7.request.promise({
+        method: 'DELETE',
+        url: uri,
+        processData: false,
+        // dataType: 'json',
+        contentType: 'application/json'
+      })
     }
   },
   sse: {
@@ -29,7 +51,8 @@ export default {
 
       return eventSource
     },
-    close (client) {
+    close (client, callback) {
+      if (!client) return
       console.log('SSE connection closed: ' + client.url)
       client.close()
     }

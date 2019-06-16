@@ -220,6 +220,16 @@ export default {
       el.select()
       document.execCommand('copy')
       copyToast.open()
+    },
+    save () {
+      this.$oh.api.post('/rest/things', this.thing).then(() => {
+        this.$f7.toast.create({
+          text: 'Thing created',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
+      this.$f7router.back('/settings/things/', { force: true })
     }
   }
   // watch: {

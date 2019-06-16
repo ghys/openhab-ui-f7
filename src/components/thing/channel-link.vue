@@ -65,6 +65,30 @@ export default {
     }
   },
   methods: {
+    buildLinks () {
+      this.channel = this.thing.channels.find((c) => c.id === this.channelId)
+      if (this.channel) {
+        this.channelKind = this.channel.kind
+        this.$set(this, 'links', [])
+        let promises = []
+        this.ready = false
+        this.channel.linkedItems.forEach((itemName) => {
+          let link = {
+            itemName,
+            item: { name: itemName }
+          }
+          this.links.push(link)
+          const fetchItem = this.$oh.api.get('/rest/items/' + link.itemName + '?metadata=semantics')
+          fetchItem.then((i) => {
+            link.item = i
+          })
+          promises.push(fetchItem)
+        })
+        Promise.all(promises).then(() => {
+          this.ready = true
+        })
+      }
+    },
     editLink (link) {
       console.log('edit link')
     },
@@ -134,16 +158,18 @@ export default {
         route: {
           component: ConfigureChannelPage,
           path: path,
-          props: {
+          context: {
+            operation: 'edit-channel'
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('page closed')
-              const finalChannel = page.app.data.finalChannel
+              const context = page.route.route.context
+              const finalChannel = context.finalChannel
               if (finalChannel) {
-                delete page.app.data.finalChannel
-                self.thing.channels.push(finalChannel)
-                self.$emit('channels-updated')
+                // replace the channel in-place
+                const idx = self.thing.channels.findIndex((c) => c.uid === finalChannel.uid)
+                self.$set(self.thing.channels, idx, finalChannel)
+                self.$emit('channel-updated')
               }
             }
           }
@@ -173,28 +199,12 @@ export default {
   watch: {
     opened (isOpen) {
       if (isOpen) {
-        this.channel = this.thing.channels.find((c) => c.id === this.channelId)
-        if (this.channel) {
-          this.channelKind = this.channel.kind
-          this.$set(this, 'links', [])
-          let promises = []
-          this.ready = false
-          this.channel.linkedItems.forEach((itemName) => {
-            let link = {
-              itemName,
-              item: { name: itemName }
-            }
-            this.links.push(link)
-            const fetchItem = this.$oh.api.get('/rest/items/' + link.itemName + '?metadata=semantics')
-            fetchItem.then((i) => {
-              link.item = i
-            })
-            promises.push(fetchItem)
-          })
-          Promise.all(promises).then(() => {
-            this.ready = true
-          })
-        }
+        this.buildLinks()
+      }
+    },
+    thing () {
+      if (this.opened) {
+        this.buildLinks()
       }
     }
   }

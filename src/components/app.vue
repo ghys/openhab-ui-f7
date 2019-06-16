@@ -1,5 +1,5 @@
 <template>
-<f7-app :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark == 'dark', 'theme-filled': this.themeOptions.bars === 'default' }">
+<f7-app :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'default', 'no-page-transitions': this.themeOptions.pageTransitionAnimation === 'disabled' }">
   <!-- Status bar overlay for fullscreen mode-->
   <f7-statusbar></f7-statusbar>
 
@@ -239,6 +239,7 @@ export default {
     this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || 'default'
     this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
     this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     // this.loginScreenOpened = true
   },
   mounted () {
