@@ -36,7 +36,7 @@ export default {
     const fullUri = prepareRequest(uri)
     if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.post(fullUri, (data) ? { data: data } : null, {},
+        cordova.plugin.http.post(fullUri, data, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
@@ -49,7 +49,7 @@ export default {
     const fullUri = prepareRequest(uri)
     if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.put(fullUri, (data) ? { data: data } : null, {},
+        cordova.plugin.http.put(fullUri, data, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
