@@ -4,18 +4,17 @@ function prepareRequest (uri) {
   const username = localStorage.getItem('openhab.ui:username')
   const password = localStorage.getItem('openhab.ui:password')
 
-  if (serverUrl) {
-    uri = serverUrl + uri
-    if (cordova && cordova.plugin.http) {
-      if (username && password) {
-        cordova.plugin.http.useBasicAuth(username, password)
-      }
-
-      return true
-    }
+  if (!serverUrl) {
+    return false
   }
 
-  return false
+  uri = serverUrl + uri
+  if (cordova && cordova.plugin.http) {
+    if (username && password) {
+      cordova.plugin.http.useBasicAuth(username, password)
+    }
+  }
+  return true
 }
 
 export default {
