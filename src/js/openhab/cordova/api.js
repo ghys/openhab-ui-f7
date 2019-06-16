@@ -5,7 +5,7 @@ function prepareRequest (uri) {
   const password = localStorage.getItem('openhab.ui:password')
 
   if (!serverUrl) {
-    return false
+    return null
   }
 
   uri = serverUrl + uri
@@ -14,14 +14,15 @@ function prepareRequest (uri) {
       cordova.plugin.http.useBasicAuth(username, password)
     }
   }
-  return true
+  return uri
 }
 
 export default {
   get (uri, data) {
-    if (prepareRequest(uri)) {
+    const fullUri = prepareRequest(uri)
+    if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.get(uri, (data) ? data.data : null, {},
+        cordova.plugin.http.get(fullUri, (data) ? data.data : null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
@@ -31,9 +32,10 @@ export default {
     }
   },
   post (uri, data) {
-    if (prepareRequest(uri)) {
+    const fullUri = prepareRequest(uri)
+    if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.post(uri, (data) ? data.data : null, {},
+        cordova.plugin.http.post(fullUri, (data) ? data.data : null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
@@ -43,9 +45,10 @@ export default {
     }
   },
   put (uri, data) {
-    if (prepareRequest(uri)) {
+    const fullUri = prepareRequest(uri)
+    if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.put(uri, (data) ? data.data : null, {},
+        cordova.plugin.http.put(fullUri, (data) ? data.data : null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
@@ -55,9 +58,10 @@ export default {
     }
   },
   delete (uri, data) {
-    if (prepareRequest(uri)) {
+    const fullUri = prepareRequest(uri)
+    if (fullUri) {
       return new Promise((resolve, reject) => {
-        cordova.plugin.http.delete(uri, (data) ? data.data : null, {},
+        cordova.plugin.http.delete(fullUri, (data) ? data.data : null, {},
           function (response) {
             resolve(JSON.parse(response.data))
           }, function (response) {
