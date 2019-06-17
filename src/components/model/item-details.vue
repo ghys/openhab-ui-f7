@@ -60,6 +60,13 @@ export default {
     },
     save () {
       this.editMode = false
+      this.$oh.api.put('/rest/items/' + this.model.item.name, this.model.item).then((data) => {
+        this.$f7.toast.create({
+          text: 'Item updated',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
     }
   },
   watch: {

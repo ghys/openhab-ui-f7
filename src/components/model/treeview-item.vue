@@ -1,7 +1,7 @@
 <template>
   <f7-treeview-item selectable :label="(model.item.label || model.item.name)"
     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
-    :selected="selected === model"
+    :selected="selected && selected.item.name === model.item.name"
     @click="select">
     <div v-if="model.children.locations.length > 0">
       <model-treeview-item v-for="location in model.children.locations"

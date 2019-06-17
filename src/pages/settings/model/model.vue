@@ -39,46 +39,10 @@
         <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50" class="details-pane">
           <f7-block no-gap>
             <model-details-pane :model="selectedItem" :links="links" />
-            <!-- <item-details :model="selectedItem" :links="links" />
-            <semantics-picker :item="selectedItem.item" :same-class-only="true" />
-            <link-details :model="selectedItem" :links="links" /> -->
           </f7-block>
         </f7-col>
       </f7-row>
     </f7-block>
-    <!-- <f7-block class="block-narrow" v-else>
-      <f7-block-title class="col wide">{{items.length}} items</f7-block-title>
-      <f7-col>
-        <f7-list
-          class="searchbar-found col wide"
-          media-list
-          virtual-list
-          :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 78 : $theme.aurora ? 60 : 87}"
-        >
-          <ul>
-            <f7-list-item
-              v-for="(item, index) in vlData.items"
-              :key="index"
-              media-item
-              class="itemlist-item"
-              :checkbox="showCheckboxes"
-              :checked="isChecked(item.name)"
-              @change="(e) => toggleItemCheck(e, item.name)"
-              :link="showCheckboxes ? null : item.name"
-              :title="(item.label) ? item.label : item.name"
-              :footer="(item.label) ? item.name : '\xa0'"
-              :subtitle="getItemTypeAndMetaLabel(item)"
-              :style="`top: ${vlData.topPosition}px`"
-              :after="item.state"
-            >
-              <oh-icon v-if="item.category" slot="media" :icon="item.category" height="32" width="32" />
-              <span v-else slot="media" class="item-initial">{{item.name[0]}}</span>
-              <f7-icon v-if="!item.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
-            </f7-list-item>
-          </ul>
-        </f7-list>
-      </f7-col>
-    </f7-block> -->
 
     <f7-fab position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || selectedItem.class.indexOf('Point_') < 0">
       <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
@@ -103,9 +67,6 @@
         <f7-block style="margin-bottom: 6rem">
           <model-details-pane :model="selectedItem" :links="links" />
         </f7-block>
-        <!-- <item-details :model="selectedItem" :links="links" />
-        <semantics-picker :item="selectedItem.item" :same-class-only="true" />
-        <link-details :model="selectedItem" :links="links" /> -->
       </f7-page>
     </f7-sheet>
 
@@ -194,7 +155,7 @@ export default {
       this.detailsOpened = false
     },
     load () {
-      if (this.ready) return
+      // if (this.ready) return
       this.loading = true
       const items = this.$oh.api.get('/rest/items?metadata=semantics')
       const links = this.$oh.api.get('/rest/links')
@@ -224,14 +185,14 @@ export default {
       })
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/items/*/added,smarthome/items/*/removed', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/items/*/added,smarthome/items/*/updated,smarthome/items/*/removed', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
           case 'added':
           case 'removed':
           case 'updated':
-            this.ready = false
+            // this.ready = false
             this.load()
             break
         }
@@ -327,18 +288,6 @@ export default {
       // this.detailsOpened = true
       console.log('selected ' + item.item.name)
     },
-    getItemTypeAndMetaLabel (item) {
-      let ret = item.type
-      if (item.metadata && item.metadata.semantics) {
-        ret += ' · '
-        const classParts = item.metadata.semantics.value.split('_')
-        ret += classParts[0]
-        if (classParts.length > 1) {
-          ret += '>' + classParts.pop()
-        }
-      }
-      return ret
-    },
     addThingAsEquipment () {
       const self = this
       this.$f7router.navigate({
@@ -365,11 +314,6 @@ export default {
           parent: this.selectedItem
         }
       })
-    }
-  },
-  asyncComputed: {
-    iconUrl () {
-      return icon => this.$oh.media.getIcon(icon)
     }
   }
 }

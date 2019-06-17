@@ -133,12 +133,6 @@ export default {
           on: {
             pageAfterOut (event, page) {
               console.log('page closed')
-              // const finalChannel = page.app.data.finalChannel
-              // if (finalChannel) {
-              //   delete page.app.data.finalChannel
-              //   self.thing.channels.push(finalChannel)
-              //   self.$emit('links-updated')
-              // }
             }
           }
         }
