@@ -140,13 +140,14 @@ export default {
   },
   methods: {
     install () {
-      this.$f7.dialog.alert(
-        'Installing/uninstalling addons not implemented yet!',
-        'Sorry'
-      )
+      this.$oh.api.post('/rest/extensions/' + this.addonId + '/install', {}, 'text').then((data) => {
+        this.$emit('install', this.addon)
+      })
     },
     uninstall () {
-      this.install()
+      this.$oh.api.post('/rest/extensions/' + this.addonId + '/uninstall', {}, 'text').then((data) => {
+        this.$emit('uninstall', this.addon)
+      })
     }
   }
 }
