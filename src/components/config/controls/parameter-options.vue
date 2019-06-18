@@ -1,9 +1,9 @@
 <template>
   <ul>
       <f7-list-item
-         :title="configDescription.label" smart-select :smart-select-params="smartSelectParams">
-        <select :name="configDescription.name" @change="updateValue($event.target.value)">
-          <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="value === option.value">{{option.label}}</option>
+         :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
+        <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple">
+          <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="isSelected(option)">{{option.label}}</option>
         </select>
       </f7-list-item>
   </ul>
@@ -33,8 +33,16 @@ export default {
     // this.smartSelectParams.routableModals = false // to fix bug on firefox
   },
   methods: {
-    updateValue (value) {
+    updateValue (event) {
+      const value = this.$refs.item.f7SmartSelect.getValue()
       this.$emit('input', value)
+    },
+    isSelected (option) {
+      if (!this.configDescription.multiple) {
+        return this.value === option.value
+      } else {
+        return this.value.indexOf(option.value) >= 0
+      }
     }
   }
 }
