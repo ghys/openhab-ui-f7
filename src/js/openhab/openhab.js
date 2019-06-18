@@ -5,8 +5,8 @@ export default {
     get (uri, data) {
       return Framework7.request.promise.json(uri, data)
     },
-    post (uri, data) {
-      return Framework7.request.promise.postJSON(uri, data)
+    post (uri, data, dataType) {
+      return Framework7.request.promise.postJSON(uri, data, dataType)
     },
     put (uri, data) {
       return Framework7.request.promise({
@@ -29,7 +29,7 @@ export default {
     }
   },
   sse: {
-    connect (path, topics, callback) {
+    connect (path, topics, callback, errorCallback) {
       let eventSource
       // TODO handle basic auth with polyfill if necessary
       eventSource = new EventSource(path)
@@ -44,6 +44,11 @@ export default {
       }
 
       eventSource.onerror = () => {
+        console.log('SSE error')
+        console.log(eventSource)
+        if (errorCallback) {
+          errorCallback()
+        }
         if (eventSource.readyState === 2) {
           console.log('%c=!= Event source connection broken...', 'background-color: red; color: white')
         }

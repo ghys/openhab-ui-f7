@@ -3,7 +3,7 @@ export default {
   /* This is a buggy and probably unreliable SSE client implementation
      using native sockets, to cope with CORS and iOS's WKWebView.
   */
-  connect (path, topics, callback) {
+  connect (path, topics, callback, errorCallback) {
     let clientSockets = []
     let buffer = ''
 
@@ -44,6 +44,8 @@ export default {
       let chunkSizes = []
       let chunks = []
       let payload = {}
+
+      decoded = decoded.trimLeft()
 
       while (decoded.trim().length) {
         let chunk
@@ -100,6 +102,15 @@ export default {
       }
     }
     chrome.sockets.tcp.onReceive.addListener(recvListener)
+
+    const errorListener = (info) => {
+      console.log('SSE error')
+      console.log(info)
+      if (errorCallback) {
+        errorCallback(info)
+      }
+    }
+    chrome.sockets.tcp.onReceiveError.addListener(errorListener)
 
     let clientInfo = {
       socketId: null,
