@@ -41,7 +41,7 @@ export default {
       if (!this.configDescription.multiple) {
         return this.value === option.value
       } else {
-        return this.value.indexOf(option.value) >= 0
+        return this.value && this.value.indexOf(option.value) >= 0
       }
     }
   }
