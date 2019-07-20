@@ -14,7 +14,7 @@
 
     <f7-tabs>
       <f7-tab id="info" tab-active @tab:show="() => this.currentTab = 'info'">
-        <f7-block v-if="ready" class="block-narrow padding-left padding-right" strong>
+        <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>Status:
             <f7-chip class="margin-left"
               :text="thing.statusInfo.status"
@@ -74,6 +74,7 @@
             <f7-block-title>Z-Wave</f7-block-title>
             <f7-list>
               <f7-list-button color="blue" title="View Network Map" @click="zwaveNetworkPopupOpened = true"></f7-list-button>
+              <f7-list-button color="blue" v-for="action in zwaveActions" :key="action.name" :title="action.label" @click="doZWaveAction(action)"></f7-list-button>
             </f7-list>
           </f7-col>
           <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" />
@@ -97,8 +98,8 @@
         <f7-block v-if="currentTab === 'config'" class="block-narrow">
           <thing-general-settings :thing="thing" :thing-type="thingType" @updated="dirty = true" />
           <config-sheet
-            :parameter-groups="thingType.parameterGroups"
-            :parameters="thingType.configParameters"
+            :parameter-groups="configDescriptions.parameterGroups"
+            :parameters="configDescriptions.parameters"
             :configuration="thing.configuration"
             @updated="dirty = true"
           />
@@ -206,6 +207,8 @@ export default {
       currentTab: 'info',
       thing: {},
       thingType: {},
+      configDescriptions: {},
+      zwaveActions: {},
       thingEnabled: true,
       codePopupOpened: false,
       zwaveNetworkPopupOpened: false,
@@ -292,9 +295,20 @@ export default {
 
         this.$oh.api.get('/rest/thing-types/' + this.thing.thingTypeUID).then(data2 => {
           this.thingType = data2
-          this.ready = true
-          this.dirty = false
-          if (!this.eventSource) this.startEventSource()
+
+          this.$oh.api.get('/rest/config-descriptions/thing:' + this.thingId).then(data3 => {
+            this.configDescriptions = data3
+            this.ready = true
+            this.dirty = false
+
+            // special treatment for Z-Wave actions
+            if (this.thingType.UID.indexOf('zwave') === 0) {
+              this.zwaveActions = this.configDescriptions.parameters.filter((p) => p.groupName === 'actions')
+              this.configDescriptions.parameters = this.configDescriptions.parameters.filter((p) => p.groupName !== 'actions')
+            }
+
+            if (!this.eventSource) this.startEventSource()
+          })
         })
       })
     },
@@ -309,6 +323,20 @@ export default {
           closeTimeout: 2000
         }).open()
       })
+    },
+    doZWaveAction (action) {
+      let thing = this.thing
+      let save = this.save
+      if (action.type !== 'BOOLEAN') return
+      this.$f7.dialog.confirm(
+        `${action.label}?`,
+        this.thing.label,
+        () => {
+          console.log(action)
+          thing.configuration[action.name] = true
+          save()
+        }
+      )
     },
     deleteThing () {
       let url, message
