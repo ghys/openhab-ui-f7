@@ -196,6 +196,7 @@ export default {
     },
     onPageBeforeOut () {
       this.detailsOpened = false
+      this.stopEventSource()
     },
     load () {
       // if (this.ready) return
