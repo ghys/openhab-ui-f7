@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeremove="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar :title="thing.label" back-link="Back" no-hairline>
       <f7-nav-right v-if="dirty">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
@@ -67,6 +67,16 @@
               ></f7-list-item>
             </f7-list>
           </f7-col>
+        </f7-block>
+
+        <f7-block class="block-narrow" v-if="ready && thingType && thingType.UID.indexOf('zwave') === 0">
+          <f7-col>
+            <f7-block-title>Z-Wave</f7-block-title>
+            <f7-list>
+              <f7-list-button color="blue" title="View Network Map" @click="zwaveNetworkPopupOpened = true"></f7-list-button>
+            </f7-list>
+          </f7-col>
+          <z-wave-network-popup :opened="zwaveNetworkPopupOpened" @closed="zwaveNetworkPopupOpened = false" />
         </f7-block>
 
         <f7-block class="block-narrow" v-if="ready">
@@ -177,13 +187,16 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
+import ZWaveNetworkPopup from './zwave/zwave-network-popup.vue'
+
 let copyToast = null
 
 export default {
   components: {
     ConfigSheet,
     ChannelList,
-    ThingGeneralSettings
+    ThingGeneralSettings,
+    ZWaveNetworkPopup
   },
   props: ['thingId'],
   data () {
@@ -195,6 +208,7 @@ export default {
       thingType: {},
       thingEnabled: true,
       codePopupOpened: false,
+      zwaveNetworkPopupOpened: false,
       eventSource: null
     }
   },

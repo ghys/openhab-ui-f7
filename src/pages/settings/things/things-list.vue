@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeremove="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar title="Things" back-link="Settings">
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
