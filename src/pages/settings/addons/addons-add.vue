@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeremove="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="stopEventSource">
     <f7-navbar :title="'Add ' + addonType + ' add-on'" back-link="Back">
       <f7-subnavbar :inner="false">
         <f7-searchbar search-container=".search-list" search-in=".item-title" remove-diacritics></f7-searchbar>
