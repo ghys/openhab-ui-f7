@@ -15,7 +15,7 @@
       </select>
     </f7-list-item>
     <f7-list-item v-if="currentSemanticType && !hideType" title="Semantic Type" :after="currentSemanticType" />
-    <f7-list-item v-if="currentSemanticType == 'Point'" title="Semantic Property" smart-select :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+    <f7-list-item v-if="currentSemanticType == 'Point'" title="Semantic Property" smart-select :smart-select-params="{view: $f7.view.main, searchbar: true, openIn: 'popup', closeOnSelect: true}">
       <select name="select-semantics-proerty" :value="semanticProperty" @change="update('property', $event.target.value)">
         <option :value="''">None</option>
         <option v-for="type in semanticClasses.Properties" :key="type" :value="type" :selected="type === semanticProperty">{{type}}</option>

@@ -20,7 +20,7 @@
           </optgroup>
         </select>
       </f7-list-item>
-      <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, lightbulb, firstfloor..." :value="item.category"
+      <f7-list-input v-if="!hideCategory" ref="category" label="Category" autocomplete="off" type="text" placeholder="temperature, firstfloor..." :value="item.category"
                       @input="item.category = $event.target.value" clear-button>
         <div slot="root-end" style="margin-left: calc(35% + 8px)">
           <oh-icon :icon="item.category" height="32" width="32" />
