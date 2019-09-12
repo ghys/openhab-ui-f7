@@ -48,6 +48,7 @@ export default [
   {
     path: '/',
     component: HomePage,
+    keepAlive: true,
     options: {
       animate: false
     }

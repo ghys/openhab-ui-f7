@@ -1,5 +1,5 @@
 <template>
-  <f7-page v-on:page:afterin="displayCards" class="home-page">
+  <f7-page stacked name="HomePage" v-on:page:afterin="displayCards" class="home-page">
     <f7-navbar>
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
