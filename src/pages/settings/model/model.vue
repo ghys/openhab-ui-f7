@@ -62,7 +62,8 @@
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
       <f7-fab-buttons position="top">
         <f7-fab-button label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:bulb" md="material:highlight" aurora="f7:bulb"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Add Thing as Equipment" @click="addThingAsEquipment"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
         <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark" md="material:place" aurora="f7:placemark"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
@@ -140,7 +141,7 @@
 
 <script>
 import ModelDetailsPane from '@/components/model/details-pane.vue'
-import AddThingAsEquipment from './add-thing-as-equipment.vue'
+import AddFromThing from './add-from-thing.vue'
 
 import ItemDetails from '@/components/model/item-details.vue'
 import LinkDetails from '@/components/model/link-details.vue'
@@ -380,24 +381,25 @@ export default {
       }
       this.load()
     },
-    addThingAsEquipment () {
+    addFromThing (createEquipment) {
       const self = this
       this.$f7router.navigate({
         url: 'add-thing',
         route: {
-          component: AddThingAsEquipment,
+          component: AddFromThing,
           path: 'add-thing',
           props: {
           },
           on: {
             pageAfterOut (event, page) {
-              console.log('page closed')
+              console.log('Add from thing page closed')
             }
           }
         }
       }, {
         props: {
-          parent: this.selectedItem
+          parent: this.selectedItem,
+          createEquipment
         }
       })
     }
