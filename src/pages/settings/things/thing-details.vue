@@ -308,6 +308,16 @@ export default {
             }
 
             if (!this.eventSource) this.startEventSource()
+          }).catch(err => {
+            console.log('No config descriptions for this thing, using those on the thing type: ' + err)
+            this.ready = true
+            this.dirty = false
+            this.configDescriptions = {
+              parameterGroups: this.thingType.parameterGroups,
+              parameters: this.thingType.configParameters
+            }
+
+            if (!this.eventSource) this.startEventSource()
           })
         })
       })

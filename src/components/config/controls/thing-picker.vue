@@ -1,6 +1,6 @@
 <template>
 <ul>
-  <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready">
+  <f7-list-item :title="title || 'Thing'" smart-select :smart-select-params="smartSelectParams" v-if="ready">
     <select :name="name" :multiple="multiple" @change="select">
       <option value=""></option>
       <option v-for="thing in things" :value="thing.UID" :key="thing.UID" :selected="(multiple) ? value.indexOf(thing.UID) >= 0 : value === thing.UID">

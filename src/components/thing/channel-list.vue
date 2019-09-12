@@ -42,7 +42,7 @@
                 </channel-link>
               </template>
               <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
-                <quick-new-item-form v-if="isChecked(channel)" :channel="channel" :checked="isChecked(channel)" />
+                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
               <!-- <channel-link #default="{ channelId }" /> -->
             </channel-group>
@@ -67,7 +67,7 @@
                 </channel-link>
               </template>
               <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
-                <quick-new-item-form v-if="isChecked(channel)" :channel="channel" :checked="isChecked(channel)" />
+                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
             </channel-group>
           </f7-col>
@@ -92,7 +92,7 @@
                 </channel-link>
               </template>
               <template v-slot:default="{ channel, channelId, channelType }" v-else-if="multipleLinksMode">
-                <quick-new-item-form v-if="isChecked(channel)" :channel="channel" :channelId="channelId" :channelType="channelType" :checked="isChecked(channel)" />
+                <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
             </channel-group>
           </f7-col>
@@ -131,16 +131,16 @@
 <script>
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
-import QuickNewItemForm from '@/components/item/quick-new-item-form.vue'
+import ItemForm from '@/components/item/item-form.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 
 export default {
-  props: ['thingType', 'thing', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter'],
+  props: ['thingType', 'thing', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItems'],
   components: {
     ChannelGroup,
     ChannelLink,
-    QuickNewItemForm
+    ItemForm
   },
   data () {
     return {
@@ -178,24 +178,38 @@ export default {
     toggleAdvanced (event) {
       this.showAdvanced = !this.showAdvanced // event.target.checked
     },
-    selectChannel (channel) {
+    selectChannel (channel, channelType) {
       if (this.pickerMode) {
         this.selectedChannel = channel
       } else if (this.multipleLinksMode) {
-        this.toggleItemCheck(channel)
+        this.toggleItemCheck(channel, channelType)
       }
-      this.$emit('selected', channel)
+      this.$emit('selected', channel, channelType)
     },
     isChecked (channel) {
       return this.selectedChannels.indexOf(channel) >= 0
     },
-    toggleItemCheck (channel) {
+    toggleItemCheck (channel, channelType) {
       console.log('toggle check')
       if (this.isChecked(channel)) {
         this.selectedChannels.splice(this.selectedChannels.indexOf(channel), 1)
+        this.newItems.splice(this.newItems.findIndex((i) => i.channel === channel), 1)
       } else {
         this.selectedChannels.push(channel)
+        const newItem = {
+          channel: channel,
+          channelType: channelType,
+          name: this.thing.label.replace(/[^0-9a-z]/gi, '') + '_' + channel.label.replace(/[^0-9a-z]/gi, ''),
+          label: channel.label,
+          category: (channelType) ? channelType.category : '',
+          type: channel.itemType,
+          tags: ['Point']
+        }
+        this.newItems.push(newItem)
       }
+    },
+    newItem (channel) {
+      return this.newItems.find((i) => i.channel === channel)
     },
     channelOpened (payload) {
       console.log('caught channel-opened')

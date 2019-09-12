@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
+  <f7-page name="Model" :stacked="true" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
     <f7-navbar title="Semantic Model" back-link="Back">
       <f7-nav-right>
         <!-- <f7-link icon-md="material:done_all" @click="toggleCheck()"
@@ -51,19 +51,19 @@
         </f7-col>
         <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50" class="details-pane">
           <f7-block no-gap>
-            <model-details-pane :model="selectedItem" :links="links" />
+            <model-details-pane :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
           </f7-block>
         </f7-col>
       </f7-row>
     </f7-block>
 
-    <f7-fab position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || selectedItem.class.indexOf('Point_') < 0">
+    <f7-fab position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
       <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
       <f7-fab-buttons position="top">
-        <f7-fab-button label="Add Equipment"><f7-icon ios="f7:bulb" md="material:highlight" aurora="f7:bulb"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:bulb" md="material:highlight" aurora="f7:bulb"></f7-icon></f7-fab-button>
         <f7-fab-button label="Add Thing as Equipment" @click="addThingAsEquipment"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location_') === 0" label="Add Location"><f7-icon ios="f7:placemark" md="material:place" aurora="f7:placemark"></f7-icon></f7-fab-button>
+        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark" md="material:place" aurora="f7:placemark"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
 
@@ -78,7 +78,7 @@
           </div>
         </f7-toolbar>
         <f7-block style="margin-bottom: 6rem" v-if="selectedItem">
-          <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" />
+          <item-details v-if="detailsTab === 'item'" :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)"/>
           <link-details v-if="detailsTab === 'links'" :item="selectedItem.item" :links="links" />
         </f7-block>
       </f7-page>
@@ -144,11 +144,11 @@ import AddThingAsEquipment from './add-thing-as-equipment.vue'
 
 import ItemDetails from '@/components/model/item-details.vue'
 import LinkDetails from '@/components/model/link-details.vue'
-import SemanticsPicker from '@/components/item/semantics-picker.vue'
 
 function modelItem (item) {
   return {
     item: item,
+    opened: null,
     class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
     children: {
       locations: [],
@@ -164,8 +164,7 @@ export default {
   components: {
     ModelDetailsPane,
     ItemDetails,
-    LinkDetails,
-    SemanticsPicker
+    LinkDetails
   },
   data () {
     return {
@@ -180,8 +179,11 @@ export default {
       rootEquipments: [],
       rootGroups: [],
       rootItems: [],
+      newItem: null,
+      newItemParent: null,
       initSearchbar: false,
       selectedItem: null,
+      previousSelection: null,
       detailsOpened: false,
       detailsTab: 'item',
       eventSource: null
@@ -210,6 +212,19 @@ export default {
         this.equipments = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
         this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
 
+        // add the currently-being-created item if appropriate
+        if (this.newItem) {
+          if (this.newItem.tags && this.newItem.tags.length > 0) {
+            if (this.newItem.tags[0].indexOf('Location') === 0) {
+              this.locations.push(this.newItem)
+            } else if (this.newItem.tags[0].indexOf('Equipment') === 0) {
+              this.equipments.push(this.newItem)
+            } else if (this.newItem.tags[0].indexOf('Point') === 0) {
+              this.points.push(this.newItem)
+            }
+          }
+        }
+
         this.rootLocations = this.locations
           .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
           .map(modelItem)
@@ -235,6 +250,12 @@ export default {
         if (!this.eventSource) this.startEventSource()
       })
     },
+    update () {
+      this.previousSelection = this.selectedItem
+      this.newItem = null
+      this.load()
+      // this.newItemParent = null
+    },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/items/*/added,smarthome/items/*/updated,smarthome/items/*/removed', null, (event) => {
         console.log(event)
@@ -244,7 +265,7 @@ export default {
           case 'removed':
           case 'updated':
             // this.ready = false
-            this.load()
+            this.update()
             break
         }
       })
@@ -254,7 +275,25 @@ export default {
       this.eventSource = null
     },
     getChildren (parent) {
-      if (parent.class.indexOf('Location_') === 0) {
+      // force the selection of the placeholder for a item being created
+      if (parent.item.created === false) {
+        this.selectItem(parent)
+        // we can also bail out because we're sure it has no children
+        return
+      }
+      // open the parent node of the placeholder
+      if (this.newItemParent && this.newItemParent === parent.item.name) {
+        parent.opened = true
+      }
+
+      // restore previous selection
+      if (this.previousSelection && parent.item.name === this.previousSelection.item.name) {
+        this.selectedItem = parent
+        this.previousSelection = null
+        this.selectItem(parent)
+      }
+
+      if (parent.class.indexOf('Location') === 0) {
         parent.children.locations = this.locations
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
           .map(modelItem)
@@ -296,13 +335,49 @@ export default {
     },
     selectItem (item) {
       this.selectedItem = item
+      if (this.newItem && (!item || item.item.name !== this.newItem.name)) {
+        this.newItem = null
+        // this.newItemParent = null
+        this.load()
+      }
       // this.detailsOpened = true
-      console.log('selected ' + item.item.name)
+      // console.log('selected ' + item.item.name)
     },
     toggleNonSemantic () {
       this.rootGroups = []
       this.rootItems = []
       this.includeNonSemantic = !this.includeNonSemantic
+      this.load()
+    },
+    addSemanticItem (semanticType) {
+      this.newItem = {
+        type: 'Group',
+        name: '',
+        label: '',
+        category: '',
+        tags: [semanticType],
+        metadata: {
+          semantics: {
+            value: semanticType
+          }
+        },
+        created: false
+      }
+      if (this.selectedItem && this.selectedItem.item.type === 'Group') {
+        this.newItem.groupNames = [this.selectedItem.item.name]
+        if (this.selectedItem.item.metadata && this.selectedItem.item.metadata.semantics &&
+            this.selectedItem.item.metadata.semantics.value.indexOf('Location') === 0 &&
+            semanticType.indexOf('Equipment') === 0) {
+          this.newItem.metadata.semantics.config = {
+            hasLocation: this.selectedItem.item.name
+          }
+        } else {
+          this.newItem.metadata.semantics.config = {
+            isPartOf: this.selectedItem.item.name
+          }
+        }
+        this.newItemParent = this.selectedItem.item.name
+      }
       this.load()
     },
     addThingAsEquipment () {
@@ -317,12 +392,6 @@ export default {
           on: {
             pageAfterOut (event, page) {
               console.log('page closed')
-              // const finalChannel = page.app.data.finalChannel
-              // if (finalChannel) {
-              //   delete page.app.data.finalChannel
-              //   self.thing.channels.push(finalChannel)
-              //   self.$emit('links-updated')
-              // }
             }
           }
         }

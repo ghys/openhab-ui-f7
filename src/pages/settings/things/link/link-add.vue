@@ -38,24 +38,7 @@
 
       <!-- Create new item -->
       <f7-col v-else-if="createItem === true && !item">
-        <quick-new-item-form :newItem="newItem" />
-        <!-- <f7-list inline-labels no-hairlines-md>
-          <f7-list-input label="Name" type="text" placeholder="Name" :value="newItem.name">
-          </f7-list-input>
-          <f7-list-input label="Label" type="text" placeholder="Name" :value="newItem.label"
-                         @input="item.label = $event.target.value" clear-button>
-          </f7-list-input>
-          <f7-list-input label="Category" input-id="input-category" autocomplete="off" type="text" placeholder="Name" :value="newItem.category"
-                         @input="newItem.category = $event.target.value" clear-button>
-            <div class="padding" slot="root-end">
-              <oh-icon :icon="newItem.category" height="32" width="32" />
-            </div>
-          </f7-list-input>
-          <f7-list-item v-if="newItem.type" title="Type" type="text" placeholder="Name" smart-select :smart-select-params="{openIn: 'popup', closeOnSelect: true}">
-            <select name="select-type" @change="newItem.type = $event.target.value">
-              <option v-for="type in types.ItemTypes" :key="type" :value="type" :selected="type === newItem.type">{{type}}</option>
-            </select>
-          </f7-list-item> -->
+        <item-form :newItem="newItem" />
       </f7-col>
 
       <!-- Item to link supplied as prop -->
@@ -94,10 +77,6 @@
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
           <f7-link external color="blue" target="_blank" href="https://www.openhab.org/docs/configuration/items.html#profiles">Learn more about profiles.</f7-link>
         </f7-block-footer>
-        <!-- <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader></f7-preloader>
-          <div>Loading...</div>
-        </f7-block> -->
         <f7-list>
           <f7-list-item radio :checked="!currentProfileType" value="" @change="onProfileTypeChange()" title="No Profile (Default)" name="profile-type" />
           <f7-list-item radio v-for="profileType in profileTypes"
@@ -123,7 +102,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
-import QuickNewItemForm from '@/components/item/quick-new-item-form.vue'
+import ItemForm from '@/components/item/item-form.vue'
 
 import Item from '@/components/item/item.vue'
 
@@ -138,7 +117,7 @@ export default {
     ThingPicker,
     Item,
     ChannelList,
-    QuickNewItemForm
+    ItemForm
   },
   props: ['thing', 'channel', 'channelType', 'item'],
   data () {
@@ -202,6 +181,7 @@ export default {
       })
     },
     itemTypeCompatible () {
+      // debugger
       // TODO move to testable .js file
       let item = this.item
       if (!item) item = (this.createItem) ? this.newItem : this.selectedItem
@@ -209,12 +189,17 @@ export default {
       if (!item.type) return true
       if (!this.selectedChannel) return true
       if (!this.selectedChannel.itemType) return false
+      
+      if (this.currentProfileType && this.currentProfileType.supportedItemTypes && this.currentProfileType.supportedItemTypes.length > 0) {
+        return (this.currentProfileType.supportedItemTypes.indexOf(this.item.type) >= 0)
+      }
 
       const channelItemType = this.selectedChannel.itemType
       if (channelItemType === this.item.type) return true
 
       // Exceptions
       if (item.type.indexOf('Number') === 0 && channelItemType.indexOf('Number') === 0) return true
+      if (item.type.indexOf('Number') === 0 && channelItemType === 'Dimmer') return true
       if (channelItemType === 'Color' && (item.type === 'Dimmer' || item.type === 'Switch')) return true
       if (channelItemType === 'Dimmer' && item.type === 'Switch') return true
 
@@ -257,7 +242,7 @@ export default {
 
       this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
         this.$f7.toast.create({
-          text: 'Link updated',
+          text: 'Link created',
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()

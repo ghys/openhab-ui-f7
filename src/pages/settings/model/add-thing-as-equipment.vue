@@ -2,8 +2,8 @@
   <f7-page>
     <f7-navbar title="Add Thing as Equipment" back-link="Back">
       <f7-nav-right>
-        <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
-        <f7-link @click="save()" v-if="!$theme.md">Add</f7-link>
+        <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
+        <f7-link @click="add()" v-if="!$theme.md">Add</f7-link>
       </f7-nav-right>
     </f7-navbar>
 
@@ -28,7 +28,7 @@
           <div>Loading...</div>
         </f7-block>
         <div v-else-if="selectedThing.UID && selectedThingType.UID">
-          <quick-new-item-form :new-item="newEquipmentItem" :hide-type="true" />
+          <item-form :item="newEquipmentItem" :enable-name="true" :hide-type="true" :force-semantics="true" />
           <f7-block-title>Channels</f7-block-title>
             <f7-block-footer class="padding-left padding-right">
               Check the channels you wish to create as new Point items. They will be members of the new equipment group defined above.
@@ -38,7 +38,7 @@
             </f7-block-footer>
             <channel-list :thing="selectedThing" :thingType="selectedThingType"
               :multiple-links-mode="true"
-              @selected="(channel) => toggleSelect(channel)" />
+              @selected="(channel) => toggleSelect(channel)" :new-items="newPointItems" />
         </div>
       </f7-col>
     </f7-block>
@@ -48,7 +48,7 @@
 <script>
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
-import QuickNewItemForm from '@/components/item/quick-new-item-form.vue'
+import ItemForm from '@/components/item/item-form.vue'
 
 import Item from '@/components/item/item.vue'
 
@@ -57,7 +57,7 @@ export default {
     Item,
     ThingPicker,
     ChannelList,
-    QuickNewItemForm
+    ItemForm
   },
   props: ['parent'],
   data () {
@@ -66,18 +66,79 @@ export default {
       selectedThingId: '',
       selectedThing: {},
       selectedThingType: {},
-      newEquipmentItem: {}
+      newEquipmentItem: {},
+      newPointItems: []
     }
   },
   methods: {
     toggleSelect (channel) {
 
+    },
+    add () {
+      if (!this.newEquipmentItem.name) {
+        this.$f7.dialog.alert('Please select a thing then fill out the details for the new Equipment group')
+        return
+      }
+      if (!this.newPointItems.length) {
+        this.$f7.dialog.alert('Please check at least one channel')
+        return
+      }
+
+      let valid = true
+      this.newPointItems.forEach((p) => {
+        if (!p.name) valid = false
+        p.groupNames = [this.newEquipmentItem.name]
+      })
+
+      if (!valid) {
+        this.$f7.dialog.alert('There are validation errors in some of the Points item to create and link to checked channels')
+        return
+      }
+
+      let dialog = this.$f7.dialog.progress('Creating the Equipment and Points...')
+      const payload = [this.newEquipmentItem,
+        ...this.newPointItems.map((p) => {
+          let copy = Object.assign({}, p)
+          delete (copy.channel)
+          delete (copy.channelType)
+          return copy
+        })]
+      this.$oh.api.put('/rest/items/', payload).then((data) => {
+        dialog.setText('Creating links...')
+        dialog.setProgress(50)
+        const linkPromises = this.newPointItems.map((p) => {
+          return this.$oh.api.put(`/rest/links/${p.name}/${encodeURIComponent(p.channel.uid)}`, {
+            itemName: p.name,
+            channelUID: p.channel.uid,
+            configuration: {}
+          })
+        })
+        Promise.all(linkPromises).then((data) => {
+          dialog.setProgress(50)
+          this.$f7.toast.create({
+            text: 'Items created and linked',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          dialog.close()
+          this.$f7router.back()
+        }).catch((err) => {
+          dialog.close()
+          console.error(err)
+          this.$f7.dialog.alert('An error occurred while creating the links: ' + err)
+        })
+      }).catch((err) => {
+        dialog.close()
+        console.error(err)
+        this.$f7.dialog.alert('An error occurred while creating the items: ' + err)
+      })
     }
   },
   watch: {
     selectedThingId () {
       this.selectedThing = {}
       this.selectedThingType = {}
+      this.newPointItems = []
       this.ready = false
       if (!this.selectedThingId) return
       this.$oh.api.get('/rest/things/' + this.selectedThingId).then((data) => {
@@ -90,7 +151,7 @@ export default {
             label: this.selectedThing.label,
             tags: ['Equipment'],
             type: 'Group',
-            groupNames: (this.parent) ? this.parent.item.name : []
+            groupNames: (this.parent) ? [this.parent.item.name] : []
           }
           this.ready = true
         })

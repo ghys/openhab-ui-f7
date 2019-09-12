@@ -8,24 +8,33 @@
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title>Channel</f7-block-title>
-        <f7-list media-list>
-          <ul>
-            <f7-list-item media-item class="channel-item"
-              :title="channel.label"
-              :footer="channel.description"
-              :subtitle="channel.uid">
-            </f7-list-item>
-          </ul>
-          <f7-list-button color="red" title="Unlink" @click="unlink()"></f7-list-button>
-        </f7-list>
-        <f7-block-title>Current State</f7-block-title>
+        <!-- <f7-block-title>Current State</f7-block-title> -->
         <f7-block strong class="state-block">
           {{item.transformedState || item.state}}
           <f7-button v-show="$theme.md" :href="'/analyzer/?items=' + item.name">Analyze</f7-button>
         </f7-block>
         <f7-list class="analyze-button" v-show="!$theme.md">
           <f7-list-button color="blue" :href="'/analyzer/?items=' + item.name">Analyze</f7-list-button>
+        </f7-list>
+        <!-- <f7-block-title>Link Details</f7-block-title> -->
+        <f7-list media-list>
+          <ul>
+            <f7-list-item divider title="Channel"></f7-list-item>
+            <f7-list-item media-item class="channel-item"
+              :title="channel.label"
+              :footer="channel.uid"
+              :subtitle="thing.label"
+              :badge="thing.statusInfo.status"
+              :badge-color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'">
+              <span slot="media" class="item-initial">{{channel.label[0]}}</span>
+            </f7-list-item>
+            <f7-list-item divider title="Item"></f7-list-item>
+            <item :item="item" />
+          </ul>
+          <ul>
+            <f7-list-button color="red" title="Unlink" @click="unlink()"></f7-list-button>
+            <f7-list-button color="red" title="Unlink and Delete Item" @click="unlinkAndDelete()" v-if="source === 'thing'"></f7-list-button>
+          </ul>
         </f7-list>
         <!-- <f7-block strong>
           <f7-block-title>{{channel.label}}</f7-block-title>
@@ -34,13 +43,6 @@
         </f7-block> -->
       </f7-col>
       <f7-col>
-        <f7-block-title>Item</f7-block-title>
-        <f7-list inline-labels no-hairlines-md>
-          <ul>
-            <item :item="item" />
-          </ul>
-          <f7-list-button color="red" title="Unlink and Delete" @click="unlinkAndDelete()"></f7-list-button>
-        </f7-list>
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
@@ -79,11 +81,10 @@ export default {
     ConfigSheet,
     Item
   },
-  props: ['thing', 'channel', 'channelType', 'linkInfo', 'item'],
+  props: ['thing', 'channel', 'item', 'source'],
   data () {
     return {
       ready: false,
-      createItem: false,
       link: {
         itemName: null,
         channelUID: null,
@@ -131,7 +132,7 @@ export default {
     unlink () {
       this.$f7.dialog.confirm(
         `Are you sure you want to unlink ${this.item.name} from ${this.thing.label}?`,
-        'Unlink channel link',
+        'Unlink',
         () => {
           const itemName = this.item.name
           const channelUID = encodeURIComponent(this.channel.uid)
@@ -148,7 +149,7 @@ export default {
     unlinkAndDelete () {
       this.$f7.dialog.confirm(
         `Are you sure you want to unlink ${this.item.name} from ${this.thing.label} and delete it?`,
-        'Unlink channel link and delete item',
+        'Unlink and Delete Item',
         () => {
           const itemName = this.item.name
           const channelUID = encodeURIComponent(this.channel.uid)
@@ -169,6 +170,26 @@ export default {
             this.$f7router.back()
           })
         })
+    },
+    save () {
+      const itemName = this.item.name
+      const channelUID = encodeURIComponent(this.channel.uid)
+      const link = this.link
+      if (this.currentProfileType) {
+        link.configuration.profile = this.currentProfileType.uid
+      }
+
+      // delete then recreate the link
+      this.$oh.api.delete('/rest/links/' + itemName + '/' + channelUID).then(() => {
+        this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
+          this.$f7.toast.create({
+            text: 'Link updated',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          this.$f7router.back()
+        })
+      })
     }
   }
 }

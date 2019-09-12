@@ -140,7 +140,8 @@ export default {
         props: {
           thing: this.thing,
           channel: this.thing.channels.find((c) => c.id === this.channelId),
-          item: link.item
+          item: link.item,
+          source: 'thing'
         }
       })
     },
@@ -173,7 +174,7 @@ export default {
           thing: this.thing,
           channel: this.channel,
           channelType: this.channelType,
-          channelId: this.channelId
+          channelId: this.channelId,
         }
       })
     },

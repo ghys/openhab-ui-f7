@@ -48,7 +48,7 @@ export default {
   },
   props: ['moduleTypes', 'currentSection'],
   data () {
-    debugger
+    // debugger
     return {
       rule: this.$f7.data.rule,
       currentModuleType: null,

@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     ternComplete (file, query) {
-      debugger
+      // debugger
     },
     onCmReady (cm) {
       console.log('the editor is readied!', cm)

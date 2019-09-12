@@ -177,7 +177,8 @@ export default [
       },
       {
         path: 'model',
-        component: SemanticModelPage
+        component: SemanticModelPage,
+        keepAlive: true
         // routes: [
         //   {
         //     path: ':itemName',

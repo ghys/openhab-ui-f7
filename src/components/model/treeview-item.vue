@@ -1,8 +1,9 @@
 <template>
-  <f7-treeview-item selectable :label="(model.item.label || model.item.name)"
+  <f7-treeview-item selectable :label="(model.item.created === false) ? '(New Item)' : (model.item.label || model.item.name)"
     :icon-ios="icon('ios')" :icon-aurora="icon('aurora')" :icon-md="icon('md')"
-    :textColor="iconColor" color="blue"
+    :textColor="iconColor" :color="(model.item.created !== false) ? 'blue' :'orange'"
     :selected="selected && selected.item.name === model.item.name"
+    :opened="model.opened"
     @click="select">
     <div v-if="model.children.locations.length > 0">
       <model-treeview-item v-for="location in model.children.locations"

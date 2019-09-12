@@ -14,7 +14,7 @@ export default {
   props: ['icon', 'width', 'height'],
   asyncComputed: {
     iconUrl () {
-      return this.$oh.media.getIcon(this.icon)
+      return (this.icon) ? this.$oh.media.getIcon(this.icon) : this.$oh.media.getIcon('undefined')
     }
   }
 }

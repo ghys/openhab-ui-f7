@@ -1,5 +1,5 @@
 <template>
-  <item-picker :title="configDescription.label" :value="value" @input="updateValue" />
+  <item-picker :title="configDescription.label || 'Item'" :value="value" @input="updateValue" />
 </template>
 
 <script>

@@ -72,7 +72,7 @@
               >
                 <oh-icon v-if="member.category" slot="media" :icon="member.category" height="32" width="32" />
                 <span v-else slot="media" class="item-initial">{{member.name[0]}}</span>
-                <f7-icon v-if="!member.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon>
+                <!-- <f7-icon v-if="!member.editable" slot="after-title" f7="lock_fill" size="1rem" color="gray"></f7-icon> -->
                 <!-- <f7-button slot="after-start" color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
               </f7-list-item>
             </f7-list>
@@ -179,6 +179,7 @@ export default {
     },
     onPageAfterIn () {
       this.$oh.api.get('/rest/links').then((data) => {
+        console.dir(data.filter((l) => l.itemName === this.item.name))
         this.links = data
       })
     },

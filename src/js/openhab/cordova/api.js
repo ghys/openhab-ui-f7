@@ -45,6 +45,22 @@ export default {
       })
     }
   },
+  postPlain (uri, data) {
+    const fullUri = prepareRequest(uri)
+    const headers = { 'Content-Type': 'text/plain' }
+    if (fullUri) {
+      cordova.plugin.http.setDataSerializer('utf8')
+      return new Promise((resolve, reject) => {
+        cordova.plugin.http.setDataSerializer('json')
+        cordova.plugin.http.post(fullUri, data, headers,
+          function (response) {
+            resolve(JSON.parse(response.data))
+          }, function (response) {
+            reject(response.error)
+          })
+      })
+    }
+  },
   put (uri, data) {
     const fullUri = prepareRequest(uri)
     if (fullUri) {

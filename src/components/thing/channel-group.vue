@@ -15,7 +15,7 @@
       :footer="channelType.description"
       :subtitle="getChannelId(channelType) + ' (' + getItemType(channelType) + ')'"
       :badge="getLinkedItems(channelType).length || ''" badge-color="blue"
-      @change="$emit('selected', getChannel(getChannelId(channelType)))"
+      @change="$emit('selected', getChannel(getChannelId(channelType)), channelType)"
       @accordion:open="opened(channelType)">
       <oh-icon v-if="!extensible && channelType.category" slot="media" :icon="channelType.category" height="32" width="32" />
       <span v-else-if="channelType.label" slot="media" class="item-initial">{{channelType.label[0]}}</span>

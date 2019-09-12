@@ -94,8 +94,7 @@ export default {
 
   },
   methods: {
-    onPageAfterIn () {
-      // this.$f7.preloader.show()
+    load () {
       this.loading = true
       this.$oh.api.get('/rest/inbox').then((data) => {
         this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
@@ -112,10 +111,13 @@ export default {
         this.loading = false
         this.ready = true
         setTimeout(() => { this.$refs.listIndex.update() })
-        // this.$f7.preloader.hide()
       })
     },
+    onPageAfterIn () {
+      this.load()
+    },
     openEntryActions (entry) {
+      let self = this
       let actions = this.$f7.actions.create({
         convertToPopover: true,
         closeOnEscape: true,
@@ -135,8 +137,22 @@ export default {
                 console.log(`Add ${entry.thingUID} as thing`)
                 this.$f7.dialog.prompt(`Thing will create a new Thing ${entry.thingUID} with the following name:`,
                   'Add as Thing',
-                  () => {
-                    this.$f7.dialog.alert('Not implemented', 'Sorry')
+                  (name) => {
+                    this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
+                      this.$f7.toast.create({
+                        text: 'Entry approved',
+                        destroyOnClose: true,
+                        closeTimeout: 2000
+                      }).open()
+                      self.load()
+                    }).catch((err) => {
+                      this.$f7.toast.create({
+                        text: 'Error during thing creation: ' + err,
+                        destroyOnClose: true,
+                        closeTimeout: 2000
+                      }).open()
+                      self.load()
+                    })
                   },
                   null,
                   entry.label)
@@ -146,7 +162,7 @@ export default {
               text: 'Ignore',
               color: 'blue',
               onClick: () => {
-                console.log(`Ignoe ${entry.thingUID}`)
+                console.log(`Ignore ${entry.thingUID}`)
               }
             }
           ],
