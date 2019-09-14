@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar :title="thing.label" back-link="Back" no-hairline>
       <f7-nav-right v-if="dirty">
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
@@ -285,8 +285,15 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
-      this.load()
+    onPageAfterIn (event) {
+      if (event.detail.direction !== 'backward') {
+        this.load()
+      }
+    },
+    onPageAfterOut (event) {
+      if (event.detail.direction === 'backward') {
+        this.stopEventSource()
+      }
     },
     load () {
       if (this.ready) return
@@ -325,7 +332,7 @@ export default {
     save () {
       if (!this.ready) return
       this.$oh.api.put('/rest/things/' + this.thingId, this.thing).then(data => {
-        this.$set(this, 'thing', data)
+        // this.$set(this, 'thing', data)
         this.dirty = false
         this.$f7.toast.create({
           text: 'Thing updated',
@@ -387,7 +394,7 @@ export default {
                 this.$f7router.back('/settings/things/', { force: true })
                 break
               case 'updated':
-                console.log('reloading')
+                console.log('Thing updated according to SSE, reloading')
                 this.ready = false
                 this.load()
                 break
@@ -395,7 +402,7 @@ export default {
             break
           case 'links':
             if (topicParts[2].indexOf(this.thingId) < 0) return
-            console.log('links updated')
+            console.log('Links updated according to SSE, reloading')
             this.ready = false
             this.load()
             break

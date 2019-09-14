@@ -36,7 +36,7 @@
         <f7-icon slot="media" f7="add_round" color="blue" />
     </f7-list-item>
     <f7-list-button class="searchbar-ignore" color="blue" title="Configure Channel" @click="configureChannel()"></f7-list-button>
-    <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Delete Channel"></f7-list-button>
+    <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()"></f7-list-button>
   </f7-list>
 </template>
 
@@ -145,7 +145,7 @@ export default {
         }
       })
     },
-    configureChannel (channel) {
+    configureChannel () {
       const self = this
       const path = 'channels/' + this.channelId + '/edit'
       this.$f7router.navigate({
@@ -177,6 +177,23 @@ export default {
           channelId: this.channelId,
         }
       })
+    },
+    removeChannel () {
+      const self = this
+
+      if (this.links.length > 0) {
+        this.$f7.dialog.alert('Please unlink all items to the channel before removing it')
+        return
+      }
+
+      this.$f7.dialog.confirm(
+        `Are you sure you want to remove the ${self.channel.label} channel from ${this.thing.label}?`,
+        'Remove channel',
+        () => {
+          const idx = self.thing.channels.findIndex((c) => c.uid === self.channel.uid)
+          self.thing.channels.splice(idx, 1)
+          self.$emit('channel-updated')
+        })
     },
     getItemTypeAndMetaLabel (item) {
       let ret = item.type
