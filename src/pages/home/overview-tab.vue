@@ -28,7 +28,7 @@
                 no-link-class
                 color="blue"
                 href="#"
-              >Design your home's conceptual model with Home Builder</f7-link>
+              >Design your home's conceptually with the semantic model builder and link the Things to Items</f7-link>
             </li>
             <li>
               <f7-link
@@ -40,14 +40,19 @@
           </ol>
         </f7-card-content>
         <f7-card-footer>
-          <f7-link color="blue" @click="showTasks = false">Dismiss</f7-link>
+          <f7-link color="blue" @click="dismissTasks">Dismiss</f7-link>
         </f7-card-footer>
       </f7-card>
 
     </f7-col>
   </f7-block>
 
-  <div class="demo-expandable-cards" v-if="showCards">
+  <f7-block v-if="showCards && !ready" class="text-align-center">
+    <f7-preloader></f7-preloader>
+    <div>Loading...</div>
+  </f7-block>
+
+  <div class="demo-expandable-cards" v-if="showCards && ready">
     <h2 class="home-header"><f7-icon ios="f7:star_fill" md="material:star" size="25" style="vertical-align: sub" />Now</h2>
     <expandable-card color="teal" header="gauge" />
     <h2 class="home-header">Favorites</h2>
@@ -67,7 +72,7 @@
     <expandable-card color="lightblue" /> -->
   </div>
 
-  <f7-block v-if="showCards">
+  <f7-block v-if="showCards && ready">
     <f7-button small @click="showSetup = true; showTasks = true; showCards = false; showHABot = false">Simulate first-time run</f7-button>
   </f7-block>
 </div>
@@ -98,7 +103,8 @@ export default {
       showSetup: false,
       showTasks: false,
       showCards: false,
-      showHABot: false
+      showHABot: false,
+      ready: false
     }
   },
   created () {
@@ -107,6 +113,7 @@ export default {
     } else {
       this.showCards = true
       this.showHABot = true
+      setTimeout(() => { this.ready = true }, 1000)
     }
   },
   methods: {
@@ -117,11 +124,15 @@ export default {
         'Skip Setup Wizard',
         () => {
           vm.showSetup = false
+          vm.showTasks = true
         }
       )
     },
     dismissTasks () {
       this.showTasks = false
+      this.showHABot = true
+      this.showCards = true
+      setTimeout(() => { this.ready = true }, 1000)
     },
     displayCards () {
       setTimeout(() => { this.showCards = true }, 3000)
