@@ -82,6 +82,7 @@ export default {
           created: false
         }
         this.$set(this, 'item', newItem)
+        this.ready = true
       } else {
         const loadItem = this.$oh.api.get('/rest/items/' + this.itemName + '?metadata=semantics')
         loadItem.then((data) => {
