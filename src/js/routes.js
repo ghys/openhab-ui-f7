@@ -123,6 +123,15 @@ export default [
         component: ItemsListPage,
         routes: [
           {
+            path: 'add',
+            component: ItemEditPage,
+            options: {
+              props: {
+                createMode: true
+              }
+            }
+          },
+          {
             path: ':itemName',
             component: ItemDetailsPage,
             routes: [
@@ -178,8 +187,8 @@ export default [
       },
       {
         path: 'model',
-        component: SemanticModelPage,
-        keepAlive: true
+        component: SemanticModelPage
+        // keepAlive: true
         // routes: [
         //   {
         //     path: ':itemName',

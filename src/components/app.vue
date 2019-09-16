@@ -49,7 +49,7 @@
   </f7-panel>
 
   <!-- Your main view, should have "view-main" class -->
-  <f7-view main class="safe-areas" url="/" :stack-pages="true" :master-detail-breakpoint="960"></f7-view>
+  <f7-view main class="safe-areas" url="/" :master-detail-breakpoint="960"></f7-view>
 
   <!-- Popup -->
   <f7-popup id="my-popup">
