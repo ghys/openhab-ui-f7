@@ -1,6 +1,6 @@
 <template>
 <ul>
-  <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready">
+  <f7-list-item :title="title" smart-select :smart-select-params="smartSelectParams" v-if="ready" ref="smartSelect">
     <select :name="name" :multiple="multiple" @change="select">
       <option value=""></option>
       <option v-for="item in items" :value="item.name" :key="item.name" :selected="(multiple) ? value.indexOf(item.name) >= 0 : value === item.name">
@@ -47,7 +47,8 @@ export default {
   },
   methods: {
     select (e) {
-      this.$emit('input', e.target.value)
+      const value = this.$refs.smartSelect.f7SmartSelect.getValue()
+      this.$emit('input', value)
     }
   }
 }
