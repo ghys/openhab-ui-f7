@@ -1,5 +1,5 @@
 <template>
-  <f7-block v-if="item" class="quick-link-form no-padding">
+  <div v-if="item" class="quick-link-form no-padding">
     <f7-list inline-labels no-hairlines-md>
       <f7-list-input v-if="!enableName" label="Name" type="text" placeholder="Name" :value="item.name" disabled>
       </f7-list-input>
@@ -28,7 +28,7 @@
       </f7-list-input>
     </f7-list>
     <semantics-picker v-if="!hideSemantics" :item="item" :same-class-only="true" :hide-type="true" :hide-none="forceSemantics" />
-  </f7-block>
+  </div>
 </template>
 
 <style lang="stylus">

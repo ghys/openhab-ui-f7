@@ -63,7 +63,8 @@ export default {
     },
     itemChanged (item) {
       this.show = false
-      console.log(item.tags)
+      if (!item.tags) return
+      // console.log(item.tags)
       this.semanticClass = ''
       this.semanticProperty = ''
       item.tags.forEach((t) => {

@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
+  <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
     <f7-navbar title="Items" back-link="Back">
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
@@ -17,13 +17,13 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash">Delete {{selectedItems.length}}</f7-link>
-      <f7-link v-if="$theme.md" icon-md="material:close" @click="showCheckboxes = false"></f7-link>
+      <f7-link v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">Remove {{selectedItems.length}}</f7-link>
+      <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
       <div class="title" v-if="$theme.md">
         {{selectedItems.length}} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link icon-md="material:delete"></f7-link>
+        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
       </div>
     </f7-toolbar>
 
@@ -55,6 +55,7 @@
       <f7-col>
         <f7-list
           class="searchbar-found col wide"
+          ref="itemsList"
           media-list
           virtual-list
           :virtual-list-params="{ items, searchAll, renderExternal, height: $theme.ios ? 78 : $theme.aurora ? 60 : 87}"
@@ -120,7 +121,8 @@ export default {
         items: []
       },
       selectedItems: [],
-      showCheckboxes: false
+      showCheckboxes: false,
+      eventSource: null
     }
   },
   created () {
@@ -128,7 +130,10 @@ export default {
   },
   methods: {
     onPageAfterIn () {
-      if (this.ready) return
+      this.load()
+    },
+    load () {
+      if (this.loading) return
       this.loading = true
       this.$oh.api.get('/rest/items?metadata=semantics').then(data => {
         this.items = data.sort((a, b) => {
@@ -136,22 +141,35 @@ export default {
           const labelB = b.label || b.name
           return labelA.localeCompare(labelB)
         })
-        this.indexedItems = this.items.reduce((prev, item, i, items) => {
-          const initial = (item.label) ? item.label.substring(0, 1).toUpperCase() : item.name.substring(0, 1).toUpperCase()
-          if (!prev[initial]) {
-            prev[initial] = []
-          }
-          prev[initial].push(item)
-
-          return prev
-        }, {})
         this.loading = false
-        this.ready = true
+        if (this.ready) {
+          this.$refs.itemsList.f7VirtualList.replaceAllItems(this.items)
+          // this.$refs.itemsList.f7VirtualList.clearCache()
+          // this.$refs.itemsList.f7VirtualList.update()
+        } else {
+          this.ready = true
+        }
 
-        setTimeout(() => {
-          this.initSearchbar = true
-        })
+        setTimeout(() => { this.initSearchbar = true })
+        if (!this.eventSource) this.startEventSource()
       })
+    },
+    startEventSource () {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/items/*/*', null, (event) => {
+        console.log(event)
+        const topicParts = event.topic.split('/')
+        switch (topicParts[3]) {
+          case 'added':
+          case 'removed':
+          case 'updated':
+            this.load()
+            break
+        }
+      })
+    },
+    stopEventSource () {
+      this.$oh.sse.close(this.eventSource)
+      this.eventSource = null
     },
     searchAll (query, items) {
       const found = []
@@ -194,6 +212,42 @@ export default {
       } else {
         this.selectedItems.push(item)
       }
+    },
+    removeSelected () {
+      const vm = this
+
+      this.$f7.dialog.confirm(
+        `Remove ${this.selectedItems.length} selected items?`,
+        'Remove Items',
+        () => {
+          vm.doRemoveSelected()
+        }
+      )
+    },
+    doRemoveSelected () {
+      if (this.selectedItems.some((i) => i.editable === false)) {
+        this.$f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
+        return
+      }
+
+      let dialog = this.$f7.dialog.progress('Deleting Items...')
+
+      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/items/' + i))
+      Promise.all(promises).then((data) => {
+        this.$f7.toast.create({
+          text: 'Items removed',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+        this.selectedItems = []
+        dialog.close()
+        this.load()
+      }).catch((err) => {
+        dialog.close()
+        this.load()
+        console.error(err)
+        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+      })
     }
   },
   asyncComputed: {

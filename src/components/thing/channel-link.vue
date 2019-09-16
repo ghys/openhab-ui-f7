@@ -1,6 +1,24 @@
 <template>
-  <f7-list media-list inset class="margin-left searchbar-ignore">
-    <f7-list-group v-if="!ready">
+  <div class="loading" v-if="!ready">
+    <div class="list media-list margin-left searchbar-ignore">
+      <ul>
+        <li class="item-content skeleton-text">
+          <div class="item-media">
+            <div class="skeleton-block" style="width: 40px; height: 40px; border-radius: 50%"></div>
+          </div>
+          <div class="item-inner">
+            <div class="item-title-row">
+              <div class="item-title">Item Title</div>
+            </div>
+            <div class="item-subtitle">Item Subtitle</div>
+            <div class="item-text">Item text goes here, and it will be rendered as gray box too.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <f7-list media-list v-else inset class="margin-left searchbar-ignore">
+    <!-- <f7-list-group v-if="!ready">
       <f7-list-item
         media-item
         v-for="n in links.length"
@@ -13,8 +31,8 @@
       >
         <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" slot="media"></f7-skeleton-block>
       </f7-list-item>
-    </f7-list-group>
-    <f7-list-group v-else>
+    </f7-list-group> -->
+    <f7-list-group>
       <f7-list-item
         v-for="link in links" :key="link.itemName"
         media-item link
