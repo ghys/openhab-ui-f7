@@ -1,5 +1,5 @@
 <template>
-  <f7-page stacked name="HomePage" v-on:page:afterin="displayCards" class="home-page">
+  <f7-page stacked name="HomePage" class="home-page">
     <f7-navbar>
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
@@ -12,10 +12,10 @@
     </f7-navbar>
 
     <f7-toolbar tabbar labels bottom class="home-tabs">
-      <f7-link tab-link="#tab-overview" tab-link-active class="tabbar-label" icon-ios="f7:home" icon-aurora="f7:home" icon-md="material:home">Overview</f7-link>
-      <f7-link tab-link="#tab-locations" class="tabbar-label" icon-ios="f7:placemark" icon-aurora="f7:placemark" icon-md="material:place">Locations</f7-link>
-      <f7-link tab-link="#tab-equipments" class="tabbar-label" icon-ios="f7:bulb" icon-aurora="f7:bulb" icon-md="material:highlight">Equipments</f7-link>
-      <f7-link tab-link="#tab-properties" class="tabbar-label" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on">Properties</f7-link>
+      <f7-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" class="tab-link tabbar-label" icon-ios="f7:home" icon-aurora="f7:home" icon-md="material:home">Overview</f7-link>
+      <f7-link @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" class="tab-link tabbar-label" icon-ios="f7:placemark" icon-aurora="f7:placemark" icon-md="material:place">Locations</f7-link>
+      <f7-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" class="tab-link tabbar-label" icon-ios="f7:bulb" icon-aurora="f7:bulb" icon-md="material:highlight">Equipments</f7-link>
+      <f7-link @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" class="tab-link tabbar-label" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on">Properties</f7-link>
     </f7-toolbar>
 
     <f7-tabs :class="{ 'after-big-title': $f7.data.themeOptions.homeNavbar !== 'simple' }" v-if="items">

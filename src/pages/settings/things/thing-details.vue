@@ -7,13 +7,13 @@
       </f7-nav-right>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link tab-link="#info" tab-link-active>Info</f7-link>
-      <f7-link tab-link="#config">Config</f7-link>
-      <f7-link tab-link="#channels">Channels</f7-link>
+      <f7-link @click="currentTab = 'info'" :tab-link-active="currentTab === 'info'" class="tab-link">Info</f7-link>
+      <f7-link @click="currentTab = 'config'" :tab-link-active="currentTab === 'config'" class="tab-link">Config</f7-link>
+      <f7-link @click="currentTab = 'channels'" :tab-link-active="currentTab === 'channels'" class="tab-link">Channels</f7-link>
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="info" tab-active @tab:show="() => this.currentTab = 'info'">
+      <f7-tab id="info" @tab:show="() => this.currentTab = 'info'" :tab-active="currentTab === 'info'">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>Status:
             <f7-chip class="margin-left"
@@ -94,7 +94,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="config" :disabled="!(thing.configuration && thingType.configParameters)" @tab:show="() => this.currentTab = 'config'">
+      <f7-tab id="config" :disabled="!(thing.configuration && thingType.configParameters)" @tab:show="() => this.currentTab = 'config'" :tab-active="currentTab === 'config'">
         <f7-block v-if="currentTab === 'config'" class="block-narrow">
           <thing-general-settings :thing="thing" :thing-type="thingType" @updated="dirty = true" />
           <config-sheet
@@ -106,7 +106,7 @@
         </f7-block>
       </f7-tab>
 
-      <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'">
+      <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing"
             @channels-updated="save()"
