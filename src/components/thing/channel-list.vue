@@ -108,11 +108,6 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-if="isExtensible && !pickerMode && !multipleLinksMode">
-      <f7-list class="padding-left">
-        <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" @click="addChannel()"></f7-list-button>
-      </f7-list>
-    </f7-col>
   </f7-block>
 </template>
 
@@ -132,8 +127,6 @@
 import ChannelGroup from './channel-group.vue'
 import ChannelLink from './channel-link.vue'
 import ItemForm from '@/components/item/item-form.vue'
-
-import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 
 export default {
   props: ['thingType', 'thing', 'pickerMode', 'multipleLinksMode', 'itemTypeFilter', 'newItems'],
@@ -215,34 +208,6 @@ export default {
       console.log('caught channel-opened')
       this.openedChannelId = payload.channelId
       this.openedChannel = payload.channel
-    },
-    addChannel () {
-      const self = this
-      this.$f7router.navigate({
-        url: 'channels/new',
-        route: {
-          component: AddChannelPage,
-          path: 'channels/new',
-          context: {
-            operation: 'add-channel'
-          },
-          on: {
-            pageAfterOut (event, page) {
-              const context = page.route.route.context
-              const finalChannel = context.finalChannel
-              if (finalChannel) {
-                self.thing.channels.push(finalChannel)
-                self.$emit('channels-updated')
-              }
-            }
-          }
-        }
-      }, {
-        props: {
-          thing: this.thing,
-          thingType: this.thingType
-        }
-      })
     }
   }
 }

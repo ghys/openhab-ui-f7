@@ -111,6 +111,13 @@
           <channel-list :thingType="thingType" :thing="thing"
             @channels-updated="save()"
           />
+          <f7-col v-if="ready && (isExtensible || thing.channels.length > 0)" class="channel-list">
+            <f7-list>
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible" @click="addChannel()"></f7-list-button>
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)"></f7-list-button>
+              <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items" @click="unlinkAll(true)"></f7-list-button>
+            </f7-list>
+          </f7-col>
         </f7-block>
       </f7-tab>
     </f7-tabs>
@@ -190,6 +197,8 @@ import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
 import ZWaveNetworkPopup from './zwave/zwave-network-popup.vue'
 
+import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
+
 let copyToast = null
 
 export default {
@@ -222,6 +231,9 @@ export default {
     })
   },
   computed: {
+    isExtensible () {
+      return this.thingType.extensibleChannelTypeIds.length > 0
+    },
     textualDefinition () {
       if (!this.thing.UID || !this.thingType.UID) return ''
 
@@ -286,14 +298,12 @@ export default {
   },
   methods: {
     onPageAfterIn (event) {
-      if (event.detail.direction !== 'backward') {
-        this.load()
-      }
+      this.ready = false
+      this.stopEventSource()
+      this.load()
     },
     onPageAfterOut (event) {
-      if (event.detail.direction === 'backward') {
-        this.stopEventSource()
-      }
+      this.stopEventSource()
     },
     load () {
       if (this.ready) return
@@ -373,6 +383,81 @@ export default {
           })
         }
       )
+    },
+    addChannel () {
+      const self = this
+      this.$f7router.navigate({
+        url: 'channels/new',
+        route: {
+          component: AddChannelPage,
+          path: 'channels/new',
+          context: {
+            operation: 'add-channel'
+          },
+          on: {
+            pageAfterOut (event, page) {
+              const context = page.route.route.context
+              const finalChannel = context.finalChannel
+              if (finalChannel) {
+                self.thing.channels.push(finalChannel)
+                self.$emit('channels-updated')
+              }
+            }
+          }
+        }
+      }, {
+        props: {
+          thing: this.thing,
+          thingType: this.thingType
+        }
+      })
+    },
+    unlinkAll (removeItems) {
+      const message = (removeItems)
+        ? 'Are you sure you wish to unlink and remove all items currently linked to this thing?'
+        : 'Are you sure you wish to unlink all items currently linked to this thing?'
+      this.$f7.dialog.confirm(message, 'Unlink all',
+        () => {
+          this.$oh.api.get('/rest/links').then((data) => {
+            let dialog = this.$f7.dialog.progress('Unlinking all items...')
+            this.stopEventSource()
+            const links = data.filter((l) => l.channelUID.indexOf(this.thingId) === 0)
+            this.ready = false
+
+            const unlinkPromises = links.map((l) => this.$oh.api.delete(`/rest/links/${l.itemName}/${encodeURIComponent(l.channelUID)}`))
+            Promise.all(unlinkPromises).then(() => {
+              if (removeItems) {
+                dialog.setText('Removing items...')
+                const deletePromises = links.map((l) => this.$oh.api.delete(`/rest/items/${l.itemName}`))
+                Promise.all(deletePromises).then(() => {
+                  dialog.close()
+                  this.$f7.toast.create({
+                    text: 'All items unlinked and removed',
+                    destroyOnClose: true,
+                    closeTimeout: 2000
+                  }).open()
+                  this.load()
+                }).catch((err) => {
+                  dialog.close()
+                  this.$f7.dialog.alert('Some of the items could not be unlinked: ' + err)
+                  this.load()
+                })
+              } else {
+                dialog.close()
+                this.$f7.toast.create({
+                  text: 'All items unlinked',
+                  destroyOnClose: true,
+                  closeTimeout: 2000
+                }).open()
+                this.load()
+              }
+            }).catch((err) => {
+              dialog.close()
+              this.$f7.dialog.alert('Some of the items could not be removed: ' + err)
+              this.load()
+            })
+          })
+        })
     },
     startEventSource () {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*,smarthome/links/*' /* + encodeURIComponent(this.thingId) */, null, (event) => {
