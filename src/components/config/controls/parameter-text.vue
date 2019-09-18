@@ -8,7 +8,7 @@
         :required="configDescription.required" validate
         :clear-button="!configDescription.required"
         @input="updateValue"
-        type="text" />
+        :type="(configDescription.context === 'password') ? 'password' : 'text'" />
   </ul>
 </template>
 

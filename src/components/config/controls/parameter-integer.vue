@@ -1,7 +1,6 @@
 <template>
   <ul>
       <f7-list-input
-        v-if="configDescription.type === 'INTEGER' && !configDescription.options.length && !configDescription.context"
         :name="configDescription.name"
         :label="configDescription.label"
         :floating-label="$theme.md"

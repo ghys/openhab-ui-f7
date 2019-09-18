@@ -34,12 +34,16 @@ export default {
   },
   methods: {
     updateValue (event) {
-      const value = this.$refs.item.f7SmartSelect.getValue()
+      let value = this.$refs.item.f7SmartSelect.getValue()
+      if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
+        value = parseInt(value)
+      }
       this.$emit('input', value)
     },
     isSelected (option) {
+      if (this.value === null || this.value === undefined) return
       if (!this.configDescription.multiple) {
-        return this.value === option.value
+        return this.value.toString() === option.value
       } else {
         return this.value && this.value.indexOf(option.value) >= 0
       }
