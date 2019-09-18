@@ -24,28 +24,28 @@ export const LogicalOnOffFunctions = [ {
   value: 'None'
 }, {
   name: 'AND_ON_OFF',
-  value: 'All ON → ON else OFF'
+  value: 'All ON then ON else OFF'
 }, {
   name: 'NAND_ON_OFF',
-  value: 'All ON → OFF else ON'
+  value: 'All ON then OFF else ON'
 }, {
   name: 'AND_OFF_ON',
-  value: 'All OFF → OFF else ON'
+  value: 'All OFF then OFF else ON'
 }, {
   name: 'NAND_OFF_ON',
-  value: 'All OFF → ON else OFF'
+  value: 'All OFF then ON else OFF'
 }, {
   name: 'OR_ON_OFF',
-  value: 'One ON → ON else OFF'
+  value: 'One ON then ON else OFF'
 }, {
   name: 'NOR_ON_OFF',
-  value: 'One ON → OFF else ON'
+  value: 'One ON then OFF else ON'
 }, {
   name: 'OR_OFF_ON',
-  value: 'One OFF → OFF else ON'
+  value: 'One OFF then OFF else ON'
 }, {
   name: 'NOR_OFF_ON',
-  value: 'One OFF → ON else OFF'
+  value: 'One OFF then ON else OFF'
 } ]
 
 export const LogicalOpenClosedFunctions = [ {
@@ -53,28 +53,28 @@ export const LogicalOpenClosedFunctions = [ {
   value: 'None'
 }, {
   name: 'AND_OPEN_CLOSED',
-  value: 'All OPEN → OPEN else CLOSED'
+  value: 'All OPEN then OPEN else CLOSED'
 }, {
   name: 'NAND_OPEN_CLOSED',
-  value: 'All OPEN → CLOSED else OPEN'
+  value: 'All OPEN then CLOSED else OPEN'
 }, {
   name: 'AND_CLOSED_OPEN',
-  value: 'All CLOSED → CLOSED else OPEN'
+  value: 'All CLOSED then CLOSED else OPEN'
 }, {
   name: 'NAND_CLOSED_OPEN',
-  value: 'All CLOSED → OPEN else CLOSED'
+  value: 'All CLOSED then OPEN else CLOSED'
 }, {
   name: 'OR_OPEN_CLOSED',
-  value: 'One OPEN → OPEN else CLOSED'
+  value: 'One OPEN then OPEN else CLOSED'
 }, {
   name: 'NOR_OPEN_CLOSED',
-  value: 'One OPEN → CLOSED else OPEN'
+  value: 'One OPEN then CLOSED else OPEN'
 }, {
   name: 'OR_CLOSED_OPEN',
-  value: 'One CLOSED → CLOSED else OPEN'
+  value: 'One CLOSED then CLOSED else OPEN'
 }, {
   name: 'NOR_CLOSED_OPEN',
-  value: 'One CLOSED → OPEN else CLOSED'
+  value: 'One CLOSED then OPEN else CLOSED'
 } ]
 
 export const DateTimeFunctions = [ {
