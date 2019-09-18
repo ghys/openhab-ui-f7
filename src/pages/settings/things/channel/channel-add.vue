@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn">
+  <f7-page @page:afterin="onPageAfterIn" name="channel-add">
     <f7-navbar title="Add Channel" back-link="Cancel">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>

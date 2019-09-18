@@ -38,7 +38,7 @@
               <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
-                  @channel-updated="$emit('channels-updated')">
+                  @channel-updated="(e) => $emit('channels-updated', e)">
                 </channel-link>
               </template>
               <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
@@ -63,7 +63,7 @@
               <template v-slot:default="{ channelId, channelType, channel }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
-                  @channel-updated="$emit('channels-updated')">
+                  @channel-updated="(e) => $emit('channels-updated', e)">
                 </channel-link>
               </template>
               <template v-slot:default="{ channel }" v-else-if="multipleLinksMode">
@@ -88,7 +88,7 @@
               <template v-slot:default="{ channelId, channelType }" v-if="!pickerMode && !multipleLinksMode">
                 <channel-link :opened="openedChannelId === channelId" :extensible="true"
                   :thing="thing" :channelId="channelId" :channelType="channelType" :channel="openedChannel"
-                  @channel-updated="$emit('channels-updated')">
+                  @channel-updated="(e) => $emit('channels-updated', e)">
                 </channel-link>
               </template>
               <template v-slot:default="{ channel, channelId, channelType }" v-else-if="multipleLinksMode">

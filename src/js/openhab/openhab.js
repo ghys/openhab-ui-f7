@@ -1,5 +1,7 @@
 import Framework7 from 'framework7/framework7.esm.bundle.js'
 
+let openSSEClients = []
+
 export default {
   api: {
     get (uri, data) {
@@ -50,7 +52,6 @@ export default {
       }
 
       eventSource.onopen = (event) => {
-        console.log('SSE connection open: ' + eventSource.url)
       }
 
       eventSource.onerror = () => {
@@ -64,11 +65,19 @@ export default {
         }
       }
 
+      openSSEClients.push(eventSource)
+      console.log(`new SSE connection: ${eventSource.url}, ${openSSEClients.length} open`)
+      console.debug(openSSEClients)
       return eventSource
     },
     close (client, callback) {
       if (!client) return
-      console.log('SSE connection closed: ' + client.url)
+      if (openSSEClients.indexOf(client) >= 0) {
+        openSSEClients.splice(openSSEClients.indexOf(client), 1)
+      }
+      console.log(`SSE connection closed: ${client.url}, ${openSSEClients.length} open`)
+      console.debug(openSSEClients)
+
       client.close()
     }
   },

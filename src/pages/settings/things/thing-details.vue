@@ -109,9 +109,9 @@
       <f7-tab id="channels" disabled="!thingType.channels" @tab:show="() => this.currentTab = 'channels'" :tab-active="currentTab === 'channels'">
         <f7-block v-if="currentTab === 'channels'" class="block-narrow">
           <channel-list :thingType="thingType" :thing="thing"
-            @channels-updated="save()"
+            @channels-updated="onChannelsUpdated"
           />
-          <f7-col v-if="ready && (isExtensible || thing.channels.length > 0)" class="channel-list">
+          <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible" @click="addChannel()"></f7-list-button>
               <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)"></f7-list-button>
@@ -212,6 +212,7 @@ export default {
   data () {
     return {
       ready: false,
+      loading: false,
       dirty: false,
       currentTab: 'info',
       thing: {},
@@ -298,15 +299,20 @@ export default {
   },
   methods: {
     onPageAfterIn (event) {
-      this.ready = false
-      this.stopEventSource()
-      this.load()
+      // When coming back from the channel add/edit page with a change, let the handler below the reloading logic (the thing has to be saved first)
+      if (!event.detail.pageFrom || !event.detail.pageFrom.name || event.detail.pageFrom.name.indexOf('channel') < 0) {
+        console.log('Loading')
+        if (!this.eventSource) this.stopEventSource()
+        this.load()
+      }
     },
     onPageAfterOut (event) {
       this.stopEventSource()
     },
     load () {
-      if (this.ready) return
+      // if (this.ready) return
+      if (this.loading) return
+      this.loading = true
       this.$oh.api.get('/rest/things/' + this.thingId).then(data => {
         this.$set(this, 'thing', data)
 
@@ -316,6 +322,7 @@ export default {
           this.$oh.api.get('/rest/config-descriptions/thing:' + this.thingId).then(data3 => {
             this.configDescriptions = data3
             this.ready = true
+            this.loading = false
             this.dirty = false
 
             // special treatment for Z-Wave actions
@@ -328,6 +335,7 @@ export default {
           }).catch(err => {
             console.log('No config descriptions for this thing, using those on the thing type: ' + err)
             this.ready = true
+            this.loading = false
             this.dirty = false
             this.configDescriptions = {
               parameterGroups: this.thingType.parameterGroups,
@@ -341,6 +349,7 @@ export default {
     },
     save () {
       if (!this.ready) return
+      console.log('Saving thing')
       this.$oh.api.put('/rest/things/' + this.thingId, this.thing).then(data => {
         // this.$set(this, 'thing', data)
         this.dirty = false
@@ -400,7 +409,10 @@ export default {
               const finalChannel = context.finalChannel
               if (finalChannel) {
                 self.thing.channels.push(finalChannel)
-                self.$emit('channels-updated')
+                self.save()
+                self.onChannelsUpdated(true)
+              } else {
+                self.onChannelsUpdated(false)
               }
             }
           }
@@ -412,6 +424,10 @@ export default {
         }
       })
     },
+    onChannelsUpdated (save) {
+      if (save) this.save()
+      if (!this.eventSource) this.startEventSource()
+    },
     unlinkAll (removeItems) {
       const message = (removeItems)
         ? 'Are you sure you wish to unlink and remove all items currently linked to this thing?'
@@ -422,7 +438,6 @@ export default {
             let dialog = this.$f7.dialog.progress('Unlinking all items...')
             this.stopEventSource()
             const links = data.filter((l) => l.channelUID.indexOf(this.thingId) === 0)
-            this.ready = false
 
             const unlinkPromises = links.map((l) => this.$oh.api.delete(`/rest/links/${l.itemName}/${encodeURIComponent(l.channelUID)}`))
             Promise.all(unlinkPromises).then(() => {
@@ -460,6 +475,7 @@ export default {
         })
     },
     startEventSource () {
+      if (this.eventSource) this.stopEventSource()
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*,smarthome/links/*' /* + encodeURIComponent(this.thingId) */, null, (event) => {
         // console.log(event)
         const topicParts = event.topic.split('/')
@@ -480,16 +496,15 @@ export default {
                 break
               case 'updated':
                 console.log('Thing updated according to SSE, reloading')
-                this.ready = false
                 this.load()
                 break
             }
             break
           case 'links':
-            if (topicParts[2].indexOf(this.thingId) < 0) return
-            console.log('Links updated according to SSE, reloading')
-            this.ready = false
-            this.load()
+            // if (topicParts[2].indexOf(this.thingId) < 0) return
+            // console.log('Links updated according to SSE, reloading')
+            // this.ready = false
+            // this.load()
             break
         }
       })

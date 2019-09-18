@@ -107,9 +107,6 @@ export default {
         })
       }
     },
-    editLink (link) {
-      console.log('edit link')
-    },
     addLink () {
       const self = this
       this.$f7router.navigate({
@@ -182,7 +179,10 @@ export default {
                 // replace the channel in-place
                 const idx = self.thing.channels.findIndex((c) => c.uid === finalChannel.uid)
                 self.$set(self.thing.channels, idx, finalChannel)
-                self.$emit('channel-updated')
+                self.channel = finalChannel
+                self.$emit('channel-updated', true)
+              } else {
+                self.$emit('channel-updated', false)
               }
             }
           }
@@ -192,7 +192,7 @@ export default {
           thing: this.thing,
           channel: this.channel,
           channelType: this.channelType,
-          channelId: this.channelId,
+          channelId: this.channelId
         }
       })
     },
@@ -210,7 +210,7 @@ export default {
         () => {
           const idx = self.thing.channels.findIndex((c) => c.uid === self.channel.uid)
           self.thing.channels.splice(idx, 1)
-          self.$emit('channel-updated')
+          self.$emit('channel-updated', true)
         })
     },
     getItemTypeAndMetaLabel (item) {
