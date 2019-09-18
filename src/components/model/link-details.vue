@@ -34,7 +34,6 @@ export default {
     }
   },
   mounted () {
-    console.log('LinkDetails: mounted')
     this.load()
   },
   methods: {
@@ -43,8 +42,6 @@ export default {
       // this.enrichedLinks = []
       this.currentItemName = this.item.name
       const itemLinks = this.links.filter((l) => l.itemName === this.item.name)
-      console.log('load link details:')
-      console.dir(itemLinks)
       const thingNames = itemLinks.map((l) => l.channelUID.substring(0, l.channelUID.lastIndexOf(':')))
       const promises = thingNames.map((t) => this.$oh.api.get('/rest/things/' + t))
       this.ready = false
@@ -77,13 +74,6 @@ export default {
           on: {
             pageAfterOut (event, page) {
               console.log('page closed')
-              // setTimeout(self.load)
-              // const finalChannel = page.app.data.finalChannel
-              // if (finalChannel) {
-              //   delete page.app.data.finalChannel
-              //   self.thing.channels.push(finalChannel)
-              //   self.$emit('links-updated')
-              // }
             }
           }
         }
@@ -105,13 +95,6 @@ export default {
           on: {
             pageAfterOut (event, page) {
               console.log('page closed')
-              // setTimeout(self.load, 0)
-              // const finalChannel = page.app.data.finalChannel
-              // if (finalChannel) {
-              //   delete page.app.data.finalChannel
-              //   self.thing.channels.push(finalChannel)
-              //   self.$emit('links-updated')
-              // }
             }
           }
         }
