@@ -34,16 +34,8 @@
         <f7-col width="100" desktop-width="50" tablet-width="50">
           <f7-block strong class="semantic-tree" no-gap>
             <f7-treeview>
-              <model-treeview-item v-for="location in rootLocations" :key="location.item.name" :model="location"
-                @selected="selectItem" :selected="selectedItem">
-              </model-treeview-item>
-              <model-treeview-item v-for="equipment in rootEquipments" :key="equipment.item.name" :model="equipment"
-                @selected="selectItem" :selected="selectedItem">
-              </model-treeview-item>
-              <model-treeview-item v-for="group in rootGroups" :key="group.item.name" :model="group"
-                @selected="selectItem" :selected="selectedItem">
-              </model-treeview-item>
-              <model-treeview-item v-for="item in rootItems" :key="item.item.name" :model="item"
+              <model-treeview-item v-for="node in [rootLocations, rootEquipments, rootPoints, rootGroups, rootItems].flat()"
+                :key="node.item.name" :model="node"
                 @selected="selectItem" :selected="selectedItem">
               </model-treeview-item>
             </f7-treeview>
@@ -61,9 +53,11 @@
       <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
       <f7-fab-buttons position="top">
+        <f7-fab-button v-if="includeNonSemantic" label="Add Item" @click="addNonSemanticItem(false)"><f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Add Point" @click="addSemanticItem('Point')"><f7-icon ios="f7:bolt_fill" md="material:flash_on" aurora="f7:bolt_fill"></f7-icon></f7-fab-button>
         <f7-fab-button label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:bulb" md="material:highlight" aurora="f7:bulb"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
         <f7-fab-button label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
         <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark" md="material:place" aurora="f7:placemark"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
@@ -72,7 +66,6 @@
       <f7-page>
         <f7-toolbar tabbar>
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'item'" @click="detailsTab = 'item'">Item</f7-link>
-          <!-- <f7-link :tab-link-active="detailsTab === 'class'" @click="detailsTab = 'class'">Classification</f7-link> -->
           <f7-link class="padding-left padding-right" :tab-link-active="detailsTab === 'links'" @click="detailsTab = 'links'">Links</f7-link>
           <div class="right">
             <f7-link sheet-close class="padding-right"><f7-icon f7="chevron_down"></f7-icon></f7-link>
@@ -146,21 +139,6 @@ import AddFromThing from './add-from-thing.vue'
 import ItemDetails from '@/components/model/item-details.vue'
 import LinkDetails from '@/components/model/link-details.vue'
 
-function modelItem (item) {
-  return {
-    item: item,
-    opened: null,
-    class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
-    children: {
-      locations: [],
-      equipments: [],
-      points: [],
-      groups: [],
-      items: []
-    }
-  }
-}
-
 export default {
   components: {
     ModelDetailsPane,
@@ -178,6 +156,7 @@ export default {
       rootLocations: [],
       equipments: {},
       rootEquipments: [],
+      rootPoints: [],
       rootGroups: [],
       rootItems: [],
       newItem: null,
@@ -201,6 +180,25 @@ export default {
       this.detailsOpened = false
       this.stopEventSource()
     },
+    modelItem (item) {
+      const modelItem = {
+        item: item,
+        opened: null,
+        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        children: {
+          locations: [],
+          equipments: [],
+          points: [],
+          groups: [],
+          items: []
+        }
+      }
+      // force the selection of the placeholder for a item being created
+      if (item.created === false) {
+        this.selectItem(modelItem)
+      }
+      return modelItem
+    },
     load () {
       // if (this.ready) return
       this.loading = true
@@ -209,40 +207,35 @@ export default {
       Promise.all([items, links]).then((data) => {
         this.items = data[0]
         this.links = data[1]
+
+        if (this.newItem) {
+          this.items.push(this.newItem)
+        }
+
         this.locations = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Location') === 0)
         this.equipments = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Equipment') === 0)
         this.points = this.items.filter((i) => i.metadata && i.metadata.semantics && i.metadata.semantics.value.indexOf('Point') === 0)
 
-        // add the currently-being-created item if appropriate
-        if (this.newItem) {
-          if (this.newItem.tags && this.newItem.tags.length > 0) {
-            if (this.newItem.tags[0].indexOf('Location') === 0) {
-              this.locations.push(this.newItem)
-            } else if (this.newItem.tags[0].indexOf('Equipment') === 0) {
-              this.equipments.push(this.newItem)
-            } else if (this.newItem.tags[0].indexOf('Point') === 0) {
-              this.points.push(this.newItem)
-            }
-          }
-        }
-
         this.rootLocations = this.locations
           .filter((i) => !i.metadata.semantics.config || !i.metadata.semantics.config.isPartOf)
-          .map(modelItem)
+          .map(this.modelItem)
         this.rootLocations.forEach(this.getChildren)
         this.rootEquipments = this.equipments
           .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPartOf && !i.metadata.semantics.config.hasLocation))
-          .map(modelItem)
+          .map(this.modelItem)
         this.rootEquipments.forEach(this.getChildren)
+        this.rootPoints = this.points
+          .filter((i) => !i.metadata.semantics.config || (!i.metadata.semantics.config.isPointOf && !i.metadata.semantics.config.hasLocation))
+          .map(this.modelItem)
 
         if (this.includeNonSemantic) {
           this.rootGroups = this.items
             .filter((i) => i.type === 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
-            .map(modelItem)
+            .map(this.modelItem)
           this.rootGroups.forEach(this.getChildren)
           this.rootItems = this.items
             .filter((i) => i.type !== 'Group' && (!i.metadata || !i.metadata.semantics) && i.groupNames.length === 0)
-            .map(modelItem)
+            .map(this.modelItem)
         }
 
         this.loading = false
@@ -276,12 +269,6 @@ export default {
       this.eventSource = null
     },
     getChildren (parent) {
-      // force the selection of the placeholder for a item being created
-      if (parent.item.created === false) {
-        this.selectItem(parent)
-        // we can also bail out because we're sure it has no children
-        return
-      }
       // open the parent node of the placeholder
       if (this.newItemParent && this.newItemParent === parent.item.name) {
         parent.opened = true
@@ -297,40 +284,40 @@ export default {
       if (parent.class.indexOf('Location') === 0) {
         parent.children.locations = this.locations
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(modelItem)
+          .map(this.modelItem)
         parent.children.locations.forEach(this.getChildren)
         parent.children.equipments = this.equipments
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-          .map(modelItem)
+          .map(this.modelItem)
         parent.children.equipments.forEach(this.getChildren)
 
         parent.children.points = this.points
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.hasLocation === parent.item.name)
-          .map(modelItem)
+          .map(this.modelItem)
       } else {
         parent.children.equipments = this.equipments
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPartOf === parent.item.name)
-          .map(modelItem)
+          .map(this.modelItem)
         parent.children.equipments.forEach(this.getChildren)
 
         parent.children.points = this.points
           .filter((i) => i.metadata.semantics.config && i.metadata.semantics.config.isPointOf === parent.item.name)
-          .map(modelItem)
+          .map(this.modelItem)
       }
 
       if (this.includeNonSemantic) {
         parent.children.groups = this.items
           .filter((i) => i.type === 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
-          .map(modelItem)
+          .map(this.modelItem)
         parent.children.groups.forEach(this.getChildren)
         if (parent.item.metadata) {
           parent.children.items = this.items
             .filter((i) => i.type !== 'Group' && (!i.metadata) && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(modelItem)
+            .map(this.modelItem)
         } else {
           parent.children.items = this.items
             .filter((i) => i.type !== 'Group' && i.groupNames.indexOf(parent.item.name) >= 0)
-            .map(modelItem)
+            .map(this.modelItem)
         }
       }
     },
@@ -364,19 +351,42 @@ export default {
         },
         created: false
       }
-      if (this.selectedItem && this.selectedItem.item.type === 'Group') {
+      if (this.selectedItem) {
         this.newItem.groupNames = [this.selectedItem.item.name]
-        if (this.selectedItem.item.metadata && this.selectedItem.item.metadata.semantics &&
-            this.selectedItem.item.metadata.semantics.value.indexOf('Location') === 0 &&
-            semanticType.indexOf('Equipment') === 0) {
-          this.newItem.metadata.semantics.config = {
-            hasLocation: this.selectedItem.item.name
-          }
-        } else {
-          this.newItem.metadata.semantics.config = {
-            isPartOf: this.selectedItem.item.name
+        if (this.selectedItem.item.metadata && this.selectedItem.item.metadata.semantics) {
+          const semantics = this.selectedItem.item.metadata.semantics
+          if (semantics.value.indexOf('Location') === 0 &&
+              semanticType.indexOf('Location') < 0) {
+            this.newItem.metadata.semantics.config = {
+              hasLocation: this.selectedItem.item.name
+            }
+          } else if (semanticType.indexOf('Point') === 0) {
+            this.newItem.metadata.semantics.config = {
+              isPointOf: this.selectedItem.item.name
+            }
+          } else {
+            this.newItem.metadata.semantics.config = {
+              isPartOf: this.selectedItem.item.name
+            }
           }
         }
+
+        this.newItemParent = this.selectedItem.item.name
+      }
+      this.load()
+    },
+    addNonSemanticItem (group) {
+      this.newItem = {
+        type: (group) ? 'Group' : 'String',
+        name: '',
+        label: '',
+        category: '',
+        groupNames: [],
+        tags: [],
+        created: false
+      }
+      if (this.selectedItem) {
+        this.newItem.groupNames = [this.selectedItem.item.name]
         this.newItemParent = this.selectedItem.item.name
       }
       this.load()

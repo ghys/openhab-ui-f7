@@ -5,36 +5,12 @@
     :selected="selected && selected.item.name === model.item.name"
     :opened="model.opened"
     @click="select">
-    <div v-if="model.children.locations.length > 0">
-      <model-treeview-item v-for="location in model.children.locations"
-      :key="location.item.name"
-      :model="location" @selected="(event) => $emit('selected', event)"
+    <model-treeview-item v-for="node in [model.children.locations,
+          model.children.equipments, model.children.points,
+          model.children.groups, model.children.items].flat()"
+      :key="node.item.name"
+      :model="node" @selected="(event) => $emit('selected', event)"
       :selected="selected" />
-    </div>
-    <div v-if="model.children.equipments.length > 0">
-      <model-treeview-item v-for="equipment in model.children.equipments"
-      :key="equipment.item.name"
-      :model="equipment" @selected="(event) => $emit('selected', event)"
-      :selected="selected" />
-    </div>
-    <div v-if="model.children.points.length > 0">
-      <model-treeview-item v-for="point in model.children.points"
-      :key="point.item.name"
-      :model="point" @selected="(event) => $emit('selected', event)"
-      :selected="selected" />
-    </div>
-    <div v-if="model.children.groups.length > 0">
-      <model-treeview-item v-for="group in model.children.groups"
-      :key="group.item.name"
-      :model="group" @selected="(event) => $emit('selected', event)"
-      :selected="selected" />
-    </div>
-    <div v-if="model.children.items.length > 0">
-      <model-treeview-item v-for="item in model.children.items"
-      :key="item.item.name"
-      :model="item" @selected="(event) => $emit('selected', event)"
-      :selected="selected" />
-    </div>
     <div slot="label" class="semantic-class"> {{className()}}</div>
   </f7-treeview-item>
 </template>
