@@ -50,7 +50,7 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-else-if="thingType.channels.length">
+    <f7-col v-else-if="thingType.channels.length || isExtensible">
       <f7-block width="100" class="channel-group">
         <f7-row>
           <f7-col>
@@ -70,17 +70,11 @@
                 <item-form v-if="isChecked(channel)" :item="newItem(channel)" :enable-name="true" :channel="channel" :checked="isChecked(channel)" />
               </template>
             </channel-group>
-          </f7-col>
-        </f7-row>
-      </f7-block>
-    </f7-col>
-    <f7-col v-else-if="isExtensible">
-      <f7-block width="100" class="channel-group">
-        <f7-row>
-          <f7-col>
+
             <channel-group
+              v-if="isExtensible"
               :extensible="true"
-              :channelTypes="displayedChannels()"
+              :channelTypes="displayedChannels('userdefined')"
               :thing="thing"
               :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
               @selected="selectChannel"
@@ -157,11 +151,14 @@ export default {
     },
     displayedChannels () {
       if (!this.thingType) return []
-      if (this.isExtensible) {
-        return () => this.thing.channels
-      } else {
-        return (group) => {
-          if (!group) return (this.showAdvanced) ? this.thingType.channels : this.thingType.channels.filter((p) => p.advanced === false)
+      return (group) => {
+        if (this.isExtensible && group === 'userdefined') {
+          const userDefinedChannels = this.thing.channels.filter((c) => this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0)
+          console.log(userDefinedChannels)
+          return userDefinedChannels
+        } else if (!group) {
+          return (this.showAdvanced) ? this.thingType.channels : this.thingType.channels.filter((p) => p.advanced === false)
+        } else {
           return (this.showAdvanced) ? group.channels : group.channels.filter((p) => p.advanced === false)
         }
       }
