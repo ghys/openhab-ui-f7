@@ -127,8 +127,7 @@
   .logo
     background #111111 !important
 .admin-sublinks
-  .item-link
-    transform scale(0.8)
+  color var(--f7-list-item-footer-text-color)
 </style>
 
 <script>
