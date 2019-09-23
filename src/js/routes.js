@@ -117,6 +117,7 @@ export default [
   {
     path: '/settings/',
     component: SettingsMenuPage,
+    keepAlive: true,
     routes: [
       {
         path: 'items',

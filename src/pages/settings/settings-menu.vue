@@ -56,7 +56,7 @@
             ></f7-list-item>
             <f7-list-item
               link="model/"
-              title="Semantic Model"
+              title="Model"
               badge-color="blue"
               :footer="objectsSubtitles.model"
             ></f7-list-item>
@@ -123,7 +123,7 @@ export default {
         inbox: 'Add new things to your system',
         things: 'Manage the physical layer',
         items: 'Manage the functional layer',
-        model: 'The conceptual model of your home',
+        model: 'The semantic model of your home',
         rules: 'Automate without programming'
       },
       addonsSubtitles: {

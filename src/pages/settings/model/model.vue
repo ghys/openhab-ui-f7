@@ -1,6 +1,6 @@
 <template>
   <f7-page name="Model" :stacked="true" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @click="selectItem(null)">
-    <f7-navbar title="Semantic Model" back-link="Back">
+    <f7-navbar title="Semantic Model" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <!-- <f7-link icon-md="material:done_all" @click="toggleCheck()"
         :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link> -->

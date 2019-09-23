@@ -22,9 +22,28 @@
       </f7-list>
       <f7-block-title>Administration</f7-block-title>
       <f7-list class="admin-links">
-        <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close>
-          <f7-icon slot="media" ios="f7:gears" md="material:settings"></f7-icon>
+        <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close :animate="false">
+          <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon>
         </f7-list-item>
+        <li v-if="showAdministrationMenu">
+          <ul class="admin-sublinks">
+          <f7-list-item inset link="/settings/inbox/" title="Inbox" view=".view-main" panel-close :animate="false">
+            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+          </f7-list-item>
+          <f7-list-item inset link="/settings/things/" title="Things" view=".view-main" panel-close :animate="false">
+            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+          </f7-list-item>
+          <f7-list-item inset link="/settings/items/" title="Items" view=".view-main" panel-close :animate="false">
+            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+          </f7-list-item>
+          <f7-list-item inset link="/settings/model/" title="Model" view=".view-main" panel-close :animate="false">
+            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+          </f7-list-item>
+          <f7-list-item inset link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false">
+            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+          </f7-list-item>
+          </ul>
+        </li>
 
         <f7-list-item link="/developer/" title="Developer Tools" panel-close>
           <f7-icon slot="media" ios="f7:fire" aurora="f7:fire" md="material:extension"></f7-icon>
@@ -49,7 +68,7 @@
   </f7-panel>
 
   <!-- Your main view, should have "view-main" class -->
-  <f7-view main class="safe-areas" url="/" :master-detail-breakpoint="960"></f7-view>
+  <f7-view main class="safe-areas" url="/" :master-detail-breakpoint="960" @routeChanged="console.log('hello')"></f7-view>
 
   <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
     <f7-view name="login">
@@ -107,6 +126,9 @@
       background #232323 !important
   .logo
     background #111111 !important
+.admin-sublinks
+  .item-link
+    transform scale(0.8)
 </style>
 
 <script>
@@ -190,7 +212,9 @@ export default {
       themeOptions: {
         dark: false,
         filled: true
-      }
+      },
+
+      showAdministrationMenu: false
     }
   },
   methods: {
@@ -250,6 +274,12 @@ export default {
       }
 
       this.loadSitemaps()
+
+      this.$f7.on('pageBeforeIn', (page) => {
+        if (page.route && page.route.url) {
+          this.showAdministrationMenu = page.route.url.indexOf('/settings/') === 0
+        }
+      })
     })
   }
 }

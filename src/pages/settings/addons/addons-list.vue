@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar :title="'Add-ons: ' + addonType" back-link="Settings">
+    <f7-navbar :title="'Add-ons: ' + addonType" back-link="Settings" back-link-url="/settings/" back-link-force>
       <!-- <f7-nav-right>
         <f7-link href="add">Add</f7-link>
       </f7-nav-right>-->

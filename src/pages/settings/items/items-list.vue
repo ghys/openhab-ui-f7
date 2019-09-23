@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar title="Items" back-link="Settings">
+    <f7-navbar title="Items" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
         :text="($theme.ios) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
