@@ -188,14 +188,14 @@ export default {
           overlay: (this.$device.cordova && this.$device.ios) || 'auto',
           iosOverlaysWebView: true,
           androidOverlaysWebView: false
-        },
-
-        smartSelect: {
-          routableModals: !this.$device.firefox && !this.$device.edge
-        },
-        colorPickers: {
-          routableModals: !this.$device.firefox && !this.$device.edge
         }
+
+        // smartSelect: {
+        //   routableModals: !this.$device.firefox && !this.$device.edge
+        // },
+        // colorPickers: {
+        //   routableModals: !this.$device.firefox && !this.$device.edge
+        // }
       },
 
       // Login screen data

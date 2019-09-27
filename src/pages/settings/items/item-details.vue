@@ -4,7 +4,6 @@
       <f7-nav-right>
         <f7-link icon-md="material:edit" href="edit">{{ $theme.md ? '' : 'Edit' }}</f7-link>
       </f7-nav-right>
-    </f7-navbar>
     <f7-subnavbar sliding class="item-header">
       <div class="item-icon" v-if="item.name">
         <oh-icon v-if="item.category" :icon="item.category" height="60" width="60" />
@@ -16,6 +15,7 @@
       <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
       <h5 v-show="item.type"><small>{{item.type}}</small></h5>
     </f7-subnavbar>
+    </f7-navbar>
     <f7-block class="block-narrow after-item-header" v-if="item">
       <f7-row v-if="item.state">
         <f7-col>
