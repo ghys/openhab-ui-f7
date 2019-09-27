@@ -39,7 +39,7 @@ module.exports = {
       '@': resolvePath('src'),
     },
   },
-  devtool: env === 'production' ? 'source-map' : 'eval',
+  devtool: env === 'production' ? 'source-map' : 'eval-source-map',
   devServer: {
     hot: true,
     // open: true,
