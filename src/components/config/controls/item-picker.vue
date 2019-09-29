@@ -22,6 +22,7 @@ export default {
       items: [],
       icons: {},
       smartSelectParams: {
+        view: this.$f7.view.main,
         openIn: 'popup',
         searchbar: true,
         searchbarPlaceholder: 'Search items',

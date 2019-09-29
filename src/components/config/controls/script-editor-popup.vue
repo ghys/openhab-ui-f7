@@ -1,9 +1,9 @@
 <template>
-  <f7-popup tablet-fullscreen @popup:opened="() => showEditor = true" @popup:closed="$emit('closed')" :opened="opened">
+  <f7-popup class="script-editor" tablet-fullscreen @popup:opened="() => showEditor = true" @popup:closed="$emit('closed')" :opened="opened">
     <f7-page class="code-editor-content">
       <f7-navbar :title="title">
         <f7-nav-right>
-          <f7-link popup-close>Close</f7-link>
+          <f7-link popup-close=".script-editor">Close</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <editor v-if="showEditor" :code="code"></editor>

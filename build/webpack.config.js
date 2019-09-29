@@ -173,11 +173,11 @@ module.exports = {
     ...(env === 'production' ? [
       // Production only plugins
       new UglifyJsPlugin({
-        uglifyOptions: {
-          compress: {
-            warnings: false,
-          },
-        },
+        // uglifyOptions: {
+        //   compress: {
+        //     // warnings: false,
+        //   },
+        // },
         sourceMap: true,
         parallel: true,
       }),

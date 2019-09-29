@@ -14,7 +14,9 @@ export default {
   props: ['configDescription', 'value'],
   data () {
     return {
-      smartSelectParams: {}
+      smartSelectParams: {
+        view: this.$f7.view.main
+      }
     }
   },
   created () {

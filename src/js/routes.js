@@ -34,6 +34,7 @@ import InboxListPage from '../pages/settings/inbox/inbox-list.vue'
 
 import SemanticModelPage from '../pages/settings/model/model.vue'
 
+import RulesListPage from '../pages/settings/rules/rules-list.vue'
 import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
 import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
 
@@ -205,19 +206,21 @@ export default [
       },
       {
         path: 'rules/',
-        component: RuleEditPage,
+        component: RulesListPage,
+        keepAlive: true,
         routes: [
           {
-            path: 'add',
-            component: RuleEditPage
-          },
-          {
-            path: 'module',
-            component: RuleConfigureModulePage
-          },
-          {
             path: ':ruleId',
-            component: RuleEditPage
+            component: RuleEditPage,
+            // master: true,
+            // detailRoutes: [
+            routes: [
+              {
+                path: ':moduleType/:moduleId',
+                // path: '/settings/rules/:ruleId/:moduleType/:moduleId',
+                component: RuleConfigureModulePage
+              }
+            ]
           }
         ]
       },
@@ -282,6 +285,10 @@ export default [
   /* For Cordova */
   {
     path: '/static/(.*)',
+    redirect: '/'
+  },
+  {
+    path: '/home/',
     redirect: '/'
   },
   // temp disable

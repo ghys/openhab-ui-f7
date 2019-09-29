@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar :title="`${rule.uid ? 'Edit' : 'Create'} rule`" back-link="Cancel">
+    <f7-navbar :title="`${rule.uid !== 'add' ? 'Edit' : 'Create'} rule`" back-link="Rules" back-link-url="/settings/rules/" back-link-force>
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>
@@ -20,13 +20,17 @@
         </f7-list>
       </f7-col>
       <div class="padding" style="text-align: right">
-        <f7-link sortable-toggle=".sortable">Toggle Reorder</f7-link>
+        <f7-link sortable-toggle=".sortable" @click="toggleModuleControls">Toggle Reorder</f7-link>
       </div>
       <f7-col>
         <f7-block-title>When</f7-block-title>
-        <f7-list sortable>
-          <f7-list-item title="Trigger 1"></f7-list-item>
-          <f7-list-item title="Trigger 2"></f7-list-item>
+        <f7-list sortable swipeout>
+          <f7-list-item :title="'Trigger ' + idx" v-for="idx in [1,2,3,4,5]" :key="idx" :link="!showModuleControls" @click.native="editModule('triggers')" :swipeout="showModuleControls">
+            <f7-link v-if="showModuleControls" slot="after" icon-size="24" icon-color="red" icon-aurora="f7:delete_round" icon-ios="f7:delete_round" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+            <f7-swipeout-actions left v-if="showModuleControls">
+              <f7-swipeout-button delete>Delete</f7-swipeout-button>
+            </f7-swipeout-actions>
+          </f7-list-item>
         </f7-list>
         <f7-list>
           <f7-list-button color="blue" title="Add Trigger" @click="addModule('triggers')"></f7-list-button>
@@ -34,10 +38,13 @@
       </f7-col>
       <f7-col>
         <f7-block-title>Then</f7-block-title>
-        <f7-list sortable>
-          <f7-list-item title="Action 1"></f7-list-item>
-          <f7-list-item title="Action 2"></f7-list-item>
-          <f7-list-item title="Action 3"></f7-list-item>
+        <f7-list sortable :swipeout="showModuleControls">
+          <f7-list-item :title="'Action ' + idx" v-for="idx in [1,2,3,4,5]" :key="idx" :link="!showModuleControls" @click.native="editModule('actions')" :swipeout="showModuleControls">
+            <f7-link v-if="showModuleControls" slot="after" icon-color="red" icon-aurora="f7:delete_round" icon-ios="f7:delete_round" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+            <f7-swipeout-actions left v-if="showModuleControls">
+              <f7-swipeout-button delete>Delete</f7-swipeout-button>
+            </f7-swipeout-actions>
+          </f7-list-item>
         </f7-list>
         <f7-list>
           <f7-list-button color="blue" title="Add Action" @click="addModule('actions')"></f7-list-button>
@@ -61,7 +68,7 @@
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-popup class="demo-popup" :opened="moduleConfigOpened" @popupClosed="moduleConfigOpened = false">
+    <f7-popup ref="modulePopup" class="demo-popup" :opened="moduleConfigOpened" @popupClosed="moduleConfigOpened = false">
       <f7-page>
         <f7-navbar>
           <f7-nav-left>
@@ -92,6 +99,10 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+
+</style>
+
 <script>
 import ConfigParameter from '@/components/config/config-parameter.vue'
 import RuleConfigureModulePage from './rule-configure-module.vue'
@@ -103,13 +114,14 @@ export default {
   data () {
     return {
       ready: false,
-      rule: { name: 'Sample' },
+      rule: { name: 'Sample', uid: 123 },
       moduleTypes: {
         actions: [],
         conditions: [],
         triggers: []
       },
       moduleConfigOpened: false,
+      showModuleControls: false,
       currentSection: 'actions',
       currentModuleType: null,
       currentModuleConfig: {}
@@ -133,34 +145,62 @@ export default {
     })
   },
   methods: {
+    exit () {
+
+    },
+    toggleModuleControls () {
+      this.showModuleControls = !this.showModuleControls
+    },
+    showSwipeout (ev) {
+      let swipeoutElement = ev.target
+      while (swipeoutElement.className !== 'swipeout') {
+        swipeoutElement = swipeoutElement.parentElement
+      }
+
+      if (swipeoutElement) {
+        this.$f7.swipeout.open(swipeoutElement)
+      }
+
+      console.log('swipeout')
+    },
+    editModule (section) {
+      if (this.showModuleControls) return
+      this.currentSection = section
+      this.$refs.modulePopup.f7Popup.open()
+    },
     addModule (section) {
       this.currentSection = section
       const f7 = this.$f7
       f7.data.rule = this.rule
-      this.$f7router.navigate({
-        url: 'confmodule',
-        route: {
-          component: RuleConfigureModulePage,
-          path: 'confmodule',
+      this.$f7router.navigate(
+        `/settings/rules/${this.rule.uid}/${section}/add`,
+        // route: {
+        //   component: RuleConfigureModulePage,
+        //   path: 'confmodule',
+        //   reloadDetail: true,
+        //   props: {
+        //     rule: this.rule,
+        //     currentSection: this.currentSection,
+        //     moduleTypes: this.moduleTypes
+        //   },
+        //   on: {
+        //     pageAfterOut (e, page) {
+        //       console.log(f7)
+        //       debugger
+        //     }
+        //   }
+        // },
+        {
+          // reloadDetail: true,
+          // history: false,
+          // pushState: false,
           props: {
             rule: this.rule,
             currentSection: this.currentSection,
             moduleTypes: this.moduleTypes
-          },
-          on: {
-            pageAfterOut (e, page) {
-              console.log(f7)
-              debugger
-            }
           }
         }
-      }, {
-        props: {
-          rule: this.rule,
-          currentSection: this.currentSection,
-          moduleTypes: this.moduleTypes
-        }
-      })
+      )
       // this.$f7router.navigate('/settings/rules/module', {
       //   props: {
       //     rule: this.rule,

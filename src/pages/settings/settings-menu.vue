@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:init="onPageInit">
-    <f7-navbar title-large="Settings" title="Settings" back-link="Back">
+    <f7-navbar title-large="Settings" title="Settings" back-link="Back" back-link-url="/home/" back-link-force>
       <f7-nav-right>
         <f7-link
           class="searchbar-enable"
@@ -124,7 +124,7 @@ export default {
         things: 'Manage the physical layer',
         items: 'Manage the functional layer',
         model: 'The semantic model of your home',
-        rules: 'Automate without programming'
+        rules: 'Automate with triggers and actions'
       },
       addonsSubtitles: {
         binding: 'Connect and control hardware and online services',

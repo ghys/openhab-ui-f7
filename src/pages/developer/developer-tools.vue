@@ -1,6 +1,6 @@
 <template>
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
-    <f7-navbar title="Developer Tools" back-link="Back"></f7-navbar>
+    <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force></f7-navbar>
     <f7-block-title class="after-big-title">Test SSE connection</f7-block-title>
     <f7-block strong>
       <p>Start a SSE connection to check the different implementations</p>
@@ -27,11 +27,19 @@
         </f7-list-input>
       </f7-list>
     </f7-block>
+    <f7-block>
+      <cron-editor />
+    </f7-block>
   </f7-page>
 </template>
 
 <script>
+import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
+
 export default {
+  components: {
+    CronEditor
+  },
   data () {
     return {
       sseClient: null,
