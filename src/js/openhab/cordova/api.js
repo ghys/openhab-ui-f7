@@ -45,9 +45,9 @@ export default {
       })
     }
   },
-  postPlain (uri, data) {
+  postPlain (uri, data, dataType, contentType) {
     const fullUri = prepareRequest(uri)
-    const headers = { 'Content-Type': 'text/plain' }
+    const headers = { 'Content-Type': contentType || 'text/plain' }
     if (fullUri) {
       cordova.plugin.http.setDataSerializer('utf8')
       return new Promise((resolve, reject) => {

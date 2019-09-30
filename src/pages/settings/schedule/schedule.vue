@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="stopEventSource">
-    <f7-navbar title="Rules" back-link="Settings" back-link-url="/settings/" back-link-force>
+    <f7-navbar title="Schedule" back-link="Settings" back-link-url="/settings/" back-link-force>
       <f7-nav-right>
         <f7-link icon-md="material:done_all" @click="toggleCheck()"
         :text="(!$theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''"></f7-link>
@@ -28,61 +28,48 @@
       </div>
     </f7-toolbar>
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found"></f7-list-item>
-    </f7-list>
-    <!-- skeleton for not ready -->
-    <f7-block class="block-narrow" v-if="!ready">
-      <f7-block-title class="col wide padding-left">Loading...</f7-block-title>
-      <f7-list media-list class="col wide">
-        <f7-list-group>
-          <f7-list-item
-            media-item
-            v-for="n in 20"
-            :key="n"
-            :class="`skeleton-text skeleton-effect-blink`"
-            title="Title of the rule"
-            subtitle="Identifier"
-            after="status badge"
-            footer="Description of the rule"
-          >
-          </f7-list-item>
-        </f7-list-group>
-      </f7-list>
-    </f7-block>
-    <f7-block class="block-narrow" v-else>
-      <f7-block-title class="col wide padding-left searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
-      <f7-col>
-        <f7-list
-          class="searchbar-found col wide"
-          ref="rulesList"
-          media-list>
-          <f7-list-item
-            v-for="(rule, index) in rules"
-            :key="index"
-            media-item
-            class="rulelist-item"
-            :checkbox="showCheckboxes"
-            :checked="isChecked(rule.uid)"
-            @change="(e) => toggleItemCheck(e, rule.uid)"
-            :link="showCheckboxes ? null : rule.uid"
-            :title="rule.name"
-            :footer="rule.description"
-            :subtitle="rule.UID"
-            :badge="rule.status.status"
-            :badge-color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
-          >
-            <span slot="media" class="item-initial">{{rule.name[0]}}</span>
-          </f7-list-item>
-        </f7-list>
-      </f7-col>
-    </f7-block>
+    <div class="timeline timeline-horizontal col-33 tablet-15">
+      <div class="timeline-year" v-for="(yearObj, year) in calendar" :key="year">
+        <div class="timeline-year-title"><span>{{year}}</span></div>
+        <div class="timeline-month" v-for="(monthObj, month) in yearObj" :key="month">
+          <div class="timeline-month-title"><span>{{month}}</span></div>
+          <div class="timeline-item" v-for="(dayObj, day) in monthObj" :key="day">
+            <div class="timeline-item-date"><span>{{day}}</span></div>
+            <div class="timeline-item-content">
+              <div class="timeline-item-time">10:00</div>
+              <div class="timeline-item-text">Task 1</div>
+              <div class="timeline-item-time">13:00</div>
+              <div class="timeline-item-text">Task 2</div>
+              <div class="timeline-item-time">8:00</div>
+              <div class="timeline-item-text">Task 3</div>
+              <div class="timeline-item-text">Task 4</div>
+              <div class="timeline-item-time">2:00</div>
+              <f7-card>
+                <f7-card-content>
+                  Hey
+                </f7-card-content>
+              </f7-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="add">
       <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
     </f7-fab>
   </f7-page>
 </template>
+
+<style lang="stylus">
+.timeline-item-content
+  scrollbar-width none /* Firefox */
+  -ms-overflow-style none  /* IE 10+ */
+.timeline-item-content::-webkit-scrollbar /* WebKit */
+  width 0
+  height 0
+
+</style>
 
 <script>
 export default {
@@ -91,6 +78,7 @@ export default {
       ready: false,
       loading: false,
       rules: [],
+      calendar: {},
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
@@ -115,6 +103,21 @@ export default {
         this.loading = false
         this.ready = true
 
+        let start = new Date(), limit = new Date()
+        limit.setDate(start.getDate() + 31)
+        let day = start
+        // eslint-disable-next-line no-unmodified-loop-condition
+        while (day < limit) {
+          const year = day.getFullYear()
+          const month = day.toLocaleString('default', { month: 'long' })
+          const dayofmonth = day.toLocaleString('default', { weekday: 'short' }) + ' ' + day.getDate()
+          const cal = this.calendar
+          if (!cal[year]) cal[year] = {}
+          if (!cal[year][month]) cal[year][month] = {}
+          if (!cal[year][month][dayofmonth]) cal[year][month][dayofmonth] = {}
+          day.setDate(day.getDate() + 1)
+        }
+
         if (!this.eventSource) this.startEventSource()
       })
     },
@@ -128,10 +131,6 @@ export default {
           case 'updated':
             this.load()
             break
-          case 'state':
-            const rule = this.rules.find((r) => r.uid === topicParts[2])
-            if (!rule) break
-            this.$set(rule, 'status', JSON.parse(event.payload))
         }
       })
     },
@@ -183,11 +182,6 @@ export default {
         console.error(err)
         this.$f7.dialog.alert('An error occurred while deleting: ' + err)
       })
-    }
-  },
-  asyncComputed: {
-    iconUrl () {
-      return icon => this.$oh.media.getIcon(icon)
     }
   }
 }

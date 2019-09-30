@@ -135,7 +135,7 @@ export default {
               bold: true,
               onClick: () => {
                 console.log(`Add ${entry.thingUID} as thing`)
-                this.$f7.dialog.prompt(`Thing will create a new Thing ${entry.thingUID} with the following name:`,
+                this.$f7.dialog.prompt(`This will create a new Thing ${entry.thingUID} with the following name:`,
                   'Add as Thing',
                   (name) => {
                     this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {

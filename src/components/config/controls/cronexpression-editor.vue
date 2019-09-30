@@ -1,9 +1,7 @@
 <!-- Adapted from https://github.com/1615450788/vue-cron - license: MIT -->
 
 <template>
-<div>
-  <f7-button popup-open=".cron-select">Open Cron Editor</f7-button>
-  <f7-popup class="cron-select">
+  <f7-popup class="cron-select" @popup:closed="$emit('closed', cron)" :opened="opened">
     <f7-page class="cron-select-content">
       <f7-navbar :title="'Cron: ' + cron" :subtitle="translation">
         <f7-nav-right>
@@ -25,7 +23,7 @@
           </h4>
         </div>
       </f7-toolbar> -->
-      <f7-tabs type="border-card">
+      <f7-tabs type="border-card" v-if="opened">
         <f7-tab :tab-active="currentTab === 'seconds'">
           <span slot="label">
             <i class="el-icon-date"></i>
@@ -244,55 +242,23 @@
                 {{text.Year.cycle[2]||''}}
               </f7-list-item>
             </f7-list>
-            <f7-row>
-              <f7-radio v-model="year.cronEvery" label="1">{{text.Year.every}}</f7-radio>
-            </f7-row>
-            <f7-row>
-              <f7-radio v-model="year.cronEvery" label="2">
-                {{text.Year.interval[0]}}
-                <f7-stepper small :value="year.incrementIncrement" :min="1" :max="99"></f7-stepper>
-                {{text.Year.interval[1]}}
-                <f7-stepper small :value="year.incrementStart" :min="2018" :max="2118"></f7-stepper>
-              </f7-radio>
-            </f7-row>
-            <f7-row>
-              <f7-radio class="long" v-model="year.cronEvery" label="3">
-                {{text.Year.specific}}
-                <select
-                  size="small"
-                  filterable
-                  multiple
-                  v-model="year.specificSpecific"
-                >
-                  <option v-for="val in 100" :key="val" :label="2017+val" :value="2017+val"></option>
-                </select>
-              </f7-radio>
-            </f7-row>
-            <f7-row>
-              <f7-radio v-model="year.cronEvery" label="4">
-                {{text.Year.cycle[0]}}
-                <f7-stepper small :value="year.rangeStart" :min="2018" :max="2118"></f7-stepper>
-                {{text.Year.cycle[1]}}
-                <f7-stepper small :value="year.rangeEnd" :min="2018" :max="2118"></f7-stepper>
-              </f7-radio>
-            </f7-row>
           </f7-block>
         </f7-tab>
       </f7-tabs>
     </f7-page>
   </f7-popup>
-</div>
 </template>
 
 <style lang="stylus">
 // .cron-select-content .page-content
 //   --f7-page-navbar-offset 0px
 @media (max-width: 640px)
-  .item-content
-    .item-inner
-      display block
-      .stepper-small
-        transform translate(0, 8px)
+  .cron-select-content
+    .item-content
+      .item-inner
+        display block
+        .stepper-small
+          transform translate(0, 8px)
 </style>
 
 <script>
@@ -301,7 +267,7 @@ import cronstrue from 'cronstrue'
 
 export default {
   name: 'vueCron',
-  props: ['data', 'i18n'],
+  props: ['value', 'opened', 'i18n'],
   data () {
     return {
       currentTab: 'seconds',
@@ -376,7 +342,7 @@ export default {
     }
   },
   watch: {
-    data () {
+    value () {
       this.rest(this.$data)
     }
   },
@@ -588,6 +554,7 @@ export default {
     },
     rest (data) {
       for (let i in data) {
+        if (i === 'currentTab') continue
         if (data[i] instanceof Object) {
           this.rest(data[i])
         } else {

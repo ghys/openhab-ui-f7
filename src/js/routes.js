@@ -38,6 +38,8 @@ import RulesListPage from '../pages/settings/rules/rules-list.vue'
 import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
 import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
 
+import SchedulePage from '../pages/settings/schedule/schedule.vue'
+
 import Analyzer from '../pages/analyzer/analyzer.vue'
 
 import MasterDetailMaster from '../pages/master-detail-master.vue'
@@ -210,6 +212,15 @@ export default [
         keepAlive: true,
         routes: [
           {
+            path: 'add',
+            component: RuleEditPage,
+            options: {
+              props: {
+                createMode: true
+              }
+            }
+          },
+          {
             path: ':ruleId',
             component: RuleEditPage,
             // master: true,
@@ -223,6 +234,10 @@ export default [
             ]
           }
         ]
+      },
+      {
+        path: 'schedule/',
+        component: SchedulePage
       },
       {
         path: 'inbox/',

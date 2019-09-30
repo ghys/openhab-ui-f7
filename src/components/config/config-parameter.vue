@@ -16,6 +16,8 @@ import ParameterOptions from './controls/parameter-options.vue'
 import ParameterItem from './controls/parameter-item.vue'
 import ParameterScript from './controls/parameter-script.vue'
 import ParameterLocation from './controls/parameter-location.vue'
+import ParameterCronExpression from './controls/parameter-cronexpression.vue'
+import ParameterDayOfWeek from './controls/parameter-dayofweek.vue'
 import ParameterText from './controls/parameter-text.vue'
 
 export default {
@@ -32,7 +34,7 @@ export default {
   computed: {
     control () {
       const configDescription = this.configDescription
-      if (configDescription.options.length) {
+      if (configDescription.options.length && configDescription.limitToOptions) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER') {
         return ParameterInteger
@@ -42,6 +44,10 @@ export default {
         return ParameterScript
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'location') {
         return ParameterLocation
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'cronexpression') {
+        return ParameterCronExpression
+      } else if (configDescription.type === 'TEXT' && configDescription.context === 'dayOfWeek') {
+        return ParameterDayOfWeek
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'item') {
         return ParameterItem
       } else if (configDescription.type === 'TEXT' && configDescription.context === 'thing') {

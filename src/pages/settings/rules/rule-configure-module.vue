@@ -28,11 +28,17 @@
       </f7-col>
       <f7-col v-if="currentModuleType != null">
         <f7-block-title>Configuration</f7-block-title>
-          <config-parameter
+          <!-- <config-parameter
             v-for="parameter in currentModuleType.configDescriptions"
             :key="parameter.name"
             :config-description="parameter"
             :value="currentModuleConfig[parameter.name]"
+          /> -->
+          <config-sheet
+            :parameterGroups="[]"
+            :parameters="currentModuleType.configDescriptions"
+            :configuration="currentModuleConfig"
+            @updated="dirty = true"
           />
       </f7-col>
     </f7-block>
@@ -41,10 +47,12 @@
 
 <script>
 import ConfigParameter from '@/components/config/config-parameter.vue'
+import ConfigSheet from '@/components/config/config-sheet.vue'
 
 export default {
   components: {
-    ConfigParameter
+    ConfigParameter,
+    ConfigSheet
   },
   props: ['rule', 'moduleTypes', 'currentSection'],
   data () {

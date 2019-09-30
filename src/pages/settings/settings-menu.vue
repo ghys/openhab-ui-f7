@@ -73,6 +73,12 @@
               badge-color="blue"
               :footer="objectsSubtitles.rules"
             ></f7-list-item>
+            <f7-list-item
+              link="schedule/"
+              title="Schedule"
+              badge-color="blue"
+              :footer="objectsSubtitles.schedule"
+            ></f7-list-item>
           </f7-list>
           <f7-block-title>Add-ons</f7-block-title>
           <f7-list class="search-list">
@@ -124,7 +130,8 @@ export default {
         things: 'Manage the physical layer',
         items: 'Manage the functional layer',
         model: 'The semantic model of your home',
-        rules: 'Automate with triggers and actions'
+        rules: 'Automate with triggers and actions',
+        schedule: 'View upcoming time-based rules'
       },
       addonsSubtitles: {
         binding: 'Connect and control hardware and online services',

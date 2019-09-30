@@ -42,6 +42,9 @@
           <f7-list-item inset link="/settings/rules/" title="Rules" view=".view-main" panel-close :animate="false">
             <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
           </f7-list-item>
+          <f7-list-item inset link="/settings/schedule/" title="Schedule" view=".view-main" panel-close :animate="false">
+            <!-- <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon> -->
+          </f7-list-item>
           </ul>
         </li>
 

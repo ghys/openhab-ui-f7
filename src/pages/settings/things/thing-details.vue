@@ -299,7 +299,7 @@ export default {
   },
   methods: {
     onPageAfterIn (event) {
-      // When coming back from the channel add/edit page with a change, let the handler below the reloading logic (the thing has to be saved first)
+      // When coming back from the channel add/edit page with a change, let the handler below take care of the reloading logic (the thing has to be saved first)
       if (!event.detail.pageFrom || !event.detail.pageFrom.name || event.detail.pageFrom.name.indexOf('channel') < 0) {
         console.log('Loading')
         if (!this.eventSource) this.stopEventSource()

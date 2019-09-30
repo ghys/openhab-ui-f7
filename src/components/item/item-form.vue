@@ -52,7 +52,8 @@ export default {
   data () {
     return {
       types: Types,
-      categoryInputId: ''
+      categoryInputId: '',
+      categoryAutocomplete: null
     }
   },
   methods: {
@@ -77,6 +78,11 @@ export default {
     if (!categoryControl || !categoryControl.$el) return
     const inputElement = this.$$(categoryControl.$el).find('input')
     this.initializeAutocomplete(inputElement)
+  },
+  beforeDestroy () {
+    if (this.categoryAutocomplete) {
+      this.$f7.autocomplete.destroy(this.categoryAutocomplete)
+    }
   }
 }
 </script>

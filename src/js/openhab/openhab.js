@@ -10,14 +10,14 @@ export default {
     post (uri, data, dataType) {
       return Framework7.request.promise.postJSON(uri, data, dataType)
     },
-    postPlain (uri, data, dataType) {
+    postPlain (uri, data, dataType, contentType) {
       return Framework7.request.promise({
         method: 'POST',
         url: uri,
         data,
         processData: false,
-        contentType: 'text/plain',
-        dataType: 'application/json'
+        contentType: contentType || 'text/plain',
+        dataType: dataType || 'application/json'
       })
     },
     put (uri, data) {
