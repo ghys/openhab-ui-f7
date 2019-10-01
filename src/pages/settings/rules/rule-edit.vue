@@ -1,6 +1,6 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
-    <f7-navbar :title="`${rule.uid !== 'add' ? 'Edit' : 'Create'} rule`" back-link="Rules" back-link-url="/settings/rules/" back-link-force>
+    <f7-navbar :title="(createMode) ? 'Create rule' : rule.name" back-link="Back">
       <f7-nav-right>
         <f7-link @click="save()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
         <f7-link @click="save()" v-if="!$theme.md">Save</f7-link>

@@ -36,19 +36,12 @@
           <div class="timeline-item" v-for="(dayObj, day) in monthObj" :key="day">
             <div class="timeline-item-date"><span>{{day}}</span></div>
             <div class="timeline-item-content">
-              <div class="timeline-item-time">10:00</div>
-              <div class="timeline-item-text">Task 1</div>
-              <div class="timeline-item-time">13:00</div>
-              <div class="timeline-item-text">Task 2</div>
-              <div class="timeline-item-time">8:00</div>
-              <div class="timeline-item-text">Task 3</div>
-              <div class="timeline-item-text">Task 4</div>
-              <div class="timeline-item-time">2:00</div>
-              <f7-card>
-                <f7-card-content>
-                  Hey
-                </f7-card-content>
-              </f7-card>
+              <div class="timeline-item-inner" v-for="(occurrence, $idx) in calendar[year][month][day]" :key="$idx">
+                <div class="timeline-item-time">{{occurrence[0].substring(11, 16)}}</div>
+                <div class="timeline-item-title">{{occurrence[1].name}}</div>
+                <!-- <div class="timeline-item-text">{{occurrence[1].description}}</div> -->
+                <f7-link :href="'/settings/rules/' + occurrence[1].uid" small text="edit"></f7-link>
+              </div>
             </div>
           </div>
         </div>
@@ -72,6 +65,8 @@
 </style>
 
 <script>
+import later from 'later-again'
+
 export default {
   data () {
     return {
@@ -95,13 +90,35 @@ export default {
     load () {
       if (this.loading) return
       this.loading = true
+      let occurrences = []
       this.$oh.api.get('/rest/rules').then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
         this.initSearchbar = true
         this.loading = false
-        this.ready = true
+
+        // compute occurrences for rules
+        this.rules.forEach((rule) => {
+          rule.triggers.forEach((t) => {
+            if (t.type === 'timer.GenericCronTrigger') {
+              if (t.configuration || t.configuration.cronExpression) {
+                try {
+                  const laterSchedule = later.cron(t.configuration.cronExpression, true)
+                  const triggerNextOccurrences = later.schedule(laterSchedule).next(100)
+                  occurrences.push(...triggerNextOccurrences.map((o) => {
+                    return [o.toISOString(), rule]
+                  }))
+                } catch (err) {
+                  throw err
+                }
+              }
+            }
+          })
+        })
+
+        occurrences = occurrences.sort((o1, o2) => o1[0].localeCompare(o2[0]))
+        this.$set(this, 'calendar', {})
 
         let start = new Date(), limit = new Date()
         limit.setDate(start.getDate() + 31)
@@ -114,10 +131,18 @@ export default {
           const cal = this.calendar
           if (!cal[year]) cal[year] = {}
           if (!cal[year][month]) cal[year][month] = {}
-          if (!cal[year][month][dayofmonth]) cal[year][month][dayofmonth] = {}
+          if (!cal[year][month][dayofmonth]) cal[year][month][dayofmonth] = []
+
+          const dayISODate = day.toISOString().split('T')[0]
+          const dayOccurrences = occurrences.filter((o) => {
+            const occurrenceISODate = o[0].split('T')[0]
+            return occurrenceISODate === dayISODate
+          })
+          cal[year][month][dayofmonth] = dayOccurrences
           day.setDate(day.getDate() + 1)
         }
 
+        this.ready = true
         if (!this.eventSource) this.startEventSource()
       })
     },
