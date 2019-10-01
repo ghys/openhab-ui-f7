@@ -390,6 +390,7 @@ export default {
         type: '',
         new: true
       }
+      if (isNaN(newModule.id) || !isFinite(newModule.id)) newModule.id = '1'
       // this.rule[section].push(newModule)
       this.currentSection = section
       this.currentModule = newModule
