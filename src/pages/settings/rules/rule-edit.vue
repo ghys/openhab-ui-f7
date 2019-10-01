@@ -41,11 +41,11 @@
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
-          <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" :required="true"
+          <f7-list-input label="Unique ID" type="text" placeholder="Required" :value="rule.uid" required validate
                          :disabled="!createMode" :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
                          @input="rule.uid = $event.target.value" clear-button>
           </f7-list-input>
-          <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" :required="true"
+          <f7-list-input label="Name" type="text" placeholder="Required" :value="rule.name" required validate
                          @input="rule.name = $event.target.value" clear-button>
           </f7-list-input>
           <f7-list-input label="Description" type="text" :value="rule.description"
@@ -63,15 +63,18 @@
         <f7-block-title>{{sectionLabels[section][0]}}</f7-block-title>
         <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
           <f7-list-item media :title="mod.label" :footer="mod.description" v-for="mod in rule[section]" :key="mod.id"
-                :link="!showModuleControls" @click.native="editModule(section, mod)" :swipeout="showModuleControls">
-            <f7-link v-if="showModuleControls" slot="media" icon-size="22" icon-color="red" icon-aurora="f7:delete_round" icon-ios="f7:delete_round" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
-            <f7-swipeout-actions right v-show="showModuleControls">
+                :link="!showModuleControls" @click="(ev) => editModule(ev, section, mod)" swipeout>
+            <f7-link slot="media" icon-color="red" icon-aurora="f7:delete_round_fill" icon-ios="f7:delete_round_fill" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+            <f7-swipeout-actions right>
               <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
             </f7-swipeout-actions>
           </f7-list-item>
         </f7-list>
         <f7-list>
-          <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]" @click="addModule(section)"></f7-list-button>
+          <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
+            <f7-icon slot="media" color="green" aurora="f7:add_round_fill" ios="f7:add_round_fill" md="material:control_point"></f7-icon>
+          </f7-list-item>
+          <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
         </f7-list>
       </f7-col>
     </f7-block>
@@ -82,9 +85,10 @@
           <f7-nav-left>
             <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close></f7-link>
           </f7-nav-left>
-          <f7-nav-title>Edit module</f7-nav-title>
+          <f7-nav-title v-if="currentModule && currentModule.new">{{sectionLabels[currentSection][1]}}</f7-nav-title>
+          <f7-nav-title v-else>Edit module</f7-nav-title>
           <f7-nav-right>
-            <f7-link @click="saveModule">Done</f7-link>
+            <f7-link v-show="currentModuleType" @click="saveModule">Done</f7-link>
           </f7-nav-right>
         </f7-navbar>
         <f7-block v-if="currentModule">
@@ -148,7 +152,7 @@
     .sortable-handler
       display none
   .item-media .icon
-    color inherit
+    color var(--f7-theme-color)
   .media-list
     margin-bottom 0
   .list
@@ -195,16 +199,23 @@ export default {
         actions: ['Then', 'Add Action'],
         conditions: ['But only if', 'Add Condition']
       },
-      eventSource: null
+      eventSource: null,
+      keyHandler: null
     }
   },
   methods: {
     onPageAfterIn () {
       if (this.ready) return
+      if (window) {
+        window.addEventListener('keydown', this.keyDown)
+      }
       this.load()
     },
     onPageAfterOut () {
       this.stopEventSource()
+      if (window) {
+        window.removeEventListener('keydown', this.keyDown)
+      }
     },
     load () {
       if (this.loading) return
@@ -245,7 +256,7 @@ export default {
         })
       })
     },
-    save () {
+    save (stay) {
       // TODO properly validate rule
       if (!this.rule.uid) return
       if (!this.rule.name) return
@@ -259,6 +270,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.load()
         } else {
           this.$f7.toast.create({
             text: 'Rule updated',
@@ -266,7 +278,13 @@ export default {
             closeTimeout: 2000
           }).open()
         }
-        this.$f7router.back()
+        if (!stay) this.$f7router.back()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error while saving rule: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
       })
     },
     toggleDisabled () {
@@ -318,11 +336,20 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
+    keyDown (ev) {
+      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey)) {
+        if (this.createMode) return // not supported!
+        this.save(true)
+        ev.stopPropagation()
+        ev.preventDefault()
+      }
+    },
     toggleModuleControls () {
       this.showModuleControls = !this.showModuleControls
     },
     showSwipeout (ev) {
       let swipeoutElement = ev.target
+      ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
@@ -331,8 +358,14 @@ export default {
         this.$f7.swipeout.open(swipeoutElement)
       }
     },
-    editModule (section, mod) {
+    editModule (ev, section, mod) {
       if (this.showModuleControls) return
+      let swipeoutElement = ev.target
+      ev.cancelBubble = true
+      while (!swipeoutElement.classList.contains('swipeout')) {
+        swipeoutElement = swipeoutElement.parentElement
+      }
+      if (swipeoutElement && swipeoutElement.classList.contains('swipeout-opened')) return
       this.currentSection = section
       this.currentModule = Object.assign({}, mod)
       this.currentModuleType = this.moduleTypes[section].find((m) => m.uid === mod.type)
@@ -340,6 +373,7 @@ export default {
     },
     deleteModule (ev, section, mod) {
       let swipeoutElement = ev.target
+      ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
         swipeoutElement = swipeoutElement.parentElement
       }
