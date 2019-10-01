@@ -74,7 +74,7 @@
   <f7-view main class="safe-areas" url="/" :master-detail-breakpoint="960" @routeChanged="console.log('hello')"></f7-view>
 
   <f7-login-screen id="my-login-screen" :opened="loginScreenOpened">
-    <f7-view name="login">
+    <f7-view name="login" v-if="$device.cordova">
       <f7-page login-screen>
         <f7-login-screen-title><img width="200px" src="static/img/openhab-logo.png"><br>Login</f7-login-screen-title>
         <f7-list form>
