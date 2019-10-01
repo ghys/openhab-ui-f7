@@ -76,7 +76,8 @@ module.exports = {
           resolvePath('node_modules/dom7'),
           resolvePath('node_modules/ssr-window'),
           resolvePath('node_modules/vue-echarts'),
-          resolvePath('node_modules/resize-detector')
+          resolvePath('node_modules/resize-detector'),
+          resolvePath('node_modules/later-again')
         ],
       },
 
@@ -174,6 +175,7 @@ module.exports = {
     ...(env === 'production' ? [
       // Production only plugins
       new UglifyJsPlugin({
+        exclude: /\/later-again.*constants/,
         // uglifyOptions: {
         //   compress: {
         //     // warnings: false,

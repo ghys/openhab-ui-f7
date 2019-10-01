@@ -38,7 +38,7 @@ import RulesListPage from '../pages/settings/rules/rules-list.vue'
 import RuleEditPage from '../pages/settings/rules/rule-edit.vue'
 import RuleConfigureModulePage from '../pages/settings/rules/rule-configure-module.vue'
 
-import SchedulePage from '../pages/settings/schedule/schedule.vue'
+// import SchedulePage from '../pages/settings/schedule/schedule.vue'
 
 import Analyzer from '../pages/analyzer/analyzer.vue'
 
@@ -237,7 +237,15 @@ export default [
       },
       {
         path: 'schedule/',
-        component: SchedulePage
+        async (routeTo, routeFrom, resolve, reject) {
+          // dynamic import component; returns promise
+          const scheduleComponent = () => import('../pages/settings/schedule/schedule.vue')
+          // resolve promise
+          scheduleComponent().then((vc) => {
+            // resolve with component
+            resolve({ component: vc.default })
+          })
+        }
       },
       {
         path: 'inbox/',
