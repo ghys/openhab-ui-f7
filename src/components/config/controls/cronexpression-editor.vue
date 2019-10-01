@@ -105,7 +105,7 @@
               </f7-list-item>
               <f7-list-item radio ref="specificHour" :title="text.Hours.specific" smart-select no-chevron :smart-select-params="{ openIn: 'popover', view: $f7.views.main }" :checked="hour.cronEvery === 3" @click="hour.cronEvery = 3">
                 <select multiple @change="hour.specificSpecific = $refs.specificHour.f7SmartSelect.getValue()">
-                  <option v-for="val in 24" :key="val" :value="val-1" :selected="hour.specificSpecific.indexOf(val) >= 0">{{val-1}}</option>
+                  <option v-for="val in 24" :key="val" :value="val-1" :selected="hour.specificSpecific.indexOf(val-1) >= 0">{{val-1}}</option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="hour.cronEvery === 4" @change="hour.cronEvery = 4">
@@ -273,7 +273,7 @@ export default {
       currentTab: 'seconds',
       second: {
         cronEvery: 3,
-        incrementStart: 3,
+        incrementStart: 0,
         incrementIncrement: 5,
         rangeStart: 1,
         rangeEnd: 1,
@@ -281,19 +281,19 @@ export default {
       },
       minute: {
         cronEvery: 3,
-        incrementStart: 3,
+        incrementStart: 0,
         incrementIncrement: 5,
         rangeStart: 1,
         rangeEnd: 1,
         specificSpecific: [0]
       },
       hour: {
-        cronEvery: 1,
-        incrementStart: 3,
+        cronEvery: 3,
+        incrementStart: 0,
         incrementIncrement: 5,
         rangeStart: 1,
         rangeEnd: 1,
-        specificSpecific: []
+        specificSpecific: [8]
       },
       day: {
         cronEvery: 1,
@@ -538,7 +538,9 @@ export default {
         '*'} ${this.weeksText || '?'} ${this.yearsText || '*'}`
     },
     translation () {
-      return cronstrue.toString(this.cron)
+      return cronstrue.toString(this.cron, {
+        use24HourTimeFormat: true
+      })
     }
   },
   methods: {
