@@ -16,6 +16,7 @@ function resolvePath(dir) {
 
 const env = process.env.NODE_ENV || 'development';
 const target = process.env.TARGET || 'web';
+const buildSourceMaps = process.env.SOURCE_MAPS || false;
 const isCordova =  target === 'cordova';
 
 // const apiBaseUrl = 'http://openhab:8080' // 'http://demo.openhab.org:8080' // 'http://localhost:8080'
@@ -39,7 +40,7 @@ module.exports = {
       '@': resolvePath('src'),
     },
   },
-  devtool: env === 'production' ? 'source-map' : 'eval-source-map',
+  devtool: env === 'production' ? (buildSourceMaps) ? 'source-map' : 'none' : 'eval-source-map',
   devServer: {
     hot: true,
     // open: true,
