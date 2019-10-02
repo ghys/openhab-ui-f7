@@ -1,5 +1,5 @@
 <template>
-  <codemirror v-model="code" ref="cm" class="code-editor-fit" :options="cmOptions" @ready="onCmReady"></codemirror>
+  <codemirror :value="value" @input="onCmCodeChange" ref="cm" class="code-editor-fit" :options="cmOptions" @ready="onCmReady"></codemirror>
 </template>
 
 <style lang="stylus">
@@ -64,9 +64,10 @@ export default {
   components: {
     codemirror
   },
-  props: ['code'],
+  props: ['value'],
   data () {
     return {
+      code: this.value,
       cmOptions: {
         // codemirror options
         tabSize: 4,
@@ -85,7 +86,6 @@ export default {
       // debugger
     },
     onCmReady (cm) {
-      console.log('the editor is readied!', cm)
       window.tern = tern
       const server = new _CodeMirror.TernServer({
         defs: [EcmascriptDefs, OpenhabDefs],
@@ -103,12 +103,8 @@ export default {
         server.updateArgHints(cm)
       })
     },
-    onCmFocus (cm) {
-      console.log('the editor is focus!', cm)
-    },
     onCmCodeChange (newCode) {
-      console.log('this is new code', newCode)
-      this.code = newCode
+      this.$emit('input', newCode)
     }
   },
   computed: {

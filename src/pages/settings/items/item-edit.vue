@@ -45,7 +45,7 @@ import * as SemanticClasses from '@/assets/semantics.js'
 
 import ItemForm from '@/components/item/item-form.vue'
 import GroupForm from '@/components/item/group-form.vue'
-import TagInput from '@/components/item/tag-input.vue'
+import TagInput from '@/components/tags/tag-input.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 export default {

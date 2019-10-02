@@ -53,10 +53,10 @@ export default {
         this.pendingTag = ''
       }
     },
-    deleteTag (chip) {
-      const tag = chip.innerText
+    deleteTag (ev) {
+      const tag = ev.target.previousSibling.innerText
       if (this.item.tags.indexOf(tag)) {
-        this.item.tags.splice(this.item.tags.indexOf(tag))
+        this.item.tags.splice(this.item.tags.indexOf(tag), 1)
       }
     }
   }

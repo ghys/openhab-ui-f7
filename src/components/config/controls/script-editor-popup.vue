@@ -1,12 +1,12 @@
 <template>
-  <f7-popup class="script-editor" tablet-fullscreen @popup:opened="() => showEditor = true" @popup:closed="$emit('closed')" :opened="opened">
+  <f7-popup :id="popupId" class="editor-popup" close-on-escape :tablet-fullscreen="fullscreen" @popup:opened="() => showEditor = true" @popup:closed="popupClosed" :opened="opened">
     <f7-page class="code-editor-content">
       <f7-navbar :title="title">
         <f7-nav-right>
-          <f7-link popup-close=".script-editor">Close</f7-link>
+          <f7-link :popup-close="(popupId) ? '#' + popupId : '.editor-popup'">Close</f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <editor v-if="showEditor" :code="code"></editor>
+      <editor v-if="showEditor" v-model="code"></editor>
     </f7-page>
   </f7-popup>
 </template>
@@ -21,15 +21,17 @@ export default {
   components: {
     'editor': () => import('./script-editor.vue')
   },
-  props: ['title', 'code', 'opened'],
+  props: ['title', 'value', 'opened', 'fullscreen', 'popupId'],
   data () {
     return {
+      code: this.value,
       showEditor: false
     }
   },
   methods: {
-    initChart () {
-      this.showEditor = true
+    popupClosed () {
+      this.showEditor = false
+      this.$emit('closed', this.code)
     }
   }
 }

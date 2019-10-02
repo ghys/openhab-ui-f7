@@ -243,9 +243,23 @@ export default [
           // resolve promise
           scheduleComponent().then((vc) => {
             // resolve with component
-            resolve({ component: vc.default })
+            resolve({
+              component: vc.default
+            })
           })
-        }
+        },
+        routes: [
+          {
+            path: 'add',
+            component: RuleEditPage,
+            options: {
+              props: {
+                createMode: true,
+                schedule: true
+              }
+            }
+          }
+        ]
       },
       {
         path: 'inbox/',

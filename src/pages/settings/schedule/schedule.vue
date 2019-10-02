@@ -8,10 +8,11 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
-          class="searchbar-items"
+          class="searchbar-schedule"
           :init="initSearchbar"
-          search-container=".virtual-list"
-          search-in=".item-title, .item-subtitle, .item-footer"
+          search-container=".timeline"
+          search-item=".timeline-item-inner"
+          search-in=".timeline-item-title"
           remove-diacritics
         ></f7-searchbar>
       </f7-subnavbar>
@@ -91,7 +92,7 @@ export default {
       if (this.loading) return
       this.loading = true
       let occurrences = []
-      this.$oh.api.get('/rest/rules').then(data => {
+      this.$oh.api.get('/rest/rules?tags=Schedule').then(data => {
         this.rules = data.sort((a, b) => {
           return a.name.localeCompare(b.name)
         })
@@ -102,7 +103,7 @@ export default {
         this.rules.forEach((rule) => {
           rule.triggers.forEach((t) => {
             if (t.type === 'timer.GenericCronTrigger') {
-              if (t.configuration || t.configuration.cronExpression) {
+              if (t.configuration && t.configuration.cronExpression) {
                 try {
                   const laterSchedule = later.cron(t.configuration.cronExpression, true)
                   const triggerNextOccurrences = later.schedule(laterSchedule).next(100)
@@ -111,6 +112,14 @@ export default {
                   }))
                 } catch (err) {
                   throw err
+                }
+              }
+            } else if (t.type === 'timer.TimeOfDayTrigger') {
+              if (t.configuration && t.configuration.time && t.configuration.time.match(/^\d\d:\d\d/)) {
+                for (let i = 0, d = new Date(); i < 31; i++) {
+                  d.setUTCHours(t.configuration.time.split(':')[0], t.configuration.time.split(':')[1])
+                  occurrences.push([d.toISOString().replace(), rule])
+                  d.setDate(d.getDate() + 1)
                 }
               }
             }
@@ -136,6 +145,15 @@ export default {
           const dayISODate = day.toISOString().split('T')[0]
           const dayOccurrences = occurrences.filter((o) => {
             const occurrenceISODate = o[0].split('T')[0]
+            const rule = o[1]
+
+            // filter out the occurrences not satisfying common rule conditions modules
+            if (rule.conditions.some((c) => c.type === 'timer.DayOfWeekCondition' &&
+                c.configuration && Array.isArray(c.configuration.days) &&
+                c.configuration.days.indexOf(['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][day.getDay()]) < 0)) {
+              return false
+            }
+
             return occurrenceISODate === dayISODate
           })
           cal[year][month][dayofmonth] = dayOccurrences

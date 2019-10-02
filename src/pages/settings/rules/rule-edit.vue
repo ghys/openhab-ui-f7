@@ -63,7 +63,7 @@
         <f7-block-title>{{sectionLabels[section][0]}}</f7-block-title>
         <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
           <f7-list-item media :title="mod.label" :footer="mod.description" v-for="mod in rule[section]" :key="mod.id"
-                :link="!showModuleControls" @click="(ev) => editModule(ev, section, mod)" swipeout>
+                :link="!showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
             <f7-link slot="media" icon-color="red" icon-aurora="f7:delete_round_fill" icon-ios="f7:delete_round_fill" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
             <f7-swipeout-actions right>
               <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
@@ -76,6 +76,11 @@
           </f7-list-item>
           <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
         </f7-list>
+      </f7-col>
+      <f7-col>
+        <f7-block-title>Tags</f7-block-title>
+        <semantics-picker :item="rule"></semantics-picker>
+        <tag-input :item="rule"></tag-input>
       </f7-col>
     </f7-block>
 
@@ -164,6 +169,8 @@ import cronstrue from 'cronstrue'
 
 // import ConfigParameter from '@/components/config/config-parameter.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import SemanticsPicker from '@/components/tags/semantics-picker.vue'
+import TagInput from '@/components/tags/tag-input.vue'
 // import RuleConfigureModulePage from './rule-configure-module.vue'
 
 function uuidv4 () {
@@ -174,9 +181,11 @@ function uuidv4 () {
 
 export default {
   components: {
-    ConfigSheet
+    ConfigSheet,
+    SemanticsPicker,
+    TagInput
   },
-  props: ['ruleId', 'createMode'],
+  props: ['ruleId', 'createMode', 'schedule'],
   data () {
     return {
       ready: false,
@@ -235,7 +244,7 @@ export default {
             triggers: [],
             actions: [],
             conditions: [],
-            tags: [],
+            tags: (this.schedule) ? ['Schedule'] : [],
             configuration: {},
             visibility: 'VISIBLE',
             status: {
@@ -384,13 +393,16 @@ export default {
     },
     addModule (section) {
       if (this.showModuleControls) return
+      let moduleId = 1
+      for (; ['triggers', 'actions', 'conditions'].some((s) => this.rule[s].some((m) => m.id === moduleId.toString())); moduleId++);
+      console.debug('new moduleId=' + moduleId)
       const newModule = {
-        id: (Math.max(...this.rule[section].map((m) => parseInt(m.id) || 0)) + 1).toString(),
+        id: moduleId.toString(),
         configuration: {},
         type: '',
         new: true
       }
-      if (isNaN(newModule.id) || !isFinite(newModule.id)) newModule.id = '1'
+
       // this.rule[section].push(newModule)
       this.currentSection = section
       this.currentModule = newModule

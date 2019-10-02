@@ -8,10 +8,11 @@
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
-          class="searchbar-items"
+          class="searchbar-rules"
           :init="initSearchbar"
-          search-container=".virtual-list"
-          search-in=".item-title, .item-subtitle, .item-footer"
+          search-container=".rules-list"
+          search-item=".rulelist-item"
+          search-in=".item-title, .item-header, .item-footer"
           remove-diacritics
         ></f7-searchbar>
       </f7-subnavbar>
@@ -42,7 +43,7 @@
             :key="n"
             :class="`skeleton-text skeleton-effect-blink`"
             title="Title of the rule"
-            subtitle="Identifier"
+            subtitle="Tags, Schedule, Scene..."
             after="status badge"
             footer="Description of the rule"
           >
@@ -54,7 +55,7 @@
       <f7-block-title class="col wide padding-left searchbar-hide-on-search">{{rules.length}} rules</f7-block-title>
       <f7-col>
         <f7-list
-          class="searchbar-found col wide"
+          class="searchbar-found col wide rules-list"
           ref="rulesList"
           media-list>
           <f7-list-item
@@ -68,10 +69,14 @@
             :link="showCheckboxes ? null : rule.uid"
             :title="rule.name"
             :footer="rule.description"
-            :subtitle="rule.UID"
             :badge="rule.status.status"
             :badge-color="(rule.status.status === 'RUNNING') ? 'orange' : (rule.status.status != 'IDLE') ? 'red' : ''"
           >
+            <div slot="subtitle">
+              <f7-chip v-for="tag in rule.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-icon slot="media" ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" ></f7-icon>
+              </f7-chip>
+            </div>
             <span slot="media" class="item-initial">{{rule.name[0]}}</span>
           </f7-list-item>
         </f7-list>

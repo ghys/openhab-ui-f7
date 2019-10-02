@@ -40,7 +40,7 @@
 </style>
 
 <script>
-import SemanticsPicker from '@/components/item/semantics-picker.vue'
+import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import * as Types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
