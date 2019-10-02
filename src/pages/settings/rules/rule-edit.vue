@@ -65,6 +65,8 @@
           <f7-list-item media :title="mod.label" :footer="mod.description" v-for="mod in rule[section]" :key="mod.id"
                 :link="!showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
             <f7-link slot="media" icon-color="red" icon-aurora="f7:delete_round_fill" icon-ios="f7:delete_round_fill" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+            <f7-link slot="after" v-if="mod.type === 'script.ScriptAction'" icon-f7="compose" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)"></f7-link>
+            <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger'" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)"></f7-link>
             <f7-swipeout-actions right>
               <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
             </f7-swipeout-actions>
@@ -143,6 +145,9 @@
         </f7-block>
       </f7-page>
     </f7-popup>
+
+    <script-editor-popup v-if="currentModule" title="Edit Script" popup-id="edit-rule-script-direct-popup" :value="scriptCode" :fullscreen="false" :opened="codeEditorOpened" @closed="codePopupClosed"></script-editor-popup>
+    <cron-editor v-if="currentModule" :value="cronExpression" :opened="cronPopupOpened" @closed="cronPopupClosed" />
   </f7-page>
 </template>
 
@@ -173,6 +178,9 @@ import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import TagInput from '@/components/tags/tag-input.vue'
 // import RuleConfigureModulePage from './rule-configure-module.vue'
 
+const ScriptEditorPopup = () => import('@/components/config/controls/script-editor-popup.vue')
+import CronEditor from '@/components/config/controls/cronexpression-editor.vue'
+
 function uuidv4 () {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -183,7 +191,9 @@ export default {
   components: {
     ConfigSheet,
     SemanticsPicker,
-    TagInput
+    TagInput,
+    ScriptEditorPopup,
+    CronEditor
   },
   props: ['ruleId', 'createMode', 'schedule'],
   data () {
@@ -209,7 +219,12 @@ export default {
         conditions: ['But only if', 'Add Condition']
       },
       eventSource: null,
-      keyHandler: null
+      keyHandler: null,
+
+      codeEditorOpened: false,
+      cronPopupOpened: false,
+      scriptCode: '',
+      cronExpression: null
     }
   },
   methods: {
@@ -427,6 +442,34 @@ export default {
       this.$refs.modulePopup.f7Popup.close()
     },
     moduleConfigClosed () {
+      this.currentModule = null
+      this.currentModuleType = null
+    },
+    editScriptDirect (ev, mod) {
+      ev.cancelBubble = true
+      this.currentModule = mod
+      this.currentModuleType = mod.type
+      this.scriptCode = mod.configuration.script
+      this.codeEditorOpened = true
+    },
+    buildCronExpression (ev, mod) {
+      ev.cancelBubble = true
+      this.currentModule = mod
+      this.currentModuleType = mod.type
+      this.cronExpression = mod.configuration.cronExpression
+      this.cronPopupOpened = true
+    },
+    codePopupClosed (value) {
+      this.codeEditorOpened = false
+      this.currentModule.configuration.script = value
+      this.currentModule = null
+      this.currentModuleType = null
+    },
+    cronPopupClosed (value) {
+      this.cronPopupOpened = false
+      this.currentModule.configuration.cronExpression = value
+      this.currentModule.label = 'Cron: ' + value
+      this.currentModule.description = cronstrue.toString(value, { use24HourTimeFormat: true })
       this.currentModule = null
       this.currentModuleType = null
     }
