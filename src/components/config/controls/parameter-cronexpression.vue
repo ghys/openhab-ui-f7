@@ -15,7 +15,7 @@
         </div>
         <div slot="info">{{translation}}</div>
       </f7-list-input>
-      <cron-editor :value="value" :opened="popupOpened" @closed="(value) => { popupOpened = false; $emit('input', value) }" />
+      <cron-editor :value="value" :opened="popupOpened" :popup-id="`config-${configDescription.name}-fullscreen`" @closed="popupOpened = false" @input="(value) => { $emit('input', value) }" />
   </ul>
 </template>
 

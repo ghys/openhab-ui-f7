@@ -1,11 +1,11 @@
 <!-- Adapted from https://github.com/1615450788/vue-cron - license: MIT -->
 
 <template>
-  <f7-popup class="cron-select" @popup:closed="$emit('closed', cron)" :opened="opened">
+  <f7-popup :id="popupId" class="cron-select" close-on-escape @popup:closed="$emit('closed')" :opened="opened">
     <f7-page class="cron-select-content">
       <f7-navbar :title="'Cron: ' + cron" :subtitle="translation">
         <f7-nav-right>
-          <f7-link popup-close=".cron-select">Close</f7-link>
+          <f7-link :popup-close="(popupId) ? '#' + popupId : '.cron-select'" @click.native="$emit('input', cron)">Done</f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar tabbar position="top">
@@ -267,7 +267,7 @@ import cronstrue from 'cronstrue'
 
 export default {
   name: 'vueCron',
-  props: ['value', 'opened', 'i18n'],
+  props: ['value', 'opened', 'popupId', 'i18n'],
   data () {
     return {
       currentTab: 'seconds',

@@ -147,7 +147,7 @@
     </f7-popup>
 
     <script-editor-popup v-if="currentModule" title="Edit Script" popup-id="edit-rule-script-direct-popup" :value="scriptCode" :fullscreen="false" :opened="codeEditorOpened" @closed="codePopupClosed"></script-editor-popup>
-    <cron-editor v-if="currentModule" :value="cronExpression" :opened="cronPopupOpened" @closed="cronPopupClosed" />
+    <cron-editor v-if="currentModule" popup-id="edit-rule-cron-popup" :value="cronExpression" :opened="cronPopupOpened" @closed="cronPopupOpened = false" @input="(value) => updateCronExpression(value)" />
   </f7-page>
 </template>
 
@@ -465,8 +465,7 @@ export default {
       this.currentModule = null
       this.currentModuleType = null
     },
-    cronPopupClosed (value) {
-      this.cronPopupOpened = false
+    updateCronExpression (value) {
       this.currentModule.configuration.cronExpression = value
       this.currentModule.label = 'Cron: ' + value
       this.currentModule.description = cronstrue.toString(value, { use24HourTimeFormat: true })
