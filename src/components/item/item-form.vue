@@ -45,7 +45,7 @@ import * as Types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
 export default {
-  props: ['item', 'channel', 'channelId', 'channelType', 'enableName', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
+  props: ['item', 'enableName', 'hideCategory', 'hideType', 'hideSemantics', 'forceSemantics'],
   components: {
     SemanticsPicker
   },

@@ -31,14 +31,17 @@
       <f7-col v-if="createItem === false && !item">
         <f7-list>
           <!-- TODO: filter with compatible item types -->
-          <item-picker title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
+          <item-picker key="itemLink" title="Item to Link" name="item" :value="selectedItemName" :multiple="false"
             @input="(value) => selectedItemName = value"></item-picker>
         </f7-list>
       </f7-col>
 
       <!-- Create new item -->
-      <f7-col v-else-if="createItem === true && !item">
-        <item-form :newItem="newItem" />
+      <f7-col v-else-if="createItem === true">
+        <item-form :item="newItem" :enable-name="true" />
+        <f7-list>
+          <item-picker key="newItem-groups" title="Parent Group(s)" name="parent-groups" :value="newItem.groupNames" @input="(value) => newItem.groupNames = value" :multiple="true" filterType="Group"></item-picker>
+        </f7-list>
       </f7-col>
 
       <!-- Item to link supplied as prop -->
@@ -138,13 +141,7 @@ export default {
       profileTypes: [],
       currentProfileType: null,
       profileTypeConfiguration: null,
-      newItem: {
-        name: null,
-        label: null,
-        groupNames: [],
-        tags: [],
-        type: null
-      },
+      newItem: {},
       configuration: {},
       types: Types,
       semanticClasses: SemanticClasses
@@ -154,6 +151,14 @@ export default {
     onPageAfterIn (event) {
       if (!this.channel) return
       this.loadProfileTypes(this.channel)
+      this.$set(this, 'newItem', {
+        name: this.thing.label.replace(/[^0-9a-z]/gi, '') + '_' + this.channel.label.replace(/[^0-9a-z]/gi, ''),
+        label: this.channel.label,
+        category: (this.channelType) ? this.channelType.category : '',
+        groupNames: [],
+        type: this.channel.itemType,
+        tags: ['Point']
+      })
     },
     loadProfileTypes (channel) {
       this.ready = false
@@ -189,13 +194,13 @@ export default {
       if (!item.type) return true
       if (!this.selectedChannel) return true
       if (!this.selectedChannel.itemType) return false
-      
+
       if (this.currentProfileType && this.currentProfileType.supportedItemTypes && this.currentProfileType.supportedItemTypes.length > 0) {
         return (this.currentProfileType.supportedItemTypes.indexOf(this.item.type) >= 0)
       }
 
       const channelItemType = this.selectedChannel.itemType
-      if (channelItemType === this.item.type) return true
+      if (channelItemType === item.type) return true
 
       // Exceptions
       if (item.type.indexOf('Number') === 0 && channelItemType.indexOf('Number') === 0) return true
@@ -240,14 +245,27 @@ export default {
         return
       }
 
-      this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-        this.$f7.toast.create({
-          text: 'Link created',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.$f7router.back()
-      })
+      if (this.createItem) {
+        this.$oh.api.put('/rest/items/' + this.newItem.name, this.newItem).then((data) => {
+          this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
+            this.$f7.toast.create({
+              text: 'Item and link created',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+            this.$f7router.back()
+          })
+        })
+      } else {
+        this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
+          this.$f7.toast.create({
+            text: 'Link created',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          this.$f7router.back()
+        })
+      }
     }
   },
   watch: {

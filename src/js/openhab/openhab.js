@@ -30,6 +30,17 @@ export default {
         contentType: 'application/json'
       })
     },
+    putPlain (uri, data, dataType, contentType) {
+      return Framework7.request.promise({
+        method: 'PUT',
+        url: uri,
+        data,
+        processData: false,
+        // dataType: 'json',
+        contentType: contentType || 'text/plain',
+        dataType: dataType || 'application/json'
+      })
+    },    
     delete (uri, data) {
       return Framework7.request.promise({
         method: 'DELETE',

@@ -15,7 +15,11 @@
     <f7-tabs>
       <f7-tab id="info" @tab:show="() => this.currentTab = 'info'" :tab-active="currentTab === 'info'">
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
-          <f7-col>Status:
+          <f7-col>
+            <div class="float-right align-items-flex-start align-items-center">
+              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_round" icon-md="f7:pause_round" icon-aurora="f7:pause_round" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
+            </div>
+            Status:
             <f7-chip class="margin-left"
               :text="thing.statusInfo.status"
               :color="thing.statusInfo.status === 'ONLINE' ? 'green' : 'red'"
@@ -83,11 +87,6 @@
         <f7-block class="block-narrow" v-if="ready">
           <f7-col>
             <f7-list>
-              <f7-list-item>
-                <span>Thing is activated</span>
-                <f7-toggle :checked="thingEnabled"></f7-toggle>
-              </f7-list-item>
-              <!-- <f7-list-item v-if="Object.keys(thing.properties).length > 0" divider>Properties</f7-list-item> -->
               <f7-list-button color="red" title="Delete Thing" @click="deleteThing"></f7-list-button>
             </f7-list>
           </f7-col>
@@ -199,6 +198,8 @@ import ZWaveNetworkPopup from './zwave/zwave-network-popup.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 
+import buildTextualDefinition from './thing-textual-definition'
+
 let copyToast = null
 
 export default {
@@ -236,65 +237,7 @@ export default {
       return this.thingType.extensibleChannelTypeIds.length > 0
     },
     textualDefinition () {
-      if (!this.thing.UID || !this.thingType.UID) return ''
-
-      let definition = ''
-
-      if (this.thing.bridgeUID) {
-        definition +=
-          '# Attention: This Thing is provided by a Bridge (' +
-          this.thing.bridgeUID +
-          ').' +
-          '\n# You can also include it within the Bridge block and remove' +
-          '\n# the reference between parentheses to the bridge below.\n\n'
-      }
-
-      definition += '# Thing definition (put in a .things file):\n\n'
-
-      definition += this.thingType.bridge ? 'Bridge' : 'Thing'
-      definition += ' ' + this.thing.UID
-      definition += ' ' + JSON.stringify(this.thing.label)
-      if (this.thing.location) { definition += ' @ ' + JSON.stringify(this.thing.location) }
-      if (this.thing.bridgeUID) definition += ' (' + this.thing.bridgeUID + ')'
-      definition += ' [ '
-      let parameters = []
-      for (let parameter in this.thing.configuration) {
-        if (!Array.isArray(this.thing.configuration[parameter])) {
-          parameters.push(
-            parameter +
-              '=' +
-              JSON.stringify(this.thing.configuration[parameter])
-          )
-        }
-      }
-      definition += parameters.join(', ') + ' ]'
-
-      // TODO: for bridges, handle things related to that bridge
-
-      let itemDefinitions = []
-      for (let channel of this.thing.channels) {
-        if (!channel.itemType) continue
-
-        let itemDefinition = ''
-        itemDefinition += channel.itemType
-        itemDefinition +=
-          ' ' +
-          this.thing.label.replace(/[^0-9a-z]/gi, '') +
-          '_' +
-          channel.id.replace(/[^0-9a-z]/gi, '')
-        itemDefinition += ' "' + channel.label + '"'
-        itemDefinition += ' {channel=' + JSON.stringify(channel.uid) + '}'
-        itemDefinitions.push(itemDefinition)
-      }
-      if (itemDefinitions.length) {
-        definition += '\n\n\n# Item definitions (put in a .items file):\n\n'
-        definition += itemDefinitions.join('\n')
-      }
-
-      definition +=
-        '\n\n# END ' + this.thing.UID + ' - ' + this.thing.label + '\n\n'
-
-      return definition
+      return buildTextualDefinition(this.thing, this.thingType)
     }
   },
   methods: {
@@ -392,6 +335,22 @@ export default {
           })
         }
       )
+    },
+    toggleDisabled () {
+      const enable = (this.thing.statusInfo.statusDetail === 'DISABLED')
+      this.$oh.api.putPlain('/rest/things/' + this.thingId + '/enable', enable.toString(), 'application/json', 'application/json').then((data) => {
+        this.$f7.toast.create({
+          text: (enable) ? 'Thing enabled' : 'Thing disabled',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      }).catch((err) => {
+        this.$f7.toast.create({
+          text: 'Error while disabling or enabling: ' + err,
+          destroyOnClose: true,
+          closeTimeout: 2000
+        }).open()
+      })
     },
     addChannel () {
       const self = this

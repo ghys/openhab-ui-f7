@@ -131,7 +131,8 @@ export default {
       }, {
         props: {
           thing: this.thing,
-          channel: this.thing.channels.find((c) => c.id === this.channelId)
+          channel: this.thing.channels.find((c) => c.id === this.channelId),
+          channelType: this.channelType
         }
       })
     },
@@ -155,6 +156,7 @@ export default {
         props: {
           thing: this.thing,
           channel: this.thing.channels.find((c) => c.id === this.channelId),
+          channelType: this.channelType,
           item: link.item,
           source: 'thing'
         }
