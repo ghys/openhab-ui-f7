@@ -3,7 +3,7 @@
       <f7-list-item
          :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
         <select :name="configDescription.name" @change="updateValue" :multiple="configDescription.multiple">
-          <option v-if="!configDescription.required || value === null || value === undefined" :value="undefined" :selected="value === null || value === undefined"></option>
+          <option v-if="!configDescription.required" :value="undefined" :selected="value === null || value === undefined"></option>
           <option v-for="option in configDescription.options" :value="option.value" :key="option.value" :selected="isSelected(option)">{{option.label}}</option>
         </select>
       </f7-list-item>
@@ -34,6 +34,9 @@ export default {
     }
     this.smartSelectParams.closeOnSelect = !(this.configDescription.multiple)
     // this.smartSelectParams.routableModals = false // to fix bug on firefox
+    if (!this.configDescription.multiple && this.configDescription.required && this.value === undefined) {
+      this.$emit('input', this.configDescription.options[0].value)
+    }
   },
   methods: {
     updateValue (event) {
