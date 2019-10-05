@@ -3,8 +3,8 @@
     <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'sse'" :tab-link-active="currentTab === 'sse'" class="tab-link">SSE &amp; Icons</f7-link>
       <f7-link @click="currentTab = 'parser'" :tab-link-active="currentTab === 'parser'" class="tab-link">Items file parser</f7-link>
+      <f7-link @click="currentTab = 'sse'" :tab-link-active="currentTab === 'sse'" class="tab-link">SSE &amp; Icons</f7-link>
       <f7-nav-right>
         <!-- <f7-link
           class="searchbar-enable"
@@ -17,6 +17,26 @@
     </f7-toolbar>
 
     <f7-tabs>
+      <f7-tab id="parser" @tab:show="() => this.currentTab = 'parser'" :tab-active="currentTab === 'parser'">
+        <!-- <f7-block>
+          <f7-row>
+            <f7-col>
+              <f7-button>Parse</f7-button>
+            </f7-col>
+          </f7-row>
+        </f7-block> -->
+        <div class="row">
+          <div class="col">
+            <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
+            <pre class="items-results"><code>{{parsedItems}}</code></pre>
+            <!-- <editor class="items-results" :value="parsedItems" /> -->
+          </div>
+          <!-- <div class="col parse-results">
+            <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
+          </div> -->
+        </div>
+      </f7-tab>
+
       <f7-tab id="info" @tab:show="() => this.currentTab = 'sse'" :tab-active="currentTab === 'sse'">
         <f7-block class="block-narrow">
           <f7-row>
@@ -57,25 +77,6 @@
           </f7-row>
         </f7-block>
       </f7-tab>
-      <f7-tab id="parser" @tab:show="() => this.currentTab = 'parser'" :tab-active="currentTab === 'parser'">
-        <!-- <f7-block>
-          <f7-row>
-            <f7-col>
-              <f7-button>Parse</f7-button>
-            </f7-col>
-          </f7-row>
-        </f7-block> -->
-        <div class="row">
-          <div class="col">
-            <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
-            <pre class="items-results"><code>{{parsedItems}}</code></pre>
-            <!-- <editor class="items-results" :value="parsedItems" /> -->
-          </div>
-          <!-- <div class="col parse-results">
-            <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
-          </div> -->
-        </div>
-      </f7-tab>
     </f7-tabs>
   </f7-page>
 </template>
@@ -102,7 +103,7 @@
 
 <script>
 import { Parser, Grammar } from 'nearley'
-import grammar from '@/assets/items.nearley'
+import grammar from '@/assets/items-lexer.nearley'
 
 export default {
   components: {
@@ -110,7 +111,7 @@ export default {
   },
   data () {
     return {
-      currentTab: 'sse',
+      currentTab: 'parser',
       sseClient: null,
       sseEvents: [],
       icon: 'lightbulb',

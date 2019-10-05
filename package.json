@@ -65,6 +65,7 @@
     "framework7-icons": "^2.3.1",
     "framework7-vue": "^4.5.2",
     "later-again": "^0.1.1",
+    "moo": "^0.5.1",
     "nearley": "^2.19.0",
     "template7": "^1.4.2",
     "tern": "^0.23.0",
