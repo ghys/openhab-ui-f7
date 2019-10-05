@@ -7,7 +7,7 @@
 		number:     /0|[1-9][0-9]*/,
 		string:     { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) },
 		itemtype:   ['Group', 'Number', 'Switch', 'Rollershutter', 'String', 'Dimmer', 'Contact', 'DateTime', 'Color', 'Player', 'Location', 'Call', 'Image'],
-		identifier: /[A-Za-z0-9_]+/,
+		identifier: /[A-Za-z0-9_-]+/,
 		lparen:  	'(',
 		rparen:  	')',
 		colon:   	':',
@@ -91,6 +91,16 @@ MetadataList -> _ MetadataEntry _					{% (d) => [d[1]] %}
 MetadataEntry -> MetadataKey _ "=" _ MetadataValue	{% (d) => { return { key: d[0], value: d[4] } } %}
 MetadataKey -> %identifier							{% (d) => d[0].text %}
 MetadataValue -> %string							{% (d) => d[0].value %}
+	| %number										{% (d) => parseInt(d[0].value) %}
+	| %string _ MetadataConfig						{% (d) => { return { value: d[0].value, config: d[2] } } %}
+
+MetadataConfig -> "[" MetadataConfigList "]"		{% (d) => [d[1]] %}
+MetadataConfigList -> _ MetadataConfigItem _ 		{% (d) => [d[1]] %}
+	| MetadataConfigList "," MetadataConfigList		{% (d) => d[0].concat(d[2]) %}
+MetadataConfigItem -> MetadataConfigKey _ "=" _ MetadataConfigValue	{% (d) => { return { key: d[0], value: d[4] } } %}
+MetadataConfigKey -> %identifier					{% (d) => d[0].text %}
+MetadataConfigValue -> %string						{% (d) => d[0].value %}
+	| %number										{% (d) => parseInt(d[0].value) %}
 
 
 _ -> null {% () => null %}
