@@ -166,6 +166,7 @@ module.exports = {
       {
         test: /\.nearley$/,
         use: [
+          'babel-loader',
           'nearley-loader'
         ]
       }
