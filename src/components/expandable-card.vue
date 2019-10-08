@@ -5,8 +5,8 @@
         v-if="header === 'image'"
         :style="{background: 'url(https://ksassets.timeincuk.net/wp/uploads/sites/54/2018/07/Nest-Hello-daytime-sample.jpg) no-repeat center top', 'background-size': 'cover', height: '300px'}"
       > -->
-      <div v-if="header === 'image'">
-        <f7-card-header text-color="black">{{title || 'Something'}}</f7-card-header>
+      <div v-if="header === 'image'" style="background: #777777">
+        <f7-card-header text-color="white">{{title || 'Something'}}</f7-card-header>
         <f7-link
           card-close
           color="white"
@@ -46,7 +46,7 @@
             v-if="header==='temperature'"
             type="circle"
             :value="gaugeValue"
-            :size="180"
+            :size="120"
             borderColor="#aaaaaa"
             :borderWidth="10"
             :valueText="`${temperature}°C`"
@@ -57,13 +57,13 @@
             v-else-if="header==='gauge'"
             type="circle"
             :value="gaugeValue"
-            :size="180"
+            :size="120"
             borderColor="#aaaaaa"
             :borderWidth="10"
             :valueText="`${gaugeValue * 100}%`"
             :valueFontSize="41"
             valueTextColor="#ffffff"
-            labelText="amount of something"
+            labelText="pressure"
             labelTextColor="#ffffff"
           />
           <h1 v-else>State</h1>
