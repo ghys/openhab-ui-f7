@@ -1,5 +1,5 @@
 <template>
-  <f7-block strong>
+  <f7-block>
     <f7-block-title class="padding-left">Theme</f7-block-title>
     <f7-segmented>
       <f7-button round color="blue" raised :fill="theme === 'auto'" @click="switchTheme('auto')">Auto</f7-button>
@@ -18,9 +18,9 @@
     </f7-row>
     <f7-block-title>Navigation bars style</f7-block-title>
     <f7-row>
-      <f7-col width="50" class="demo-bars-picker demo-bars-picker-fill" @click="setBarsStyle('default')">
+      <f7-col width="50" class="demo-bars-picker demo-bars-picker-fill" @click="setBarsStyle('filled')">
         <div class="demo-navbar"></div>
-        <f7-checkbox checked disabled v-if="barsStyle === 'default'" />
+        <f7-checkbox checked disabled v-if="barsStyle === 'filled'" />
       </f7-col>
       <f7-col width="50" class="demo-bars-picker demo-bars-picker-empty" @click="setBarsStyle('light')">
         <div class="demo-navbar"></div>
@@ -59,6 +59,7 @@ export default {
     },
     setThemeDark (value) {
       localStorage.setItem('openhab.ui:theme.dark', value)
+      localStorage.setItem('openhab.ui:theme.bars', 'light') // dark theme with filled bars is ugly, switch to light bars too
       location.reload()
     },
     setBarsStyle (value) {
@@ -86,7 +87,7 @@ export default {
       return localStorage.getItem('openhab.ui:theme.dark') || 'light'
     },
     barsStyle () {
-      return localStorage.getItem('openhab.ui:theme.bars') || 'default'
+      return localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.md) ? 'filled' : 'light')
     },
     homePageNavbarStyle () {
       return localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'

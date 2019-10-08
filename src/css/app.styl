@@ -51,9 +51,16 @@ html
     --f7-tabbar-link-active-border-color: #fff;
   }
   .navbar {
-    --f7-bars-bg-color: var(--f7-theme-color);  
+    --f7-bars-bg-color: var(--f7-theme-color);
     --f7-bars-text-color: #fff;
+    --f7-navbar-large-title-text-color: #fff;
     --f7-bars-link-color: #fff;
+    &.navbar-large-transparent .title-large-text {
+      --f7-navbar-large-title-text-color: #000;
+    }
+    &.navbar-large-transparent:not(.navbar-large-collapsed) {
+      --f7-bars-link-color: var(--f7-theme-color);
+    }
   }
   --f7-navbar-subtitle-text-color: rgba(255,255,255,0.85);
   --f7-navbar-border-color: transparent;
@@ -68,25 +75,33 @@ html
   --f7-theme-color: #2196f3;
 }
 
-// .toolbar.toolbar-bottom, .tabbar.tabbar-bottom {
-//   --f7-theme-color: #2196f3;
-//   }
+.navbar-large-hidden {
+  --f7-navbar-large-collapse-progress: 1
+  opacity 0
+}
+.navbar-large-hidden:not(.navbar-large-collapsed) .navbar-bg {
+  opacity 0
+}
 
-// .home-tabs {
-//   --f7-theme-color: #2196f3;
-//   --f7-bars-bg-color: rgb(247, 247, 248);
-//   --f7-bars-text-color: #000;
-//   --f7-tabbar-link-inactive-color: rgba(0, 0, 0, 0.54);
-//   --f7-tabbar-link-active-color: var(--f7-theme-color);
-//   text-transform: none;
-// }
+.toolbar.toolbar-bottom, .tabbar.tabbar-bottom {
+  --f7-theme-color: #2196f3;
+  }
 
-// .theme-dark .home-tabs {
-//   --f7-bars-bg-color: rgb(32, 32, 33);
-//   --f7-bars-text-color: #fff;
-//   --f7-bars-link-color: #fff;
-//   --f7-tabbar-link-inactive-color: rgba(255,255,255,0.54);
-// }
+.home-tabs {
+  --f7-theme-color: #2196f3;
+  --f7-bars-bg-color: rgb(247, 247, 248);
+  --f7-bars-text-color: #000;
+  --f7-tabbar-link-inactive-color: rgba(0, 0, 0, 0.54);
+  --f7-tabbar-link-active-color: var(--f7-theme-color);
+  text-transform: none;
+}
+
+.theme-dark .home-tabs {
+  --f7-bars-bg-color: rgb(32, 32, 33);
+  --f7-bars-text-color: #fff;
+  --f7-bars-link-color: #fff;
+  --f7-tabbar-link-inactive-color: rgba(255,255,255,0.54);
+}
 
 .ios .contextual-toolbar {
 //   --f7-theme-color: #2196f3;
@@ -108,20 +123,28 @@ html
   height: var(--f7-navbar-height);
 }
 
+.page-home
+  .page-content::-webkit-scrollbar
+    width 0
+  // &.page-with-card-opened
+  //   .page-content
+  //     overflow auto
+  // .toolbar-hidden + .page-content
+  //   overflow hidden !important
 
-.tabbar-labels .tabbar-label {
-    line-height: 1;
-    margin: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: var(--f7-tabbar-label-font-size) !important;
-    text-transform: var(--f7-tabbar-label-text-transform) !important;
-    font-weight: var(--f7-tabbar-label-font-weight) !important;
-    letter-spacing: var(--f7-tabbar-label-letter-spacing) !important;
-}
+// .tabbar-labels .tabbar-label {
+//     line-height: 1;
+//     margin: 0;
+//     text-overflow: ellipsis;
+//     white-space: nowrap;
+//     font-size: var(--f7-tabbar-label-font-size) !important;
+//     text-transform: var(--f7-tabbar-label-text-transform) !important;
+//     font-weight: var(--f7-tabbar-label-font-weight) !important;
+//     letter-spacing: var(--f7-tabbar-label-letter-spacing) !important;
+// }
 
 /* Left Panel right border when it is visible by breakpoint */
-.panel-left.panel-visible-by-breakpoint:before {
+.panel-left.panel-in-breakpoint:before {
   position: absolute;
   right: 0;
   top: 0;
@@ -133,15 +156,15 @@ html
 }
 
 /* Hide navbar link which opens left panel when it is visible by breakpoint */
-.panel-left.panel-visible-by-breakpoint ~ .view .navbar .panel-open[data-panel="left"] {
+.panel-left.panel-in-breakpoint ~ .view .navbar .panel-open[data-panel="left"] {
   display: none;
 }
 
 /*
   Extra borders for main view and left panel for iOS theme when it behaves as panel (before breakpoint size)
 */
-.ios .panel-left:not(.panel-visible-by-breakpoint).panel-active ~ .view-main:before,
-.ios .panel-left:not(.panel-visible-by-breakpoint).panel-closing ~ .view-main:before {
+.ios .panel-left:not(.panel-in-breakpoint).panel-active ~ .view-main:before,
+.ios .panel-left:not(.panel-in-breakpoint).panel-closing ~ .view-main:before {
   position: absolute;
   left: 0;
   top: 0;
@@ -179,7 +202,7 @@ html
   }
 }
 
-.md .panel-visible-by-breakpoint {
+.md .panel-in-breakpoint {
   box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.3);
 }
 
@@ -289,3 +312,20 @@ html
   width 32px
   text-align center
   line-height 32px
+
+#framework7-root:not(.theme-dark) .page-home,
+#framework7-root:not(.theme-dark) .page-about,
+//#framework7-root:not(.theme-dark) .page-settings
+  --f7-page-bg-color #fff
+
+// disable blur on card backdrop (poor performance)
+.card-backdrop {
+  background: rgba(0,0,0,0.2);
+}
+.card-backdrop-in {
+  animation: card-backdrop-fade-in 400ms forwards;
+  pointer-events: auto;
+}
+.card-backdrop-out {
+  animation: card-backdrop-fade-out 400ms forwards;
+}

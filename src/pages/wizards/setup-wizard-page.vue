@@ -84,7 +84,7 @@
                   <big>Next</big>
                   <f7-icon ios="f7:arrow_right" aurora="f7:arrow_right" md="material:arrow_forward"/>
                 </f7-list-button>
-                <f7-list-button title="Close" color="red" link="/"></f7-list-button>
+                <f7-list-button title="Close" color="red" reload-all ignore-cache link="/"></f7-list-button>
               </f7-list>
             </f7-tab>
 
@@ -147,7 +147,7 @@
                   <big>Next</big>
                   <f7-icon ios="f7:arrow_right" aurora="f7:arrow_right" md="material:arrow_forward"/>
                 </f7-list-button>
-                <f7-list-button title="Close" color="red" link="/"></f7-list-button>
+                <f7-list-button title="Close" color="red" reload-all ignore-cache link="/"></f7-list-button>
               </f7-list>
             </f7-tab>
 
@@ -169,7 +169,7 @@
                 <f7-list-button @click="configure()" tab-link-active color="blue">
                   <big>Finish</big>
                 </f7-list-button>
-                <f7-list-button title="Close" color="red" link="/"></f7-list-button>
+                <f7-list-button title="Close" color="red" reload-all ignore-cache link="/"></f7-list-button>
               </f7-list>
             </f7-tab>
           </f7-tabs>
@@ -230,13 +230,10 @@ export default {
       }
     },
     pageBeforeIn () {
-      delete this.$f7.params.panel.leftBreakpoint
-      this.$f7.panel.left.initBreakpoints()
+      this.$f7.panel.get('left').disableVisibleBreakpoint()
     },
     pageBeforeOut (e, page) {
-      if (e.from === 'current') return
-      this.$f7.params.panel.leftBreakpoint = 768
-      this.$f7.panel.left.initBreakpoints()
+      this.$f7.panel.get('left').enableVisibleBreakpoint()
     }
   },
   created () {

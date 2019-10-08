@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="stopEventSource">
     <f7-navbar :title="'Add ' + addonType + ' add-on'" back-link="Back">
       <f7-subnavbar :inner="false">
-        <f7-searchbar search-container=".search-list" search-in=".item-title" remove-diacritics></f7-searchbar>
+        <f7-searchbar search-container=".search-list" search-in=".item-title" remove-diacritics :disable-button="!$theme.aurora"></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
     <f7-list class="searchbar-not-found">

@@ -9,6 +9,7 @@
           search-container=".contacts-list"
           search-in=".item-title"
           remove-diacritics
+          :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
@@ -69,7 +70,7 @@
       </f7-col>
     </f7-block>
     <f7-fab position="right-bottom" slot="fixed" color="blue" href="/settings/things/add">
-      <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
       <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
       <!-- <f7-fab-buttons position="top">
         <f7-fab-button label="Scan and add to Inbox">S</f7-fab-button>

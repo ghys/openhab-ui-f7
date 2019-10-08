@@ -1,6 +1,6 @@
 <template>
   <f7-page name="devtools" @page:beforeremove="onPageBeforeRemove">
-    <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force>
+    <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force no-hairline>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
       <f7-link @click="currentTab = 'parser'" :tab-link-active="currentTab === 'parser'" class="tab-link">Items file parser</f7-link>

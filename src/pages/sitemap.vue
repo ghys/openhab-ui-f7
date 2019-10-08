@@ -1,10 +1,11 @@
 <template>
   <f7-page class="sitemap">
-    <f7-navbar :back-link="(sitemapId !== pageId) ? 'Back' : null">
+    <f7-navbar :back-link="(!isRoot) ? 'Back' : null" :large="isRoot">
       <f7-nav-left v-if="sitemapId === pageId">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
-      <f7-nav-title v-if="sitemap.title">{{sitemap.title}}</f7-nav-title>
+      <f7-nav-title-large v-if="isRoot">{{sitemap.title}}</f7-nav-title-large>
+      <f7-nav-title>{{sitemap.title}}</f7-nav-title>
     </f7-navbar>
     <f7-block class="block-narrow" v-if="sitemap.widgets">
       <f7-row>
@@ -31,13 +32,18 @@ export default {
   props: ['sitemapId', 'pageId'],
   data () {
     return {
-      sitemap: {}
+      sitemap: { title: '' }
     }
   },
   created () {
     this.$oh.api.get('/rest/sitemaps/' + this.sitemapId + '/' + this.pageId).then(data => {
       this.sitemap = data
     })
+  },
+  computed: {
+    isRoot () {
+      return (this.pageId === this.sitemapId)
+    }
   }
 }
 </script>

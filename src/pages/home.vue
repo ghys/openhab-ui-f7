@@ -1,21 +1,26 @@
 <template>
-  <f7-page stacked name="HomePage" class="home-page">
-    <f7-navbar>
+  <f7-page stacked name="HomePage" class="page-home" @page:init="onPageInit">
+    <f7-navbar :large-transparent="true">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left"></f7-link>
       </f7-nav-left>
-      <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'">{{title}}</f7-nav-title-large>
-      <f7-nav-title>{{title}}</f7-nav-title>
+      <f7-nav-title-large v-if="$f7.data.themeOptions.homeNavbar !== 'simple'" class="home-title-large">
+        <span class="today">{{new Date().toLocaleString('default', { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
+        {{title}}
+      </f7-nav-title-large>
+      <f7-nav-title>
+        {{title}}
+      </f7-nav-title>
       <f7-nav-right>
-        <f7-link icon-ios="f7:tabs" icon-aurora="f7:tabs" icon-md="material:exit_to_app" panel-open="right"></f7-link>
+        <f7-link icon-ios="f7:sidebar_right" icon-aurora="f7:sidebar_right" icon-md="material:exit_to_app" panel-open="right"></f7-link>
       </f7-nav-right>
     </f7-navbar>
 
-    <f7-toolbar tabbar labels bottom class="home-tabs">
-      <f7-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" class="tab-link tabbar-label" icon-ios="f7:home" icon-aurora="f7:home" icon-md="material:home">Overview</f7-link>
-      <f7-link @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" class="tab-link tabbar-label" icon-ios="f7:placemark" icon-aurora="f7:placemark" icon-md="material:place">Locations</f7-link>
-      <f7-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" class="tab-link tabbar-label" icon-ios="f7:bulb" icon-aurora="f7:bulb" icon-md="material:highlight">Equipments</f7-link>
-      <f7-link @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" class="tab-link tabbar-label" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on">Properties</f7-link>
+    <f7-toolbar tabbar labels bottom>
+      <f7-link tab-link @click="currentTab = 'overview'" :tab-link-active="currentTab === 'overview'" icon-ios="f7:house_fill" icon-aurora="f7:house_fill" icon-md="material:home" text="Overview"></f7-link>
+      <f7-link tab-link @click="currentTab = 'locations'" :tab-link-active="currentTab === 'locations'" icon-ios="f7:placemark" icon-aurora="f7:placemark" icon-md="material:place" text="Locations"></f7-link>
+      <f7-link tab-link @click="currentTab = 'equipments'" :tab-link-active="currentTab === 'equipments'" icon-ios="f7:lightbulb_fill" icon-aurora="f7:lightbulb_fill" icon-md="material:highlight" text="Equipments"></f7-link>
+      <f7-link tab-link @click="currentTab = 'properties'" :tab-link-active="currentTab === 'properties'" icon-ios="f7:bolt_fill" icon-aurora="f7:bolt_fill" icon-md="material:flash_on" text="Properties"></f7-link>
     </f7-toolbar>
 
     <f7-tabs :class="{ 'after-big-title': $f7.data.themeOptions.homeNavbar !== 'simple' }" v-if="items">
@@ -36,8 +41,16 @@
 </template>
 
 <style lang="stylus">
-.home-page .page-content::-webkit-scrollbar
-    width 0
+.home-title-large .title-large-text
+  line-height 0.8
+  .today
+    position absolute
+    font-size 9pt
+    font-weight normal
+    text-transform uppercase
+    top -10px
+    letter-spacing 1px
+    color var(--f7-list-item-footer-text-color)
 </style>
 
 <script>
@@ -135,6 +148,9 @@ export default {
     })
   },
   methods: {
+    onPageInit () {
+      this.$f7.panel.get('left').enableVisibleBreakpoint()
+    },
     skipSetupWizard () {
       const vm = this
       this.$f7.dialog.confirm(

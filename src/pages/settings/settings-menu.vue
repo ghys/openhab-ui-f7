@@ -1,6 +1,6 @@
 <template>
-  <f7-page @page:init="onPageInit">
-    <f7-navbar title-large="Settings" title="Settings" back-link="Back" back-link-url="/home/" back-link-force>
+  <f7-page @page:init="onPageInit" class="page-settings">
+    <f7-navbar :large-transparent="false" title-large="Settings" title="Settings" back-link="Back" back-link-url="/home/" back-link-force>
       <f7-nav-right>
         <f7-link
           class="searchbar-enable"
@@ -15,6 +15,7 @@
         expandable
         search-container=".search-list"
         search-in=".item-title"
+        :disable-button="!$theme.aurora"
       ></f7-searchbar>
     </f7-navbar>
     <!-- <f7-block>
@@ -29,7 +30,7 @@
     </f7-block>-->
     <f7-block class="block-narrow after-big-title settings-menu" v-show="addonsLoaded && servicesLoaded">
       <f7-row>
-        <f7-col width="100" tablet-width="50">
+        <f7-col width="100" medium="50">
           <f7-block-title>Configuration &amp; Automation</f7-block-title>
           <f7-list class="search-list">
             <f7-list-item
@@ -91,7 +92,7 @@
             ></f7-list-item>
           </f7-list>
         </f7-col>
-        <f7-col width="100" tablet-width="50">
+        <f7-col width="100" medium="50">
           <f7-block-title>System Services</f7-block-title>
           <f7-list class="search-list">
             <f7-list-item

@@ -6,7 +6,7 @@ import OHIconComponent from '../components/oh-icon.vue'
 import TreeviewItem from '../components/model/treeview-item.vue'
 
 // Import Framework7
-import Framework7 from 'framework7/framework7.esm.bundle.js'
+import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
 // Import Framework7-Vue Plugin
 import Framework7Vue from 'framework7-vue/framework7-vue.esm.bundle.js'

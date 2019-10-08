@@ -1,4 +1,4 @@
-import Framework7 from 'framework7/framework7.esm.bundle.js'
+import Framework7 from 'framework7/framework7-lite.esm.bundle.js'
 
 export default {
   getIcon: (icon, format) => {

@@ -4,9 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const WorkboxPlugin = require('workbox-webpack-plugin')
-const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// const WebpackAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const path = require('path')
 
@@ -30,7 +30,9 @@ module.exports = {
   output: {
     path: resolvePath(isCordova ? 'cordova/www' : 'www'),
     filename: 'js/app.js',
-    publicPath: ''
+    publicPath: '',
+    hotUpdateChunkFilename: 'hot/hot-update.js',
+    hotUpdateMainFilename: 'hot/hot-update.json'
   },
   resolve: {
     extensions: ['.mjs', '.js', '.vue', '.json'],
@@ -47,7 +49,7 @@ module.exports = {
     contentBase: '/www/',
     disableHostCheck: true,
     // watchOptions: {
-    //   poll: true,
+    //   poll: 1000,
     // },
     proxy: {
       '/rest': apiBaseUrl,
@@ -55,6 +57,11 @@ module.exports = {
       '/proxy': apiBaseUrl,
       '/icon': apiBaseUrl
     }
+  },
+  optimization: {
+    minimizer: [new TerserPlugin({
+      sourceMap: true
+    })]
   },
   module: {
     rules: [
@@ -70,13 +77,10 @@ module.exports = {
           resolvePath('src'),
           resolvePath('node_modules/framework7'),
           resolvePath('node_modules/framework7-vue'),
-          resolvePath('node_modules/framework7-react'),
+
           resolvePath('node_modules/template7'),
           resolvePath('node_modules/dom7'),
-          resolvePath('node_modules/ssr-window'),
-          resolvePath('node_modules/vue-echarts'),
-          resolvePath('node_modules/resize-detector'),
-          resolvePath('node_modules/later-again')
+          resolvePath('node_modules/ssr-window')
         ]
       },
 
@@ -145,14 +149,16 @@ module.exports = {
         options: {
           limit: 10000,
           name: 'images/[name].[ext]'
+
         }
       },
       {
-        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac|m4a)(\?.*)?$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
           name: 'media/[name].[ext]'
+
         }
       },
       {
@@ -161,6 +167,7 @@ module.exports = {
         options: {
           limit: 10000,
           name: 'fonts/[name].[ext]'
+
         }
       },
       {
@@ -179,17 +186,6 @@ module.exports = {
     }),
     new VueLoaderPlugin(),
     ...(env === 'production' ? [
-      // Production only plugins
-      new UglifyJsPlugin({
-        exclude: /\/later-again.*constants/,
-        // uglifyOptions: {
-        //   compress: {
-        //     // warnings: false,
-        //   },
-        // },
-        sourceMap: true,
-        parallel: true
-      }),
       new OptimizeCSSPlugin({
         cssProcessorOptions: {
           safe: true,
@@ -233,9 +229,5 @@ module.exports = {
         swSrc: resolvePath('src/service-worker.js')
       })
     ] : [])
-    // new WebpackAnalyzerPlugin({
-    //   analyzerMode: 'static',
-    //   reportFilename: '../report.html'
-    // })
   ]
 }

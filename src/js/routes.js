@@ -51,9 +51,10 @@ export default [
   {
     path: '/',
     component: HomePage,
-    keepAlive: true,
+    // keepAlive: true,
     options: {
-      animate: false
+      // animate: false
+      transition: 'f7-dive'
     }
     // tabs: [
     //   {
@@ -114,7 +115,7 @@ export default [
     path: '/setup-wizard/',
     component: SetupWizardPage,
     options: {
-      animate: false
+      transition: 'f7-cover-v'
     }
   },
   {

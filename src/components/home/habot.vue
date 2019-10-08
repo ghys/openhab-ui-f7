@@ -31,6 +31,7 @@
       display none
     input
       height 48px
+      border 1px solid var(--f7-list-border-color)
     &.input-focused:after
       display none
   .message
@@ -50,11 +51,11 @@
     box-shadow none !important
     margin-left -2px !important
     input
-      background #f1f3f4
+      // background #f1f3f4
       transition background-color 300ms
       border-radius 22px !important
     &.highlight input
-      background-color #ffffff !important
+      // background-color #ffffff !important
       transition background-color 300ms
       box-shadow var(--f7-searchbar-in-page-content-box-shadow)
     &.searchbar:after

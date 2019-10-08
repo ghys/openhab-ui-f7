@@ -53,7 +53,10 @@
   </f7-block>
 
   <div class="demo-expandable-cards" v-if="showCards && ready">
-    <h2 class="home-header"><f7-icon ios="f7:star_fill" md="material:star" size="25" style="vertical-align: sub" />Now</h2>
+    <h2 class="home-header">
+      <!-- <f7-icon aurora="f7:star_fill" ios="f7:star_fill" md="material:star" size="25" style="vertical-align: sub" /> -->
+      Now
+    </h2>
     <expandable-card color="teal" header="gauge" />
     <h2 class="home-header">Favorites</h2>
     <h3 class="home-header">Scenes</h3>
@@ -84,7 +87,7 @@
 .home-header
   display block
   width calc(100% - 30px)
-  padding-left 15px
+  margin-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
 </style>
 
 
@@ -102,19 +105,19 @@ export default {
     return {
       showSetup: false,
       showTasks: false,
-      showCards: false,
-      showHABot: false,
-      ready: false
+      showCards: true,
+      showHABot: true,
+      ready: true
     }
   },
   created () {
-    if (Object.keys(this.items).length === 0) {
-      this.showSetup = true
-    } else {
-      this.showCards = true
-      this.showHABot = true
-      setTimeout(() => { this.ready = true }, 1000)
-    }
+    // if (Object.keys(this.items).length === 0) {
+    //   this.showSetup = true
+    // } else {
+    //   this.showCards = true
+    //   this.showHABot = true
+    //   setTimeout(() => { this.ready = true }, 1000)
+    // }
   },
   methods: {
     skipSetupWizard () {

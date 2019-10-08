@@ -1,5 +1,5 @@
 <template>
-  <f7-page name="about">
+  <f7-page name="about" class="page-about">
     <f7-navbar title-large="About" title="About" back-link="Back"></f7-navbar>
     <f7-block class="block-narrow after-big-title">
       <f7-row>
@@ -7,7 +7,7 @@
           <!-- <f7-block-title>About openHAB</f7-block-title> -->
           <f7-block>
             <img src="static/icons/128x128.png" width="96" class="padding float-right">
-            <h3>openHAB version {{this.$f7.version}}</h3>
+            <h2 class="block-title-medium">openHAB version {{this.$f7.version}}</h2>
             <p><f7-link external target="_blank" href="https://www.openhab.org/">Home page</f7-link></p>
             <p><f7-link external target="_blank" href="https://www.openhab.org/docs/">Documentation</f7-link></p>
             <p><f7-link external target="_blank" href="https://community.openhab.org/">Community forum</f7-link></p>
@@ -20,7 +20,7 @@
 
         </f7-col>
       </f7-row>
-      <f7-block-title>Appearance Options (local to this device)</f7-block-title>
+      <f7-block-title><h4>Appearance Options (local to this device)</h4></f7-block-title>
       <theme-switcher />
     </f7-block>
 

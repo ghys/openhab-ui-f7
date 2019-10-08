@@ -1,10 +1,8 @@
 <template>
-<f7-app :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'default', 'no-page-transitions': this.themeOptions.pageTransitionAnimation === 'disabled' }">
-  <!-- Status bar overlay for fullscreen mode-->
-  <f7-statusbar></f7-statusbar>
+<f7-app :params="f7params" :class="{ 'theme-dark': this.themeOptions.dark === 'dark', 'theme-filled': this.themeOptions.bars === 'filled', 'no-page-transitions': this.themeOptions.pageTransitionAnimation === 'disabled' }">
 
   <!-- Left Panel -->
-  <f7-panel left :cover="showSidebar" class="sidebar" resizable>
+  <f7-panel left :cover="showSidebar" class="sidebar" :visible-breakpoint="1024">
     <f7-page>
       <f7-list-item link="/" class="logo" panel-close v-if="themeOptions.dark === 'dark'">
         <img src="../static/img/openhab-logo-white.png" width="100%">
@@ -17,13 +15,13 @@
         <f7-list-item v-for="sitemap in sitemaps" :animate="false" :key="sitemap.name"
                 :link="'/sitemap/' + sitemap.name + '/' + sitemap.name"
                 :title="sitemap.label" view=".view-main" panel-close>
-          <f7-icon slot="media" ios="f7:list" aurora="material:list" md="material:list"></f7-icon>
+          <f7-icon slot="media" ios="f7:menu" aurora="f7:menu" md="material:list"></f7-icon>
         </f7-list-item>
       </f7-list>
       <f7-block-title>Administration</f7-block-title>
       <f7-list class="admin-links">
         <f7-list-item link="/settings/" title="Settings" view=".view-main" panel-close :animate="false">
-          <f7-icon slot="media" ios="f7:gears" aurora="f7:gears" md="material:settings"></f7-icon>
+          <f7-icon slot="media" ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray"></f7-icon>
         </f7-list-item>
         <li v-if="showAdministrationMenu">
           <ul class="admin-sublinks">
@@ -49,13 +47,13 @@
         </li>
 
         <f7-list-item link="/developer/" title="Developer Tools" panel-close>
-          <f7-icon slot="media" ios="f7:fire" aurora="f7:fire" md="material:extension"></f7-icon>
+          <f7-icon slot="media" ios="f7:exclamationmark_shield_fill" aurora="f7:exclamationmark_shield_fill" md="material:extension" color="gray"></f7-icon>
         </f7-list-item>
         <f7-list-item link="/about/" title="Help &amp; About" view=".view-main" panel-close>
-          <f7-icon slot="media" ios="f7:help_round" md="material:help"></f7-icon>
+          <f7-icon slot="media" ios="f7:question_circle_fill" aurora="f7:question_circle_fill" md="material:help" color="gray"></f7-icon>
         </f7-list-item>
         <f7-list-item v-if="loggedIn" link="/" title="Logout" @click="logout()" panel-close>
-          <f7-icon slot="media" ios="f7:exit" md="material:exit_to_app"></f7-icon>
+          <f7-icon slot="media" ios="f7:square_arrow_right" md="material:exit_to_app" color="gray"></f7-icon>
         </f7-list-item>
         <!-- <f7-list-item title="Master-Details" view=".view-main" panel-close>
           <f7-icon slot="media" ios="f7:exit" md="material:exit_to_app"></f7-icon>
@@ -118,7 +116,7 @@
     background #f5f5f5 !important
   .logo
     list-style none
-    padding 3rem 2rem
+    padding 2.5rem 2rem
     background-color #fff
     height 50px
   .list
@@ -252,14 +250,14 @@ export default {
     }
   },
   created () {
-    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
-    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || 'default'
-    this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
-    this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
-    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     // this.loginScreenOpened = true
   },
   mounted () {
+    this.themeOptions.dark = localStorage.getItem('openhab.ui:theme.dark') || 'light'
+    this.themeOptions.bars = localStorage.getItem('openhab.ui:theme.bars') || ((this.$theme.md) ? 'filled' : 'light')
+    this.themeOptions.homeNavbar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+    this.themeOptions.expandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+    this.themeOptions.pageTransitionAnimation = localStorage.getItem('openhab.ui:theme.home.pagetransition') || 'default'
     this.$f7ready((f7) => {
       this.$f7.data.themeOptions = this.themeOptions
 

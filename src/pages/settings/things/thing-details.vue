@@ -17,7 +17,7 @@
         <f7-block v-if="ready && thing.statusInfo" class="block-narrow padding-left padding-right" strong>
           <f7-col>
             <div class="float-right align-items-flex-start align-items-center">
-              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_round" icon-md="f7:pause_round" icon-aurora="f7:pause_round" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
+              <f7-link :icon-color="(thing.statusInfo.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
             </div>
             Status:
             <f7-chip class="margin-left"
@@ -243,7 +243,7 @@ export default {
   methods: {
     onPageAfterIn (event) {
       // When coming back from the channel add/edit page with a change, let the handler below take care of the reloading logic (the thing has to be saved first)
-      if (!event.detail.pageFrom || !event.detail.pageFrom.name || event.detail.pageFrom.name.indexOf('channel') < 0) {
+      if (!event.pageFrom || !event.pageFrom.name || event.pageFrom.name.indexOf('channel') < 0) {
         console.log('Loading')
         if (!this.eventSource) this.stopEventSource()
         this.load()

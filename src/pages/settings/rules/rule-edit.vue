@@ -10,7 +10,7 @@
       <f7-col v-if="!createMode">
         <div class="float-right align-items-flex-start align-items-center">
           <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
-          <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_round" icon-md="f7:pause_round" icon-aurora="f7:pause_round" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
+          <f7-link :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'" icon-ios="f7:pause_circle" icon-md="f7:pause_circle" icon-aurora="f7:pause_circle" icon-size="32" color="orange" @click="toggleDisabled"></f7-link>
           <f7-link icon-ios="f7:play_round" icon-md="f7:play_round" icon-aurora="f7:play_round" icon-size="32" color="blue" @click="runNow"></f7-link>
         </div>
         Status:
@@ -65,8 +65,8 @@
           <f7-list-item media :title="mod.label" :footer="mod.description" v-for="mod in rule[section]" :key="mod.id"
                 :link="!showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
             <f7-link slot="media" icon-color="red" icon-aurora="f7:delete_round_fill" icon-ios="f7:delete_round_fill" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
-            <f7-link slot="after" v-if="mod.type === 'script.ScriptAction'" icon-f7="compose" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)"></f7-link>
-            <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger'" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)"></f7-link>
+            <f7-link slot="after" v-if="mod.type === 'script.ScriptAction'" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" tooltip="Edit script"></f7-link>
+            <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger'" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
             <f7-swipeout-actions right>
               <f7-swipeout-button @click="(ev) => deleteModule(ev, section, mod)" style="background-color: var(--f7-swipeout-delete-button-bg-color)">Delete</f7-swipeout-button>
             </f7-swipeout-actions>
@@ -74,7 +74,7 @@
         </f7-list>
         <f7-list>
           <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
-            <f7-icon slot="media" color="green" aurora="f7:add_round_fill" ios="f7:add_round_fill" md="material:control_point"></f7-icon>
+            <f7-icon slot="media" color="green" aurora="f7:plus_round_fill" ios="f7:plus_round_fill" md="material:control_point"></f7-icon>
           </f7-list-item>
           <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
         </f7-list>

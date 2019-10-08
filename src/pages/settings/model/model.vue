@@ -12,7 +12,7 @@
           search-container=".semantic-tree"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
-
+          :disable-button="!$theme.aurora"
         ></f7-searchbar>
       </f7-subnavbar>
     </f7-navbar>
@@ -31,7 +31,7 @@
     </f7-block>
     <f7-block v-else class="semantic-tree-wrapper" :class="{ 'sheet-opened' : detailsOpened }">
       <f7-row>
-        <f7-col width="100" desktop-width="50" tablet-width="50">
+        <f7-col width="100" medium="50">
           <f7-block strong class="semantic-tree" no-gap>
             <f7-treeview>
               <model-treeview-item v-for="node in [rootLocations, rootEquipments, rootPoints, rootGroups, rootItems].flat()"
@@ -41,7 +41,7 @@
             </f7-treeview>
           </f7-block>
         </f7-col>
-        <f7-col v-if="selectedItem" width="100" desktop-width="50" tablet-width="50" class="details-pane">
+        <f7-col v-if="selectedItem" width="100" medium="50" class="details-pane">
           <f7-block no-gap>
             <model-details-pane :model="selectedItem" :links="links" @item-updated="update" @item-created="update" @item-removed="selectItem(null)" @cancel-create="selectItem(null)" />
           </f7-block>
@@ -50,13 +50,13 @@
     </f7-block>
 
     <f7-fab position="right-bottom" slot="fixed" color="blue" v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
-      <f7-icon ios="f7:add" md="material:add" aurora="f7:add"></f7-icon>
-      <f7-icon ios="f7:close" md="material:close" aurora="f7:close"></f7-icon>
+      <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
+      <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
       <f7-fab-buttons position="top">
         <f7-fab-button v-if="includeNonSemantic" label="Add Item" @click="addNonSemanticItem(false)"><f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline"></f7-icon></f7-fab-button>
         <f7-fab-button label="Add Point" @click="addSemanticItem('Point')"><f7-icon ios="f7:bolt_fill" md="material:flash_on" aurora="f7:bolt_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:bulb" md="material:highlight" aurora="f7:bulb"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:lightbulb_fill" md="material:highlight" aurora="f7:lightbulb_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers" md="material:layers" aurora="f7:layers"></f7-icon></f7-fab-button>
         <f7-fab-button label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
         <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark" md="material:place" aurora="f7:placemark"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
