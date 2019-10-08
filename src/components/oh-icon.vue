@@ -14,7 +14,10 @@ export default {
   props: ['icon', 'width', 'height'],
   asyncComputed: {
     iconUrl () {
-      return (this.icon) ? this.$oh.media.getIcon(this.icon) : this.$oh.media.getIcon('undefined')
+      return (this.icon)
+        ? this.$oh.media.getIcon(this.icon)
+        // transparent PNG pixel
+        : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
     }
   }
 }

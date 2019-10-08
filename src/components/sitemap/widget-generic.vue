@@ -12,7 +12,7 @@
     </f7-list>
   </f7-block>
   <f7-list-item v-else :title="title" :after="state" :link="link">
-    <oh-icon v-if="model.icon" slot="media" :icon="model.icon" height="32" width="32" />
+    <oh-icon slot="media" :icon="model.icon" height="32" width="32" />
     <f7-segmented round v-if="model.type === 'Rollershutter' || (model.item && model.item.type === 'Rollershutter')">
       <f7-button round icon-size="18" icon-f7="chevron_down" color="blue"></f7-button>
       <f7-button round icon-size="18" icon-f7="close_round_fill" color="blue"></f7-button>
@@ -33,12 +33,13 @@
       ></f7-range>
     </f7-list-item-cell>
     <f7-list-item-cell style="max-width: 40%; text-align: right;" v-else-if="model.type === 'Colorpicker'">
-      <f7-list-input type="colorpicker" placeholder="Color" readonly hidden :value="state"
+      <f7-list-input type="colorpicker" placeholder="Color" :value="state" hidden readonly
           :color-picker-params="{
-            targetEl: '.color-picker-target'
+            targetElSetBackgroundColor: true,
+            targetEl: '#colorswatch-' + model.widgetId
           }"
       ></f7-list-input>
-      <i style="background-color: black; width: 18px; height: 18px" class="icon color-picker-target"></i>
+      <i ref="colorcircle" style="background-color: black; width: 32px; height: 32px; border-radius: 6px" class="icon color-picker-target" :id="'colorswatch-' + model.widgetId"></i>
     </f7-list-item-cell>
   </f7-list-item>
   <!-- <f7-list-item v-else :title="title" :after="state">

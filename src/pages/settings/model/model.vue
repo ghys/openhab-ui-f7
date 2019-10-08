@@ -58,7 +58,7 @@
         <f7-fab-button label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:lightbulb_fill" md="material:highlight" aurora="f7:lightbulb_fill"></f7-icon></f7-fab-button>
         <f7-fab-button label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers" md="material:layers" aurora="f7:layers"></f7-icon></f7-fab-button>
         <f7-fab-button label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark" md="material:place" aurora="f7:placemark"></f7-icon></f7-fab-button>
+        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark_fill" md="material:place" aurora="f7:placemark_fill"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
 
