@@ -13,10 +13,10 @@
   </f7-block>
   <f7-list-item v-else :title="title" :after="state" :link="link">
     <oh-icon slot="media" :icon="model.icon" height="32" width="32" />
-    <f7-segmented round v-if="model.type === 'Rollershutter' || (model.item && model.item.type === 'Rollershutter')">
-      <f7-button round icon-size="18" icon-f7="chevron_down" color="blue"></f7-button>
-      <f7-button round icon-size="18" icon-f7="close_round_fill" color="blue"></f7-button>
-      <f7-button round icon-size="18" icon-f7="chevron_up" color="blue"></f7-button>
+    <f7-segmented round outline v-if="model.type === 'Rollershutter' || (model.item && model.item.type === 'Rollershutter')">
+      <f7-button round small outline icon-size="22" icon-f7="chevron_down" color="blue" style="text-overflow: inherit"></f7-button>
+      <f7-button round small outline icon-size="22" icon-f7="multiply" color="blue" style="text-overflow: inherit"></f7-button>
+      <f7-button round small outline icon-size="22" icon-f7="chevron_up" color="blue" style="text-overflow: inherit"></f7-button>
     </f7-segmented>
     <f7-toggle style="margin-left: 10px" color="blue" v-else-if="model.type === 'Switch'" />
     <f7-stepper class="sitemap-stepper"
@@ -39,7 +39,7 @@
             targetEl: '#colorswatch-' + model.widgetId
           }"
       ></f7-list-input>
-      <i ref="colorcircle" style="background-color: black; width: 32px; height: 32px; border-radius: 6px" class="icon color-picker-target" :id="'colorswatch-' + model.widgetId"></i>
+      <i ref="colorcircle" style="background-color: black; width: 32px; height: 32px; border-radius: 6px; cursor: pointer" class="icon color-picker-target" :id="'colorswatch-' + model.widgetId"></i>
     </f7-list-item-cell>
   </f7-list-item>
   <!-- <f7-list-item v-else :title="title" :after="state">
