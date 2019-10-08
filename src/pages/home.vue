@@ -42,13 +42,13 @@
 
 <style lang="stylus">
 .home-title-large .title-large-text
-  line-height 0.8
+  line-height 0.95
   .today
     position absolute
-    font-size 9pt
+    font-size 8pt
     font-weight normal
     text-transform uppercase
-    top -10px
+    top -6px
     letter-spacing 1px
     color var(--f7-list-item-footer-text-color)
 </style>
