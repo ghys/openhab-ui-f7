@@ -12,8 +12,8 @@
 </template>
 
 <style lang="stylus">
-.analyzer-content
-  background white
+// .analyzer-content
+//   background white
 </style>
 
 <script>

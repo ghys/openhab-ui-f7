@@ -450,14 +450,14 @@ export default {
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
-      this.codeEditorOpened = true
+      setTimeout(() => { this.codeEditorOpened = true }, 200)
     },
     buildCronExpression (ev, mod) {
       ev.cancelBubble = true
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.cronExpression = mod.configuration.cronExpression
-      this.cronPopupOpened = true
+      setTimeout(() => { this.cronPopupOpened = true }, 200)
     },
     codePopupClosed (value) {
       this.codeEditorOpened = false

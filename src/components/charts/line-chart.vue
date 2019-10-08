@@ -1,5 +1,5 @@
 <template>
-  <chart :options="finalOptions" autoresize></chart>
+  <chart :options="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize></chart>
 </template>
 
 <script>

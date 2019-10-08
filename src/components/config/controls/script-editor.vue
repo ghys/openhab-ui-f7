@@ -35,7 +35,7 @@ import 'codemirror/lib/codemirror.css'
 // language js
 import 'codemirror/mode/javascript/javascript.js'
 // theme css
-// import 'codemirror/theme/base16-dark.css'
+import 'codemirror/theme/ambiance.css'
 
 import 'codemirror/addon/edit/matchbrackets.js'
 import 'codemirror/addon/edit/closebrackets.js'
@@ -72,7 +72,7 @@ export default {
         // codemirror options
         tabSize: 4,
         mode: 'text/javascript',
-        // theme: 'base16-dark',
+        theme: (this.$f7.data.themeOptions.dark === 'dark') ? 'ambiance' : 'default',
         lineNumbers: true,
         line: true,
         matchBrackets: true,

@@ -1,6 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart :options="finalOptions" autoresize></chart>
+    <chart :options="finalOptions" :theme="$f7.data.themeOptions.dark === 'dark' ? 'dark' : undefined" autoresize></chart>
   </div>
 </template>
 
@@ -12,7 +12,6 @@
   height calc(100% - var(--f7-navbar-height))
   width 100%
   display flex
-  background white
   align-items center
   justify-content center
   .echarts

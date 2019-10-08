@@ -11,11 +11,6 @@
   </f7-popup>
 </template>
 
-<style lang="stylus">
-.analyzer-content
-  background white
-</style>
-
 <script>
 export default {
   components: {
