@@ -115,6 +115,7 @@
   .page
     background #f5f5f5 !important
   .logo
+    margin-top var(--f7-safe-area-top)
     list-style none
     padding 2.5rem 2rem
     background-color #fff

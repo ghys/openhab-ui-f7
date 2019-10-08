@@ -1,11 +1,12 @@
 <template>
   <f7-card expandable :animate="$f7.data.themeOptions.expandableCardAnimation !== 'disabled'" card-tablet-fullscreen v-on:card:opened="cardOpening" v-on:card:closed="cardClosed">
     <f7-card-content :padding="false">
-      <div
+      <!-- <div
         v-if="header === 'image'"
         :style="{background: 'url(https://ksassets.timeincuk.net/wp/uploads/sites/54/2018/07/Nest-Hello-daytime-sample.jpg) no-repeat center top', 'background-size': 'cover', height: '300px'}"
-      >
-        <f7-card-header text-color="white">{{title || 'Something'}}</f7-card-header>
+      > -->
+      <div v-if="header === 'image'">
+        <f7-card-header text-color="black">{{title || 'Something'}}</f7-card-header>
         <f7-link
           card-close
           color="white"
@@ -13,6 +14,7 @@
           :style="{position: 'absolute', right: '15px', top: '15px'}"
           icon-f7="close_round_fill"
         ></f7-link>
+        <img src="https://ksassets.timeincuk.net/wp/uploads/sites/54/2018/07/Nest-Hello-daytime-sample.jpg" width="340px" />
       </div>
       <div v-else-if="header === 'player'" :class="`bg-color-${color}`" :style="{height: '300px'}">
         <f7-card-header text-color="white" class="display-block">
@@ -22,7 +24,7 @@
           <br>
           <br>
           <img
-            width="160"
+            width="100"
             src="https://images-na.ssl-images-amazon.com/images/I/61hw9WloObL._SY355_.jpg"
           >
         </f7-card-header>
