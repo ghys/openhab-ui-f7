@@ -53,12 +53,12 @@
       <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus"></f7-icon>
       <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply"></f7-icon>
       <f7-fab-buttons position="top">
-        <f7-fab-button v-if="includeNonSemantic" label="Add Item" @click="addNonSemanticItem(false)"><f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Add Point" @click="addSemanticItem('Point')"><f7-icon ios="f7:bolt_fill" md="material:flash_on" aurora="f7:bolt_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:lightbulb_fill" md="material:highlight" aurora="f7:lightbulb_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers" md="material:layers" aurora="f7:layers"></f7-icon></f7-fab-button>
-        <f7-fab-button label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
-        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark_fill" md="material:place" aurora="f7:placemark_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button v-if="includeNonSemantic" fab-close label="Add Item" @click="addNonSemanticItem(false)"><f7-icon ios="material:label_outline" md="material:label_outline" aurora="material:label_outline"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Add Point" @click="addSemanticItem('Point')"><f7-icon ios="f7:bolt_fill" md="material:flash_on" aurora="f7:bolt_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Add Equipment" @click="addSemanticItem('Equipment')"><f7-icon ios="f7:lightbulb_fill" md="material:highlight" aurora="f7:lightbulb_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create Points from Thing" @click="addFromThing(false)"><f7-icon ios="f7:layers" md="material:layers" aurora="f7:layers"></f7-icon></f7-fab-button>
+        <f7-fab-button fab-close label="Create Equipment from Thing" @click="addFromThing(true)"><f7-icon ios="f7:layers_fill" md="material:layers" aurora="f7:layers_fill"></f7-icon></f7-fab-button>
+        <f7-fab-button v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0" fab-close label="Add Location" @click="addSemanticItem('Location')"><f7-icon ios="f7:placemark_fill" md="material:place" aurora="f7:placemark_fill"></f7-icon></f7-fab-button>
       </f7-fab-buttons>
     </f7-fab>
 

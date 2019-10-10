@@ -122,7 +122,7 @@ export default {
           })
         })
         Promise.all(linkPromises).then((data) => {
-          dialog.setProgress(50)
+          dialog.setProgress(100)
           this.$f7.toast.create({
             text: 'Items created and linked',
             destroyOnClose: true,

@@ -3,7 +3,7 @@
     <f7-navbar title="Developer Tools" back-link="Back" back-link-url="/" back-link-force no-hairline>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'parser'" :tab-link-active="currentTab === 'parser'" class="tab-link">Items file parser</f7-link>
+      <!-- <f7-link @click="currentTab = 'parser'" :tab-link-active="currentTab === 'parser'" class="tab-link">Items file parser</f7-link> -->
       <f7-link @click="currentTab = 'sse'" :tab-link-active="currentTab === 'sse'" class="tab-link">SSE &amp; Icons</f7-link>
       <f7-nav-right>
         <!-- <f7-link
@@ -17,26 +17,6 @@
     </f7-toolbar>
 
     <f7-tabs>
-      <f7-tab id="parser" @tab:show="() => this.currentTab = 'parser'" :tab-active="currentTab === 'parser'">
-        <!-- <f7-block>
-          <f7-row>
-            <f7-col>
-              <f7-button>Parse</f7-button>
-            </f7-col>
-          </f7-row>
-        </f7-block> -->
-        <div class="row">
-          <div class="col">
-            <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
-            <pre class="items-results"><code>{{parsedItems}}</code></pre>
-            <!-- <editor class="items-results" :value="parsedItems" /> -->
-          </div>
-          <!-- <div class="col parse-results">
-            <editor class="items-parser" :value="itemsDsl" @input="(value) => itemsDsl = value" />
-          </div> -->
-        </div>
-      </f7-tab>
-
       <f7-tab id="info" @tab:show="() => this.currentTab = 'sse'" :tab-active="currentTab === 'sse'">
         <f7-block class="block-narrow">
           <f7-row>
@@ -82,36 +62,14 @@
 </template>
 
 <style lang="stylus">
-.items-parser.vue-codemirror
-  display block
-  top calc(var(--f7-navbar-height) + var(--f7-toolbar-height))
-  height calc(50% - var(--f7-navbar-height) - var(--f7-toolbar-height))
-  width 100%
-.items-results
-  position absolute
-  top 50%
-  padding 0 1rem
-.parse-results
-  position relative
-  left 0
-  width 100%
-  pre
-    font-size 12px
-    height calc(100% - var(--f7-navbar-height) + var(--f7-toolbar-height) - 100px)
-    overflow auto
+
 </style>
 
 <script>
-import { Parser, Grammar } from 'nearley'
-import grammar from '@/assets/items-lexer.nearley'
-
 export default {
-  components: {
-    'editor': () => import('@/components/config/controls/script-editor.vue')
-  },
   data () {
     return {
-      currentTab: 'parser',
+      currentTab: 'sse',
       sseClient: null,
       sseEvents: [],
       icon: 'lightbulb',
@@ -133,19 +91,6 @@ export default {
       this.$oh.sse.close(this.sseClient)
       this.sseClient = null
       this.sseEvents = []
-    }
-  },
-  computed: {
-    parsedItems () {
-      try {
-        const parser = new Parser(Grammar.fromCompiled(grammar))
-        parser.feed(this.itemsDsl.trim())
-        if (!parser.results.length) return 'Unable to parse, check your input'
-        // return parser.results[0].map((i) => i.name).join('\n')
-        return JSON.stringify(parser.results[0].filter((i) => i !== null), null, 4)
-      } catch (e) {
-        return e
-      }
     }
   },
   asyncComputed: {

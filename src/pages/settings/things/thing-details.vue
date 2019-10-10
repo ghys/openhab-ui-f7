@@ -122,7 +122,7 @@
     </f7-tabs>
 
     <f7-fab position="right-bottom" color="blue" slot="fixed" @click="codePopupOpened = true">
-      <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text" ></f7-icon>
+      <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text"></f7-icon>
       <f7-icon ios="f7:close" md="material:close"></f7-icon>
     </f7-fab>
 
