@@ -55,8 +55,8 @@
       </f7-col>
       <f7-col class="text-align-right justify-content-flex-end">
         <div class="no-padding float-right">
-          <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable"
-            color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Organize</f7-button>
+          <f7-button @click="toggleModuleControls" small outline :fill="showModuleControls" sortable-toggle=".sortable" style="margin-top: -3px; margin-right: 5px"
+            color="gray" icon-size="12" icon-ios="material:wrap_text" icon-md="material:wrap_text" icon-aurora="material:wrap_text">&nbsp;Reorder</f7-button>
         </div>
       </f7-col>
       <f7-col class="rule-modules" v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
@@ -64,7 +64,7 @@
         <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
           <f7-list-item media :title="mod.label" :footer="mod.description" v-for="mod in rule[section]" :key="mod.id"
                 :link="!showModuleControls" @click.native="(ev) => editModule(ev, section, mod)" swipeout>
-            <f7-link slot="media" icon-color="red" icon-aurora="f7:delete_round_fill" icon-ios="f7:delete_round_fill" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
+            <f7-link slot="media" icon-color="red" icon-aurora="f7:minus_circle_filled" icon-ios="f7:minus_circle_filled" icon-md="material:remove_circle_outline" @click="showSwipeout"></f7-link>
             <f7-link slot="after" v-if="mod.type === 'script.ScriptAction'" icon-f7="pencil_ellipsis_rectangle" color="gray" @click.native="(ev) => editScriptDirect(ev, mod)" tooltip="Edit script"></f7-link>
             <f7-link slot="after" v-if="mod.type === 'timer.GenericCronTrigger'" icon-f7="calendar" color="gray" @click.native="(ev) => buildCronExpression(ev, mod)" tooltip="Build cron expression"></f7-link>
             <f7-swipeout-actions right>
@@ -74,7 +74,7 @@
         </f7-list>
         <f7-list>
           <f7-list-item link no-chevron media-item :color="($theme.dark) ? 'black' : 'white'" :subtitle="sectionLabels[section][1]" @click="addModule(section)">
-            <f7-icon slot="media" color="green" aurora="f7:plus_round_fill" ios="f7:plus_round_fill" md="material:control_point"></f7-icon>
+            <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point"></f7-icon>
           </f7-list-item>
           <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
         </f7-list>
