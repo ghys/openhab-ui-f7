@@ -7,7 +7,7 @@
           class="searchbar-things"
           :init="initSearchbar"
           search-container=".contacts-list"
-          search-in=".item-title"
+          search-in=".item-inner"
           remove-diacritics
           :disable-button="!$theme.aurora"
         ></f7-searchbar>
@@ -16,6 +16,7 @@
 
     <f7-list-index
       ref="listIndex"
+      v-show="groupBy === 'alphabetical'"
       list-el=".things-list"
       :scroll-list="true"
       :label="true"
@@ -26,7 +27,13 @@
     </f7-list>
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title class="searchbar-hide-on-search">{{things.length}} things</f7-block-title>
+        <f7-block-title class="searchbar-hide-on-search"><span v-if="ready">{{things.length}} things</span></f7-block-title>
+        <div class="padding-left padding-right">
+          <f7-segmented strong tag="p">
+            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'; $nextTick(() => $refs.listIndex.update())">Alphabetical</f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="groupBy = 'binding'">By binding</f7-button>
+          </f7-segmented>
+        </div>
         <f7-list v-if="!ready" contacts-list class="col things-list">
           <f7-list-group>
             <f7-list-item
@@ -41,7 +48,7 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-        <f7-list v-else class="searchbar-found col" contacts-list>
+        <f7-list v-else class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
           <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
             <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title></f7-list-item>
             <f7-list-item v-for="thing in thingsWithInitial"
@@ -86,12 +93,38 @@ export default {
       loading: false,
       initSearchbar: false,
       things: [],
-      indexedThings: {},
+      // indexedThings: {},
+      groupBy: 'alphabetical',
       eventSource: null
     }
   },
   created () {
 
+  },
+  computed: {
+    indexedThings () {
+      if (this.groupBy === 'alphabetical') {
+        return this.things.reduce((prev, thing, i, things) => {
+          const initial = thing.label.substring(0, 1).toUpperCase()
+          if (!prev[initial]) {
+            prev[initial] = []
+          }
+          prev[initial].push(thing)
+
+          return prev
+        }, {})
+      } else {
+        return this.things.reduce((prev, thing, i, things) => {
+          const binding = thing.thingTypeUID.split(':')[0]
+          if (!prev[binding]) {
+            prev[binding] = []
+          }
+          prev[binding].push(thing)
+
+          return prev
+        }, {})
+      }
+    }
   },
   methods: {
     onPageAfterIn () {
@@ -118,7 +151,7 @@ export default {
       })
     },
     startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*/*', null, (event) => {
+      this.eventSource = this.$oh.sse.connect('/rest/events?topics=smarthome/things/*/added,smarthome/things/*/removed,smarthome/things/*/updated,smarthome/things/*/status', null, (event) => {
         console.log(event)
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {

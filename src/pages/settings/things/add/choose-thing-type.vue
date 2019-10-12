@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforein="onPageBeforeIn">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar title="Add a new Thing" back-link="Back">
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
@@ -22,16 +22,37 @@
     ></f7-list-index> -->
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-list class="col thing-type-list">
-          <f7-list-item divider title="Discovered Things (not implemented)"></f7-list-item>
-          <f7-list-item v-if="scanning" title="Scanning for things...">
+        <div v-if="discoverySupported" class="display-flex justify-content-center">
+          <div class="flex-shrink-0">
+            <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill :disabled="scanning" @click="scan">{{(scanning) ? 'Scanning...' : 'Rescan'}}</f7-button>
+          </div>
+        </div>
+        <p class="margin-left margin-right" style="height: 30px" id="scan-progress"></p>
+        <f7-block-title v-if="discoverySupported && scanResults.length">Discovered Things</f7-block-title>
+        <!-- <f7-list class="col thing-type-list" v-if="scanning">
+          <f7-list-item title="Scanning for things...">
             <f7-preloader slot="media" :size="42"></f7-preloader>
           </f7-list-item>
-          <f7-list-item v-if="!scanning && !scanResults.length"
+        </f7-list> -->
+        <!-- <f7-list class="col thing-type-list" v-if="ready && discoverySupported && !scanning && !scanResults.length">
+          <f7-list-item
             title="No discovery results.">
             <f7-button slot="after" @click="scan()">Retry</f7-button>
           </f7-list-item>
-          <f7-list-item divider title="Add manually"></f7-list-item>
+        </f7-list> -->
+        <f7-list class="col thing-type-list" v-if="scanResults.length">
+          <f7-list-item v-for="entry in scanResults"
+            :key="entry.thingUID"
+            :link="true"
+            media-item
+            :title="entry.label"
+            :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
+            :footer="entry.thingTypeUID">
+          </f7-list-item>
+        </f7-list>
+
+        <f7-block-title>Add Manually</f7-block-title>
+        <f7-list>
           <ul v-if="!ready">
           <f7-list-item
             v-for="n in 10"
@@ -77,16 +98,23 @@ export default {
       loading: false,
       initSearchbar: false,
       thingTypes: [],
+      discoverySupported: false,
       scanning: false,
-      scanResults: []
+      scanResults: [],
+      scanTimeout: 0,
+      scanProgress: 0,
+      intervalId: 0
     }
   },
   created () {
 
   },
   methods: {
-    onPageBeforeIn () {
-      this.scan()
+    onPageBeforeOut () {
+      if (this.intervalId) {
+        clearInterval(this.intervalId)
+        this.intervalId = 0
+      }
     },
     onPageAfterIn () {
       // this.$f7.preloader.show()
@@ -101,15 +129,44 @@ export default {
         this.loading = false
         this.ready = true
         this.initSearchbar = true
+        this.$oh.api.get('/rest/discovery').then((data) => {
+          if (data.indexOf(this.bindingId) >= 0) {
+            this.discoverySupported = true
+            this.scan()
+          }
+        })
         // this.scan()
       })
     },
     scan () {
       // simulate scan
       this.scanning = true
-      setTimeout(() => {
-        this.scanning = false
-      }, 2000)
+      this.$oh.api.postPlain('/rest/discovery/bindings/' + this.bindingId + '/scan', null, 'text/plain', 'text/plain').then((data) => {
+        try {
+          this.loadInbox()
+          this.scanTimeout = parseInt(data)
+          this.scanProgress = 0
+          let progressBarEl = this.$f7.progressbar.show('#scan-progress', 0, 'blue')
+          this.intervalId = setInterval(() => {
+            this.scanProgress += 1
+            this.$f7.progressbar.set(progressBarEl, this.scanProgress * 100 / this.scanTimeout)
+          }, 1000)
+          setTimeout(() => {
+            this.scanning = false
+            clearInterval(this.intervalId)
+            this.intervalId = 0
+            this.$f7.progressbar.hide(progressBarEl)
+            this.loadInbox()
+          }, this.scanTimeout * 1000)
+        } catch (e) {
+          this.scanning = false
+        }
+      })
+    },
+    loadInbox () {
+      this.$oh.api.get('/rest/inbox').then((data) => {
+        this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
+      })
     }
   }
 }

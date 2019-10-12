@@ -30,25 +30,6 @@
       />
     </f7-block>
 
-    <f7-fab position="right-bottom" color="blue" slot="fixed" @click="codePopupOpened = true">
-      <f7-icon ios="f7:document_text" md="material:assignment" aurora="f7:document_text" ></f7-icon>
-      <f7-icon ios="f7:close" md="material:close"></f7-icon>
-    </f7-fab>
-
-    <f7-popup tablet-fullscreen :opened="codePopupOpened" @popup:closed="codePopupOpened = false">
-      <f7-page>
-        <f7-toolbar>
-          <div class="left">
-            <f7-link @click="copyTextualDefinition">Copy</f7-link>
-          </div>
-          <div class="right">
-            <f7-link popup-close>Close</f7-link>
-          </div>
-        </f7-toolbar>
-        <!-- <pre class="textual-definition" v-html="textualDefinition"></pre> -->
-        <textarea class="textual-definition" id="textual-definition" :value="textualDefinition"></textarea>
-      </f7-page>
-    </f7-popup>
   </f7-page>
 </template>
 
@@ -102,8 +83,6 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 
-let copyToast = null
-
 function uuidv4 () {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -131,75 +110,6 @@ export default {
       codePopupOpened: false
     }
   },
-  created () {
-    copyToast = this.$f7.toast.create({
-      text: 'Textual definition copied to clipboard',
-      closeTimeout: 2000
-    })
-  },
-  computed: {
-    textualDefinition () {
-      if (!this.thing.UID || !this.thingType.UID) return ''
-
-      let definition = ''
-
-      if (this.thing.bridgeUID) {
-        definition +=
-          '# Attention: This Thing is provided by a Bridge (' +
-          this.thing.bridgeUID +
-          ').' +
-          '\n# You can also include it within the Bridge block and remove' +
-          '\n# the reference between parentheses to the bridge below.\n\n'
-      }
-
-      definition += '# Thing definition (put in a .things file):\n\n'
-
-      definition += this.thingType.bridge ? 'Bridge' : 'Thing'
-      definition += ' ' + this.thing.UID
-      definition += ' ' + JSON.stringify(this.thing.label)
-      if (this.thing.location) { definition += ' @ ' + JSON.stringify(this.thing.location) }
-      if (this.thing.bridgeUID) definition += ' (' + this.thing.bridgeUID + ')'
-      definition += ' [ '
-      let parameters = []
-      for (let parameter in this.thing.configuration) {
-        if (!Array.isArray(this.thing.configuration[parameter])) {
-          parameters.push(
-            parameter +
-              '=' +
-              JSON.stringify(this.thing.configuration[parameter])
-          )
-        }
-      }
-      definition += parameters.join(', ') + ' ]'
-
-      // TODO: for bridges, handle things related to that bridge
-
-      let itemDefinitions = []
-      for (let channel of this.thing.channels) {
-        if (!channel.itemType) continue
-
-        let itemDefinition = ''
-        itemDefinition += channel.itemType
-        itemDefinition +=
-          ' ' +
-          this.thing.label.replace(/[^0-9a-z]/gi, '') +
-          '_' +
-          channel.id.replace(/[^0-9a-z]/gi, '')
-        itemDefinition += ' "' + channel.label + '"'
-        itemDefinition += ' {channel=' + JSON.stringify(channel.uid) + '}'
-        itemDefinitions.push(itemDefinition)
-      }
-      if (itemDefinitions.length) {
-        definition += '\n\n\n# Item definitions (put in a .items file):\n\n'
-        definition += itemDefinitions.join('\n')
-      }
-
-      definition +=
-        '\n\n# END ' + this.thing.UID + ' - ' + this.thing.label + '\n\n'
-
-      return definition
-    }
-  },
   methods: {
     onPageAfterIn () {
       if (this.ready) return
@@ -215,13 +125,17 @@ export default {
         this.ready = true
       })
     },
-    copyTextualDefinition () {
-      let el = document.getElementById('textual-definition')
-      el.select()
-      document.execCommand('copy')
-      copyToast.open()
-    },
     save () {
+      if (!this.thing.ID) {
+        this.$f7.dialog.alert('Please give an unique identifier')
+        return
+      }
+      if (!this.label) {
+        this.$f7.dialog.alert('Please give a name')
+        return
+      }
+      this.thing.UID = this.thingTypeId + ':' + this.thing.ID
+
       this.$oh.api.post('/rest/things', this.thing).then(() => {
         this.$f7.toast.create({
           text: 'Thing created',
@@ -232,10 +146,5 @@ export default {
       this.$f7router.back('/settings/things/', { force: true })
     }
   }
-  // watch: {
-  //   thingId (val) {
-  //     this.thing.UID = this.thingTypeUID.UID + ':' + this.thingId
-  //   }
-  // }
 }
 </script>

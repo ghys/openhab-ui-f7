@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:init="onPageInit" class="page-settings">
+  <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar :large-transparent="false" title-large="Settings" title="Settings" back-link="Back" back-link-url="/home/" back-link-force>
       <f7-nav-right>
         <f7-link
@@ -37,7 +37,7 @@
               color="red"
               link="inbox/"
               title="Inbox"
-              :badge="inboxCount"
+              :badge="(inboxCount > 0) ? inboxCount : undefined"
               badge-color="red"
               :footer="objectsSubtitles.inbox"
             ></f7-list-item>
@@ -149,7 +149,7 @@ export default {
     }
   },
   methods: {
-    onPageInit () {
+    loadMenu () {
       // can be done in parallel!
       this.$oh.api.get('/rest/services').then((data) => {
         this.systemServices = data.filter(s => s.category === 'system')
@@ -160,9 +160,18 @@ export default {
         this.addonTypes = data
         this.addonsLoaded = true
       })
-      this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.length.toString() })
+    },
+    loadCounters () {
+      this.$oh.api.get('/rest/inbox').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
       this.$oh.api.get('/rest/things').then((data) => { this.thingsCount = data.length.toString() })
       this.$oh.api.get('/rest/items').then((data) => { this.itemsCount = data.length.toString() })
+    },
+    onPageInit () {
+      this.loadMenu()
+    },
+    onPageAfterIn () {
+      // this.loadMenu()
+      this.loadCounters()
     }
   }
 }

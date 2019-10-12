@@ -72,6 +72,14 @@ export default {
       })
     },
     save () {
+      if (!this.channel.id) {
+        this.$f7.dialog.alert('Please give an unique identifier')
+        return
+      }
+      if (!this.channel.label) {
+        this.$f7.dialog.alert('Please give a label')
+        return
+      }
       let finalChannel = Object.assign({}, this.channel, {
         uid: this.thing.UID + ':' + this.channel.id,
         channelTypeUID: this.currentChannelType.UID,

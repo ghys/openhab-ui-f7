@@ -50,8 +50,8 @@
       </f7-list-item>
     </f7-list-group>
     <f7-list-item class="searchbar-ignore" link
-      color="blue" title="Add Link to Item..." @click="addLink()">
-        <f7-icon slot="media" f7="add_round" color="blue" />
+      color="blue" subtitle="Add Link to Item..." @click="addLink()">
+        <f7-icon slot="media" color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point"></f7-icon>
     </f7-list-item>
     <f7-list-button class="searchbar-ignore" color="blue" title="Configure Channel" @click="configureChannel()"></f7-list-button>
     <f7-list-button class="searchbar-ignore" v-if="extensible" color="red" title="Remove Channel" @click="removeChannel()"></f7-list-button>
@@ -77,6 +77,7 @@ export default {
   data () {
     return {
       ready: false,
+      loading: false,
       channel: null,
       links: [],
       channelKind: ''
@@ -87,15 +88,15 @@ export default {
       this.channel = this.thing.channels.find((c) => c.id === this.channelId)
       if (this.channel) {
         this.channelKind = this.channel.kind
-        this.$set(this, 'links', [])
+        let links = []
         let promises = []
-        this.ready = false
+        this.loading = true
         this.channel.linkedItems.forEach((itemName) => {
           let link = {
             itemName,
             item: { name: itemName }
           }
-          this.links.push(link)
+          links.push(link)
           const fetchItem = this.$oh.api.get('/rest/items/' + link.itemName + '?metadata=semantics')
           fetchItem.then((i) => {
             link.item = i
@@ -103,7 +104,9 @@ export default {
           promises.push(fetchItem)
         })
         Promise.all(promises).then(() => {
+          this.links = links
           this.ready = true
+          this.loading = false
         })
       }
     },
