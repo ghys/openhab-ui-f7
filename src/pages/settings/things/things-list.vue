@@ -134,15 +134,6 @@ export default {
       this.loading = true
       this.$oh.api.get('/rest/things').then((data) => {
         this.things = data.sort((a, b) => a.label.localeCompare(b.label))
-        this.indexedThings = this.things.reduce((prev, thing, i, items) => {
-          const initial = thing.label.substring(0, 1).toUpperCase()
-          if (!prev[initial]) {
-            prev[initial] = []
-          }
-          prev[initial].push(thing)
-
-          return prev
-        }, {})
         this.initSearchbar = true
         this.loading = false
         this.ready = true
