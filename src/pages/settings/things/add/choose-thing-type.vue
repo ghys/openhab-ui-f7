@@ -1,6 +1,6 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
-    <f7-navbar title="Add a new Thing" back-link="Back">
+  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+    <f7-navbar :title="`Add a new Thing: ${bindingId}`" back-link="Back">
       <f7-subnavbar :inner="false" v-show="initSearchbar">
         <f7-searchbar
           v-if="initSearchbar"
@@ -44,11 +44,13 @@
           <f7-list-item v-for="entry in scanResults"
             :key="entry.thingUID"
             :link="true"
+            @click="approve(entry)"
             media-item
             :title="entry.label"
             :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
             :footer="entry.thingTypeUID">
           </f7-list-item>
+          <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue"></f7-list-button>
         </f7-list>
 
         <f7-block-title>Add Manually</f7-block-title>
@@ -82,7 +84,7 @@
     <f7-block v-if="!loading && !thingTypes.length" class="block-narrow">
       <f7-col>
         <f7-block strong>
-          <p>No bindings available.</p>
+          <p>No thing types can be added with this binding.</p>
         </f7-block>
       </f7-col>
     </f7-block>
@@ -117,7 +119,6 @@ export default {
       }
     },
     onPageAfterIn () {
-      // this.$f7.preloader.show()
       this.loading = true
       this.$oh.api.get('/rest/thing-types').then((data) => {
         this.thingTypes = data.filter((tt) => tt.UID.split(':')[0] === this.bindingId && tt.listed)
@@ -135,11 +136,9 @@ export default {
             this.scan()
           }
         })
-        // this.scan()
       })
     },
     scan () {
-      // simulate scan
       this.scanning = true
       this.$oh.api.postPlain('/rest/discovery/bindings/' + this.bindingId + '/scan', null, 'text/plain', 'text/plain').then((data) => {
         try {
@@ -164,8 +163,53 @@ export default {
       })
     },
     loadInbox () {
+      if (this.loading) return
+      this.loading = true
       this.$oh.api.get('/rest/inbox').then((data) => {
+        this.loading = false
         this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
+      })
+    },
+    approve (entry) {
+      console.log(`Add ${entry.thingUID} as thing`)
+      this.$f7.dialog.prompt(`This will create a new Thing ${entry.thingUID} with the following name:`,
+        'Add as Thing',
+        (name) => {
+          this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/approve`, name).then((res) => {
+            this.$f7.toast.create({
+              text: 'Entry approved',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+            this.$f7router.back('/settings/things/', { force: true })
+          }).catch((err) => {
+            this.$f7.toast.create({
+              text: 'Error during thing creation: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            }).open()
+          })
+        },
+        null,
+        entry.label)
+    },
+    approveAll () {
+      this.$f7.dialog.confirm('Add all discovered Things?', 'Add Things', () => {
+        const promises = this.scanResults.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i.thingUID + '/approve', i.label))
+        let dialog = this.$f7.dialog.progress(`Adding Things`)
+        Promise.all(promises).then((data) => {
+          this.$f7.toast.create({
+            text: `Things added`,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          }).open()
+          dialog.close()
+          this.$f7router.back('/settings/things/', { force: true })
+        }).catch((err) => {
+          dialog.close()
+          console.error(err)
+          this.$f7.dialog.alert('An error occurred: ' + err)
+        })
       })
     }
   }

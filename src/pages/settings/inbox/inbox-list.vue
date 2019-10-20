@@ -18,17 +18,17 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar class="contextual-toolbar" :class="{ 'navbar': $theme.md }" v-if="showCheckboxes" bottom-ios bottom-aurora>
-      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="removeSelected">&nbsp;Remove {{selectedItems.length}}</f7-link>
-      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="ignore" @click="ignoreSelected" icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">&nbsp;Ignore {{selectedItems.length}}</f7-link>
-      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="approve" @click="approveSelected" icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">&nbsp;Approve {{selectedItems.length}}</f7-link>
+      <f7-link color="red" v-show="selectedItems.length" v-if="!$theme.md" class="delete" icon-ios="f7:trash" icon-aurora="f7:trash" @click="confirmActionOnSelection('delete')">&nbsp;Remove {{selectedItems.length}}</f7-link>
+      <f7-link color="orange" v-show="selectedItems.length" v-if="!$theme.md" class="ignore" @click="confirmActionOnSelection('ignore')" icon-ios="f7:eye_slash" icon-aurora="f7:eye_slash">&nbsp;Ignore {{selectedItems.length}}</f7-link>
+      <f7-link color="green" v-show="selectedItems.length" v-if="!$theme.md" class="approve" @click="confirmActionOnSelection('approve')" icon-ios="f7:hand_thumbsup" icon-aurora="f7:hand_thumbsup">&nbsp;Approve {{selectedItems.length}}</f7-link>
       <f7-link v-if="$theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false"></f7-link>
       <div class="title" v-if="$theme.md">
         {{selectedItems.length}} selected
       </div>
       <div class="right" v-if="$theme.md">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected"></f7-link>
-        <f7-link icon-md="material:visibility_off" icon-color="white" @click="ignoreSelected"></f7-link>
-        <f7-link icon-md="material:thumb_up" icon-color="white" @click="approveSelected"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="confirmActionOnSelection('delete')"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:visibility_off" icon-color="white" @click="confirmActionOnSelection('ignore')"></f7-link>
+        <f7-link v-show="selectedItems.length" icon-md="material:thumb_up" icon-color="white" @click="confirmActionOnSelection('approve')"></f7-link>
       </div>
     </f7-toolbar>
 
@@ -43,7 +43,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <f7-block-title><span v-if="ready">{{inbox.length}} entries</span>
-        <div style="text-align:right; color:black; font-weight: normal" class="float-right">
+        <div style="text-align:right; color:var(--f7-block-text-color); font-weight: normal" class="float-right">
           <label @click="toggleIgnored" style="cursor:pointer">Show ignored</label> <f7-checkbox :checked="showIgnored" @change="toggleIgnored"></f7-checkbox>
         </div>
         </f7-block-title>
@@ -81,6 +81,7 @@
               :title="entry.label"
               :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
               :footer="entry.thingTypeUID"
+              :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''"
             >
               <!-- <f7-button icon-f7="add_round" color="blue" slot="after"></f7-button>
               <f7-button icon-f7="eye_off" color="blue" slot="after"></f7-button>
@@ -174,6 +175,7 @@ export default {
         return
       }
       let self = this
+      let ignored = entry.flag === 'IGNORED'
       let actions = this.$f7.actions.create({
         convertToPopover: true,
         closeOnEscape: true,
@@ -215,10 +217,24 @@ export default {
               }
             },
             {
-              text: 'Ignore',
-              color: 'orange',
+              text: (!ignored) ? 'Ignore' : 'Unignore',
+              color: (!ignored) ? 'orange' : 'blue',
               onClick: () => {
-                console.log(`Ignore ${entry.thingUID}`)
+                this.$oh.api.postPlain(`/rest/inbox/${entry.thingUID}/${(!ignored) ? 'ignore' : 'unignore'}`).then((res) => {
+                  this.$f7.toast.create({
+                    text: (!ignored) ? 'Entry ignored' : 'Entry unignored',
+                    destroyOnClose: true,
+                    closeTimeout: 2000
+                  }).open()
+                  self.load()
+                }).catch((err) => {
+                  this.$f7.toast.create({
+                    text: 'Error while updating ignore flag: ' + err,
+                    destroyOnClose: true,
+                    closeTimeout: 2000
+                  }).open()
+                  self.load()
+                })
               }
             }
           ],
@@ -227,7 +243,23 @@ export default {
               text: 'Remove',
               color: 'red',
               onClick: () => {
-                console.log(`Remove ${entry.thingUID}`)
+                this.$f7.dialog.confirm(`Remove ${entry.label} from Inbox?`, 'Remove Entry', () => {
+                  this.$oh.api.delete('/rest/inbox/' + entry.thingUID).then((res) => {
+                    this.$f7.toast.create({
+                      text: 'Entry removed',
+                      destroyOnClose: true,
+                      closeTimeout: 2000
+                    }).open()
+                    self.load()
+                  }).catch((err) => {
+                    this.$f7.toast.create({
+                      text: 'Error while removing entry: ' + err,
+                      destroyOnClose: true,
+                      closeTimeout: 2000
+                    }).open()
+                    self.load()
+                  })
+                })
               }
             }
           ]
@@ -255,24 +287,61 @@ export default {
         this.selectedItems.push(item)
       }
     },
-    removeSelected () {
+    confirmActionOnSelection (action) {
       const vm = this
 
-      this.$f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected entries?`,
-        'Remove Entries',
-        () => {
-          vm.doRemoveSelected()
-        }
-      )
-    },
-    doRemoveSelected () {
-      let dialog = this.$f7.dialog.progress('Deleting Inbox Entries...')
+      let title, message
+      switch (action) {
+        case 'delete':
+          title = 'Remove Inbox Entries'
+          message = `Remove ${this.selectedItems.length} selected entries?`
+          break
+        case 'approve':
+          title = 'Approve Inbox Entries'
+          message = `Approve ${this.selectedItems.length} selected entries?`
+          break
+        case 'ignore':
+          title = 'Ignore Inbox Entries'
+          message = `Ignore ${this.selectedItems.length} selected entries?`
+          break
+        case 'unignore':
+          title = 'Unignore Inbox Entries'
+          message = `Unignore ${this.selectedItems.length} selected entries?`
+          break
+      }
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/inbox/' + i))
+      this.$f7.dialog.confirm(message, title, () => { vm.performActionOnSelection(action) })
+    },
+    performActionOnSelection (action) {
+      let progressMessage, successMessage, promises
+      switch (action) {
+        case 'delete':
+          progressMessage = 'Removing Inbox Entries...'
+          successMessage = `${this.selectedItems.length} entries removed`
+          promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/inbox/' + i))
+          break
+        case 'approve':
+          progressMessage = 'Approving Inbox Entries...'
+          successMessage = `${this.selectedItems.length} entries approved`
+          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/approve', i.label))
+          break
+        case 'ignore':
+          progressMessage = 'Ignoring Inbox Entries...'
+          successMessage = `${this.selectedItems.length} entries ignored`
+          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/ignore'))
+          break
+        case 'unignore':
+          progressMessage = 'Unignoring Inbox Entries...'
+          successMessage = `${this.selectedItems.length} entries unignored`
+          promises = this.selectedItems.map((i) => this.$oh.api.postPlain('/rest/inbox/' + i + '/unignore'))
+          break
+      }
+
+      let dialog = this.$f7.dialog.progress(progressMessage)
+
       Promise.all(promises).then((data) => {
         this.$f7.toast.create({
-          text: 'Entries removed',
+          text: successMessage,
           destroyOnClose: true,
           closeTimeout: 2000
         }).open()
@@ -283,7 +352,7 @@ export default {
         dialog.close()
         this.load()
         console.error(err)
-        this.$f7.dialog.alert('An error occurred while deleting: ' + err)
+        this.$f7.dialog.alert('An error occurred: ' + err)
       })
     }
   }

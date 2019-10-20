@@ -130,7 +130,7 @@ export default {
         this.$f7.dialog.alert('Please give an unique identifier')
         return
       }
-      if (!this.label) {
+      if (!this.thing.label) {
         this.$f7.dialog.alert('Please give a name')
         return
       }
