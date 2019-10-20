@@ -111,7 +111,7 @@
           </f7-col>
           <f7-block-footer class="no-margin padding-left"><small>Tip: leave fields blank to set automatically to the suggested name and description. <f7-link @click="currentModule.label = null; currentModule.description = null">Clear</f7-link></small></f7-block-footer>
 
-          <f7-block-title>Module type</f7-block-title>
+          <f7-block-title>Type of {{currentSection.replace(/.$/, '')}}</f7-block-title>
           <f7-list v-if="!currentModuleType">
             <f7-list-item radio v-for="moduleType in moduleTypes[currentSection].filter((t) => t.visibility === 'VISIBLE')"
               :value="moduleType.uid"
@@ -120,7 +120,7 @@
               :key="moduleType.uid" :title="moduleType.label" name="module-type"></f7-list-item>
           </f7-list>
           <f7-list v-else>
-            <f7-list-item title="Module type" ref="moduleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
+            <f7-list-item :title="sectionLabels[currentSection][0]" ref="moduleTypeSmartSelect" smart-select :smart-select-params="{ view: $f7.views.main, openIn: 'popup', closeOnSelect: true }">
               <select name="currentModuleType"
                 @change="currentModuleType = moduleTypes[currentSection].find((t) => t.uid === $refs.moduleTypeSmartSelect.f7SmartSelect.getValue());
                          currentModule.type = currentModuleType.uid;
