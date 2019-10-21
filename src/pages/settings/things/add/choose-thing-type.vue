@@ -167,7 +167,7 @@ export default {
       this.loading = true
       this.$oh.api.get('/rest/inbox').then((data) => {
         this.loading = false
-        this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
+        this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId && e.flag !== 'IGNORED')
       })
     },
     approve (entry) {
