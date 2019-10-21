@@ -147,7 +147,7 @@
     </f7-popup>
 
     <script-editor-popup v-if="currentModule" title="Edit Script" popup-id="edit-rule-script-direct-popup" :value="scriptCode" :fullscreen="false" :opened="codeEditorOpened" @closed="codePopupClosed"></script-editor-popup>
-    <cron-editor v-if="currentModule" popup-id="edit-rule-cron-popup" :value="cronExpression" :opened="cronPopupOpened" @closed="cronPopupOpened = false" @input="(value) => updateCronExpression(value)" />
+    <cron-editor popup-id="edit-rule-cron-popup" :value="cronExpression" :opened="cronPopupOpened" @closed="cronPopupOpened = false" @input="(value) => updateCronExpression(value)" />
   </f7-page>
 </template>
 
@@ -450,14 +450,14 @@ export default {
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.scriptCode = mod.configuration.script
-      setTimeout(() => { this.codeEditorOpened = true }, 200)
+      setTimeout(() => { this.codeEditorOpened = true })
     },
     buildCronExpression (ev, mod) {
       ev.cancelBubble = true
       this.currentModule = mod
       this.currentModuleType = mod.type
       this.cronExpression = mod.configuration.cronExpression
-      setTimeout(() => { this.cronPopupOpened = true }, 200)
+      this.cronPopupOpened = true
     },
     codePopupClosed (value) {
       this.codeEditorOpened = false
