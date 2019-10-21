@@ -55,7 +55,7 @@ export default {
     },
     deleteTag (ev) {
       const tag = ev.target.previousSibling.innerText
-      if (this.item.tags.indexOf(tag)) {
+      if (this.item.tags.indexOf(tag) >= 0) {
         this.item.tags.splice(this.item.tags.indexOf(tag), 1)
       }
     }
