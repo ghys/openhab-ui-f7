@@ -30,7 +30,7 @@
 
             <channel-group
               :group="group"
-              :channelTypes="displayedChannels(group)"
+              :channelTypes="displayedChannelTypes(group)"
               :thing="thing"
               :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
               @selected="selectChannel"
@@ -50,12 +50,12 @@
         </f7-row>
       </f7-block>
     </f7-col>
-    <f7-col v-else-if="thingType.channels.length || isExtensible">
+    <f7-col v-else-if="knownChannelTypesUID.length > 0 || dynamicChannels.length > 0">
       <f7-block width="100" class="channel-group">
         <f7-row>
           <f7-col>
             <channel-group
-              :channelTypes="displayedChannels()"
+              :channelTypes="displayedChannelTypes()"
               :thing="thing"
               :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
               @selected="selectChannel"
@@ -72,9 +72,8 @@
             </channel-group>
 
             <channel-group
-              v-if="isExtensible"
               :extensible="true"
-              :channelTypes="displayedChannels('userdefined')"
+              :channelTypes="dynamicChannels"
               :thing="thing"
               :picker-mode="pickerMode" :multiple-links-mode="multipleLinksMode" :item-type-filter="itemTypeFilter"
               @selected="selectChannel"
@@ -130,12 +129,24 @@ export default {
     ItemForm
   },
   data () {
+    let knownChannelTypesUID = []
+    if (this.thingType) {
+      this.thingType.channelGroups.forEach((g) => {
+        g.channels.forEach((c) => {
+          knownChannelTypesUID.push(g.id + '#' + c.id)
+        })
+      })
+      this.thingType.channels.forEach((c) => {
+        knownChannelTypesUID.push(c.id)
+      })
+    }
     return {
       showAdvanced: false,
       openedChannelId: '',
       openedChannel: null,
       selectedChannel: null,
-      selectedChannels: []
+      selectedChannels: [],
+      knownChannelTypesUID: knownChannelTypesUID
     }
   },
   computed: {
@@ -149,14 +160,13 @@ export default {
         return this.thingType.channels.some((c) => c.advanced)
       }
     },
-    displayedChannels () {
+    dynamicChannels () {
+      return this.thing.channels.filter((c) => this.knownChannelTypesUID.indexOf(c.id) < 0 || this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0)
+    },
+    displayedChannelTypes () {
       if (!this.thingType) return []
       return (group) => {
-        if (this.isExtensible && group === 'userdefined') {
-          const userDefinedChannels = this.thing.channels.filter((c) => this.thingType.extensibleChannelTypeIds.indexOf(c.channelTypeUID.split(':')[1]) >= 0)
-          console.log(userDefinedChannels)
-          return userDefinedChannels
-        } else if (!group) {
+        if (!group) {
           return (this.showAdvanced) ? this.thingType.channels : this.thingType.channels.filter((p) => p.advanced === false)
         } else {
           return (this.showAdvanced) ? group.channels : group.channels.filter((p) => p.advanced === false)
