@@ -32,35 +32,43 @@
       <f7-row>
         <f7-col width="100" medium="50">
           <f7-block-title>Configuration &amp; Automation</f7-block-title>
-          <f7-list class="search-list">
+          <f7-list media-list class="search-list">
             <f7-list-item
+              media-item
               color="red"
               link="inbox/"
               title="Inbox"
               :badge="(inboxCount > 0) ? inboxCount : undefined"
               badge-color="red"
-              :footer="objectsSubtitles.inbox"
-            ></f7-list-item>
+              :footer="objectsSubtitles.inbox">
+              <f7-icon slot="media" f7="tray" color="gray"></f7-icon>
+            </f7-list-item>
             <f7-list-item
+              media-item
               link="things/"
               title="Things"
               :after="thingsCount"
               badge-color="blue"
-              :footer="objectsSubtitles.things"
-            ></f7-list-item>
+              :footer="objectsSubtitles.things">
+              <f7-icon slot="media" f7="lightbulb" color="gray"></f7-icon>
+            </f7-list-item>
             <f7-list-item
+              media-item
               link="items/"
               title="Items"
               :after="itemsCount"
               badge-color="blue"
-              :footer="objectsSubtitles.items"
-            ></f7-list-item>
+              :footer="objectsSubtitles.items">
+              <f7-icon slot="media" f7="square_on_circle" color="gray"></f7-icon>
+            </f7-list-item>
             <f7-list-item
+              media-item
               link="model/"
               title="Model"
               badge-color="blue"
-              :footer="objectsSubtitles.model"
-            ></f7-list-item>
+              :footer="objectsSubtitles.model">
+              <f7-icon slot="media" f7="list_bullet_indent" color="gray"></f7-icon>
+            </f7-list-item>
             <!-- <f7-list-item
               link="items-virtual/"
               title="Items (virtual)"
@@ -69,27 +77,33 @@
               :footer="objectsSubtitles.items"
             ></f7-list-item> -->
             <f7-list-item
+              media-item
               link="rules/"
               title="Rules"
               badge-color="blue"
-              :footer="objectsSubtitles.rules"
-            ></f7-list-item>
+              :footer="objectsSubtitles.rules">
+              <f7-icon slot="media" f7="wand_rays" color="gray"></f7-icon>
+            </f7-list-item>
             <f7-list-item
+              media-item
               link="schedule/"
               title="Schedule"
               badge-color="blue"
-              :footer="objectsSubtitles.schedule"
-            ></f7-list-item>
+              :footer="objectsSubtitles.schedule">
+              <f7-icon slot="media" f7="calendar" color="gray"></f7-icon>
+            </f7-list-item>
           </f7-list>
           <f7-block-title>Add-ons</f7-block-title>
-          <f7-list class="search-list">
+          <f7-list media-list class="search-list">
             <f7-list-item
+              media-item
               v-for="type in addonTypes"
               :key="type.id"
               :link="'addons/' + type.id"
               :title="type.label"
-              :footer="addonsSubtitles[type.id]"
-            ></f7-list-item>
+              :footer="addonsSubtitles[type.id]">
+              <f7-icon slot="media" :f7="addonsIcons[type.id]" color="gray"></f7-icon>
+            </f7-list-item>
           </f7-list>
         </f7-col>
         <f7-col width="100" medium="50">
@@ -142,6 +156,15 @@ export default {
         misc: 'Integrations to external systems and more',
         ui: 'Alternative frontends for user interaction',
         voice: 'Convert between text and speech, interpret human language queries'
+      },
+      addonsIcons: {
+        binding: 'circle_grid_hex',
+        action: 'bolt_horizontal',
+        persistence: 'download_circle',
+        transformation: 'function',
+        misc: 'rectangle_3_offgrid',
+        ui: 'play_rectangle',
+        voice: 'chat_bubble_2'
       },
       inboxCount: '',
       thingsCount: '',
