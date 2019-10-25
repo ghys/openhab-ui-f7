@@ -13,12 +13,14 @@
         <f7-block-title
           v-if="addons.length"
         >{{addons.length}} Addon{{addons.length > 1 ? 's' : ''}} available</f7-block-title>
-        <f7-list class="search-list searchbar-found">
+        <f7-list media-list class="search-list searchbar-found">
           <f7-list-item
+            media-item
             v-for="addon in addons"
             :key="addon.id"
             link="#"
             @click="openAddonPopup(addon.id)"
+            :header="addon.id"
             :footer="addon.version"
             :after="(currentlyInstalling.indexOf(addon.id) >= 0) ? 'Installing...' : ''"
             :title="addon.label"

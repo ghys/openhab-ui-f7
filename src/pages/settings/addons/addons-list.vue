@@ -8,13 +8,14 @@
     <f7-block form v-if="addons.length" class="service-config block-narrow">
       <f7-col>
         <f7-block-title>{{addons.length}} Add-on{{addons.length > 1 ? 's' : ''}} installed</f7-block-title>
-        <f7-list>
+        <f7-list media-list>
           <f7-list-item
-            swipeout
+            media-item
             link="#"
             v-for="addon in addons"
             :key="addon.id"
             @click="openAddonPopup(addon.id)"
+            :header="addon.id"
             :footer="addon.version"
             :after="(currentlyUninstalling.indexOf(addon.id) >= 0) ? 'Uninstalling...' : ''"
             :title="addon.label"
