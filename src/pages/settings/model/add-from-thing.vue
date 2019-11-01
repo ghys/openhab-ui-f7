@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar title="Add Items from Thing" back-link="Back">
       <f7-nav-right>
         <f7-link @click="add()" v-if="$theme.md" icon-md="material:save" icon-only></f7-link>
@@ -9,22 +9,32 @@
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title v-if="parent">Parent Group</f7-block-title>
+        <f7-block-title v-if="parent || thingId">Parent Group</f7-block-title>
         <f7-list media-list v-if="parent">
           <ul>
             <item :item="parent.item" />
           </ul>
         </f7-list>
+        <f7-block-footer v-if="thingId" class="padding-left padding-right">
+          Select a parent group, preferably part of the semantic model like a Location or Equipment group, where the new items will be inserted (optional, but recommended).
+        </f7-block-footer>
+        <f7-list v-if="thingId">
+          <item-picker title="Parent Group" name="parent-group" :value="parentGroup" @input="(value) => parentGroup = value" :multiple="false" filterType="Group"></item-picker>
+        </f7-list>
         <f7-block-title v-if="createEquipment">Equipment</f7-block-title>
-        <f7-block-title v-else>Equipment</f7-block-title>
-        <f7-block-footer v-if="createEquipment" class="padding-left padding-right">
-          Select the Thing you wish to create as an Equipment group in the model. It will be placed under the parent group displayed above, if any.
+        <f7-block-title v-else-if="!thingId">Parent Group</f7-block-title>
+        <f7-block-footer v-if="createEquipment && !thingId" class="padding-left padding-right">
+          Select the Thing you wish to create as a new Equipment group in the model. It will be placed under the parent group above, if any.
           You can alter the new group's details and change its equipment class.
         </f7-block-footer>
-        <f7-block-footer v-else class="padding-left padding-right">
-          Select the Thing for which you wish to create Points Items from its Channels. They will be placed under the parent group displayed above, if any.
+        <f7-block-footer v-else-if="createEquipment && thingId" class="padding-left padding-right">
+          Complete the details of the new Equipment group to add to the model. It will be placed under the parent group above, if any.
+          You can alter the new group's details and change its equipment class.
         </f7-block-footer>
-        <f7-list inline-labels no-hairlines-md>
+        <f7-block-footer v-else-if="!createEquipment && !thingId" class="padding-left padding-right">
+          Select the Thing for which you wish to create Point Items from its Channels. They will be placed under the parent group above, if any.
+        </f7-block-footer>
+        <f7-list inline-labels no-hairlines-md v-if="!thingId">
           <thing-picker title="Thing" name="thing" :value="selectedThingId" @input="(e) => selectedThingId = e" />
         </f7-list>
         <f7-block v-if="!ready" class="text-align-center">
@@ -51,6 +61,7 @@
 
 <script>
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
+import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ChannelList from '@/components/thing/channel-list.vue'
 import ItemForm from '@/components/item/item-form.vue'
 
@@ -59,14 +70,16 @@ import Item from '@/components/item/item.vue'
 export default {
   components: {
     Item,
+    ItemPicker,
     ThingPicker,
     ChannelList,
     ItemForm
   },
-  props: ['parent', 'createEquipment'],
+  props: ['parent', 'createEquipment', 'thingId'],
   data () {
     return {
       ready: true,
+      parentGroup: null,
       selectedThingId: '',
       selectedThing: {},
       selectedThingType: {},
@@ -75,12 +88,21 @@ export default {
     }
   },
   methods: {
+    onPageAfterIn () {
+      if (this.thingId) {
+        this.selectedThingId = this.thingId
+      }
+    },
     toggleSelect (channel) {
 
     },
     add () {
+      if (!this.selectedThingId) {
+        this.$f7.dialog.alert('Please select a Thing')
+        return
+      }
       if (this.createEquipment && !this.newEquipmentItem.name) {
-        this.$f7.dialog.alert('Please select a thing then fill out the details for the new Equipment group')
+        this.$f7.dialog.alert('Please fill out the details for the new Equipment group')
         return
       }
       if (!this.newPointItems.length) {
@@ -89,12 +111,15 @@ export default {
       }
 
       let valid = true
+      if (this.parentGroup && this.createEquipment) {
+        this.newEquipmentItem.groupNames = [this.parentGroup]
+      }
       this.newPointItems.forEach((p) => {
         if (!p.name) valid = false
         if (this.createEquipment) {
           p.groupNames = [this.newEquipmentItem.name]
         } else {
-          p.groupNames = (this.parent) ? [this.parent.item.name] : []
+          p.groupNames = (this.parent) ? [this.parent.item.name] : (this.parentGroup) ? [this.parentGroup] : []
         }
       })
 

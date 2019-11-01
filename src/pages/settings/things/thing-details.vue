@@ -113,6 +113,8 @@
           <f7-col v-if="isExtensible || thing.channels.length > 0">
             <f7-list>
               <f7-list-button class="searchbar-ignore" color="blue" title="Add Channel" v-if="isExtensible" @click="addChannel()"></f7-list-button>
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)"></f7-list-button>
+              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)"></f7-list-button>
               <f7-list-button class="searchbar-ignore" color="red" title="Unlink all Items" @click="unlinkAll(false)"></f7-list-button>
               <f7-list-button class="searchbar-ignore" color="red" title="Unlink all and Remove Items" @click="unlinkAll(true)"></f7-list-button>
             </f7-list>
@@ -197,6 +199,7 @@ import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 import ZWaveNetworkPopup from './zwave/zwave-network-popup.vue'
 
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
+import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
 
 import buildTextualDefinition from './thing-textual-definition'
 
@@ -380,6 +383,28 @@ export default {
         props: {
           thing: this.thing,
           thingType: this.thingType
+        }
+      })
+    },
+    addToModel (createEquipment) {
+      const self = this
+      this.$f7router.navigate({
+        url: 'add-to-model',
+        route: {
+          component: AddFromThingPage,
+          path: 'add-to-model',
+          props: {
+          },
+          on: {
+            pageAfterOut (event, page) {
+              console.log('Add to model page closed')
+            }
+          }
+        }
+      }, {
+        props: {
+          thingId: this.thing.UID,
+          createEquipment
         }
       })
     },
