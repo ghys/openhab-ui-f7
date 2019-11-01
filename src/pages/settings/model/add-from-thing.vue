@@ -16,10 +16,10 @@
           </ul>
         </f7-list>
         <f7-block-footer v-if="thingId" class="padding-left padding-right">
-          Select a parent group, preferably part of the semantic model like a Location or Equipment group, where the new items will be inserted (optional, but recommended).
+          Select a parent group, preferably part of the semantic model like a Location or Equipment group, under which the new items will be inserted (optional, but recommended).
         </f7-block-footer>
         <f7-list v-if="thingId">
-          <item-picker title="Parent Group" name="parent-group" :value="parentGroup" @input="(value) => parentGroup = value" :multiple="false" filterType="Group"></item-picker>
+          <item-picker title="Create Items Under" name="parent-group" :value="parentGroup" @input="(value) => parentGroup = value" :multiple="false" filterType="Group"></item-picker>
         </f7-list>
         <f7-block-title v-if="createEquipment">Equipment</f7-block-title>
         <f7-block-title v-else-if="!thingId">Parent Group</f7-block-title>
